@@ -1,0 +1,13 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+app/build/
+# Keep the placeholder google-services.json in the repo so CI can build.
+# Replace it with your real file locally; do NOT commit real secrets.
