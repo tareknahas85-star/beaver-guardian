@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="لوحة تحكم وليّ الأمر / Parent Dashboard"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvPairCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="رمز الربط: ..."
+            android:textSize="16sp"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="أوامر فورية / Instant controls"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Button android:id="@+id/btnLockNow" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🔒 قفل الجهاز فوراً" />
+        <Button android:id="@+id/btnUnlock" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🔓 فتح الجهاز" />
+        <Button android:id="@+id/btnBlockInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 قطع الإنترنت" />
+        <Button android:id="@+id/btnAllowInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 السماح بالإنترنت" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="تقارير / Reports"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="بانتظار البيانات من جهاز الطفل..."
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>
