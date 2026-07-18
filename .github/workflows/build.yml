@@ -7,6 +7,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,6 +26,11 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -31,9 +39,23 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
+      - name: Stage APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/beaver-guardian.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: beaver-guardian-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: beaver-guardian-apk
+          path: dist/beaver-guardian.apk
           if-no-files-found: error
+
+      - name: Publish APK to 'latest' release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Beaver Guardian — latest build
+          body: "أحدث APK للتجربة. نزّل beaver-guardian.apk وثبّته على الجهازين. Latest test APK — download and install beaver-guardian.apk."
+          files: dist/beaver-guardian.apk
