@@ -1,28 +1,28 @@
-# 🛠️ دليل الإعداد الكامل / Full Setup Guide
+# 🛠️ Full Setup Guide
 
-خطوات مرتّبة من الصفر حتى جهاز طفل محمي بالكامل.
-
----
-
-## 0) المتطلبات / Prerequisites
-
-- جهازان بأندرويد (جهازك + جهاز الطفل)، **Android 8 (API 26)** أو أحدث.
-- كمبيوتر عليه **ADB** (Platform Tools) — لخطوة Device Owner فقط.
-- حساب Google (مجاني) لإنشاء مشروع Firebase.
+Everything from zero to a fully protected child device.
 
 ---
 
-## 1) إنشاء مشروع Firebase / Create the Firebase project
+## 0) What you need
 
-1. افتح <https://console.firebase.google.com> → **Add project** → سمّه مثلاً `beaver-guardian`.
-2. من القائمة: **Build → Realtime Database → Create Database** → اختر أقرب منطقة → ابدأ بـ **Locked mode**.
-3. أضف تطبيق أندرويد: **Project settings → Your apps → Android**.
-   - **Package name:** `com.microbeaver.guardian` (مهم أن يطابق تماماً).
-   - نزّل ملف **`google-services.json`**.
-4. ضع الملف مكان: `app/google-services.json` (استبدل الملف المؤقت الموجود).
+- Two Android devices (yours + the kid's), **Android 8 (API 26)** or newer.
+- A computer with **ADB** (Platform Tools), only needed for the Device Owner step.
+- A Google account (free) to create the Firebase project.
 
-### قواعد قاعدة البيانات (مبدئية للتجربة)
-في **Realtime Database → Rules** الصق التالي مؤقتاً للتجربة، ثم شدّدها لاحقاً:
+---
+
+## 1) Create the Firebase project
+
+1. Open <https://console.firebase.google.com> > **Add project** > name it something like `beaver-guardian`.
+2. From the menu: **Build > Realtime Database > Create Database** > pick the closest region > start in **Locked mode**.
+3. Add an Android app: **Project settings > Your apps > Android**.
+   - **Package name:** `com.microbeaver.guardian` (must match exactly).
+   - Download **`google-services.json`**.
+4. Put the file at `app/google-services.json` (replace the placeholder that's there).
+
+### Database rules (just for testing)
+In **Realtime Database > Rules** paste this for now, tighten it later:
 
 ```json
 {
@@ -37,97 +37,97 @@
 }
 ```
 
-> 🔐 **للإنتاج:** فعّل Firebase Auth وقيّد القراءة/الكتابة على مستخدم وليّ الأمر فقط.
+> 🔐 **For production:** turn on Firebase Auth and restrict read/write to the parent's account only.
 
 ---
 
-## 2) بناء الـ APK / Build the APK
+## 2) Build the APK
 
-**الطريقة الأسهل — GitHub Actions (بدون أي إعداد محلي):**
-- ادفع الكود إلى فرع `main`. تبويب **Actions** يبني الـ APK.
-- بعد نجاح البناء: **Actions → آخر تشغيل → Artifacts → `beaver-guardian-debug-apk`** → نزّل وفكّ الضغط → `app-debug.apk`.
+**Easiest way, GitHub Actions (no local setup at all):**
+- Push the code to `main`. The **Actions** tab builds the APK.
+- When the build finishes: **Actions > latest run > Artifacts > `beaver-guardian-debug-apk`** > download, unzip > `app-debug.apk`.
 
-**محلياً (اختياري):** افتح المشروع بـ **Android Studio** واضغط Run، أو:
+**Locally (optional):** open the project in **Android Studio** and hit Run, or:
 ```bash
-gradle assembleDebug        # يتطلب Gradle 8.7 + JDK 17 + Android SDK
+gradle assembleDebug        # needs Gradle 8.7 + JDK 17 + Android SDK
 ```
 
-انقل `app-debug.apk` للجهازين وثبّته (فعّل "تثبيت من مصادر غير معروفة").
+Copy `app-debug.apk` to both devices and install it (allow "install from unknown sources").
 
 ---
 
-## 3) إعداد جهازك (Parent)
+## 3) Your device (Parent)
 
-1. افتح **Beaver Guardian** → اختر **أنا وليّ الأمر (Parent)**.
-2. انسخ **رمز الربط (Pairing code)** المكوّن من 6 أحرف.
-
----
-
-## 4) إعداد جهاز الطفل (Child)
-
-1. افتح التطبيق → اختر **هذا جهاز الطفل (Child)**.
-2. أدخل **رمز الربط** → اضغط **ربط الجهاز**.
-3. فعّل الأذونات بالترتيب (الأزرار 1→6):
-   1. **الوصول لإحصاءات الاستخدام** (Usage Access).
-   2. **خدمة الوصول** (Accessibility) → فعّل *Beaver Guardian — App Guard*.
-   3. **الظهور فوق التطبيقات** (Display over other apps).
-   4. **الموقع + المكالمات + الإشعارات** → الموقع اختر **"طوال الوقت / Allow all the time"**.
-   5. **تفعيل مشرف الجهاز** (Device Admin).
-   6. **تشغيل فلتر الإنترنت** (VPN) → اقبل طلب الاتصال.
+1. Open **Beaver Guardian** > pick **Parent**.
+2. Copy the 6 character **pairing code**.
 
 ---
 
-## 5) تفعيل Device Owner (منع الحذف الكامل)
+## 4) The kid's device (Child)
 
-هي الخطوة الوحيدة اللي بتحتاج كمبيوتر، وبتعطي **التحكم الكامل ومنع الحذف النهائي**.
+1. Open the app > pick **Child**.
+2. Enter the **pairing code** > tap **pair device**.
+3. Turn on the permissions in order (buttons 1 to 6):
+   1. **Usage Access**.
+   2. **Accessibility** > enable *Beaver Guardian - App Guard*.
+   3. **Display over other apps**.
+   4. **Location + calls + notifications**. For location pick **"Allow all the time"**.
+   5. **Device Admin**.
+   6. **Internet filter (VPN)** > accept the connection request.
 
-> ⚠️ الجهاز لازم يكون **بدون أي حساب Google مُضاف** (جهاز جديد أو بعد Factory Reset). هذا شرط أندرويد، مش من التطبيق.
+---
 
-على جهاز الطفل:
-1. فعّل **خيارات المطوّر**: الإعدادات → حول الهاتف → اضغط **رقم الإصدار** 7 مرات.
-2. فعّل **تصحيح USB (USB debugging)**.
-3. وصّل الجهاز بالكمبيوتر، واعتمد التصحيح.
+## 5) Device Owner (full uninstall protection)
 
-على الكمبيوتر:
+The only step that needs a computer. It gives **full control and makes the app impossible to remove**.
+
+> ⚠️ The device must have **no Google account added** (new device or right after a factory reset). That's an Android requirement, not ours.
+
+On the kid's device:
+1. Enable **Developer options**: Settings > About phone > tap **Build number** 7 times.
+2. Enable **USB debugging**.
+3. Plug it into the computer and approve debugging.
+
+On the computer:
 ```bash
-adb devices           # تأكد أن الجهاز ظاهر
+adb devices           # make sure the device shows up
 adb shell dpm set-device-owner com.microbeaver.guardian/.admin.GuardianDeviceAdminReceiver
 ```
 
-النتيجة المتوقعة:
+Expected result:
 ```
 Success: Device owner set to package com.microbeaver.guardian
 ```
 
-بمجرد نجاحها، يطبّق التطبيق تلقائياً:
-- `setUninstallBlocked` → **لا يمكن حذف التطبيق**.
-- `DISALLOW_FACTORY_RESET` → منع إعادة الضبط للهروب.
+Once that works, the app automatically applies:
+- `setUninstallBlocked`, so **the app can't be removed**.
+- `DISALLOW_FACTORY_RESET`, no factory reset escape.
 - `DISALLOW_ADD_USER` / `DISALLOW_SAFE_BOOT`.
-- إخفاء التطبيقات المحظورة نهائياً (الألعاب مثلاً).
+- Fully hiding blocked apps (games for example).
 
-### لإلغاء الإشراف لاحقاً (وليّ الأمر فقط)
+### To remove supervision later (parent only)
 ```bash
 adb shell dpm remove-active-admin com.microbeaver.guardian/.admin.GuardianDeviceAdminReceiver
 ```
 
 ---
 
-## 6) الاستخدام اليومي / Daily use
+## 6) Daily use
 
-من جهازك (Parent Dashboard):
-- **🔒 قفل فوري** / **🔓 فتح**.
-- **🌐 قطع/سماح الإنترنت**.
-- **تقارير الاستخدام** لكل تطبيق (تتحدّث كل دقيقة).
+From your device (Parent Dashboard):
+- **🔒 Instant lock** / **🔓 unlock**.
+- **🌐 Cut / allow internet**.
+- **Usage reports** per app (updates every minute).
 
-الحدود الزمنية وحظر تطبيقات محددة تُكتب في `policy` بقاعدة البيانات (`limits`, `blockedApps`) — واجهة إدارتها ضمن التحسينات القادمة، والمحرّك جاهز ويطبّقها فوراً.
+Time limits and blocking specific apps are written to `policy` in the database (`limits`, `blockedApps`). A UI to manage them is on the roadmap, the engine is ready and applies them right away.
 
 ---
 
-## استكشاف الأخطاء / Troubleshooting
+## Troubleshooting
 
-| المشكلة | الحل |
+| Problem | Fix |
 |---|---|
-| `set-device-owner` يفشل بـ *already has an account* | اعمل Factory Reset ولا تُضِف حساب Google قبل الخطوة. |
-| لا تظهر تقارير | تأكد من رمز الربط نفسه على الجهازين + قواعد Firebase تسمح بالكتابة. |
-| التطبيق يُقتل بالخلفية | ألغِ تحسين البطارية للتطبيق (Battery → Unrestricted). |
-| فشل بناء CI | تأكد أن `google-services.json` موجود و package = `com.microbeaver.guardian`. |
+| `set-device-owner` fails with *already has an account* | Factory reset and don't add a Google account before this step. |
+| No reports showing | Make sure both devices use the same pairing code and the Firebase rules allow writes. |
+| App gets killed in the background | Turn off battery optimization for the app (Battery > Unrestricted). |
+| CI build fails | Make sure `google-services.json` exists and the package is `com.microbeaver.guardian`. |
