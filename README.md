@@ -1,42 +1,32 @@
 # 🦫 Beaver Guardian
 
-تطبيق **مراقبة وإدارة أبوية** (Parental Control / MDM) لأندرويد — تطبيق واحد (APK واحد) فيه وضعان: **وليّ الأمر (Parent)** و**الطفل (Child)**. وليّ الأمر يتحكم عن بُعد بجهاز الطفل: حدود وقت التطبيقات والألعاب، حظر التطبيقات، قطع الإنترنت، سجل المكالمات، والموقع — مع **منع الحذف** إلا بموافقة وليّ الأمر.
+Android parental control app. One APK, two modes: Parent and Child. You control your kid's phone from yours: app and game time limits, block apps, cut the internet, see the call log and location. And the kid can't uninstall it without your approval.
 
-A single-APK Android parental-control app with two modes — **Parent** and **Child**. The parent remotely controls the child device: app/game time limits, app blocking, internet cut-off, call-log visibility, and location — with **uninstall protection**.
-
-> **الشفافية بالتصميم / Transparent by design:** جهاز الطفل يعرض إشعاراً دائماً بأنه تحت الإشراف. This is supervision the child is told about — not hidden spyware.
+The child's phone always shows a notification that it's being supervised. This is supervision the kid knows about, not hidden spyware.
 
 ![Build APK](../../actions/workflows/build.yml/badge.svg)
 
----
+## Features
 
-## ✨ الميزات / Features
+- Screen time and per-app limits: uses `UsageStatsManager` and closes the app when time is up (needs Usage Access + Accessibility)
+- Lock or block apps, plus instant lock that sends the kid back to the home screen (Device Owner / Accessibility)
+- Internet control: a local VPN that cuts all traffic when you say so (VPN service)
+- Call log: number, direction, time and duration. No audio recording (`READ_CALL_LOG`)
+- Location: last known device location, synced to Firebase (background location)
+- Uninstall protection: `setUninstallBlocked` + `DISALLOW_FACTORY_RESET` (needs Device Owner)
 
-| Feature | كيف تعمل | مستوى الصلاحية |
-|---|---|---|
-| ⏱️ حدود وقت الشاشة والتطبيقات | `UsageStatsManager` + إغلاق التطبيق عند تجاوز الحد | Usage Access + Accessibility |
-| 🚫 قفل/حظر التطبيقات + قفل فوري | إخفاء التطبيق (Device Owner) + إعادة للـ Home | Device Owner / Accessibility |
-| 🌐 التحكم بالنت | VPN محلي يقطع كل الترافيك عند الطلب | VPN service |
-| 📞 سجل المكالمات | الرقم/الاتجاه/الوقت/المدة (**بدون تسجيل صوت**) | `READ_CALL_LOG` |
-| 📍 الموقع | آخر موقع للجهاز على Firebase | Location (background) |
-| 🔒 منع الحذف | `setUninstallBlocked` + `DISALLOW_FACTORY_RESET` | **Device Owner** |
+Heads up: recording call audio is simply not possible on Android 10+ for any third party app. You get call info only, no sound.
 
-> ⚠️ **تسجيل المكالمات الصوتي غير ممكن** على Android 10+ لأي تطبيق طرف ثالث. نعرض بيانات المكالمة فقط. Call **audio** recording is not possible on modern Android.
+## Quick start
 
----
+1. Build the APK: every push to `main` builds it automatically. Go to Actions, open the latest run, grab `beaver-guardian-debug-apk` from Artifacts.
+2. Firebase: follow [docs/SETUP.md](docs/SETUP.md) to create a Firebase project and replace `app/google-services.json`.
+3. Setup: on your phone pick Parent and copy the pairing code. On the kid's phone pick Child, enter the code and allow the six permissions.
+4. Uninstall protection (Device Owner): run the one ADB step in [docs/SETUP.md](docs/SETUP.md).
 
-## 🚀 التشغيل السريع / Quick start
+Full guide: [docs/SETUP.md](docs/SETUP.md) / Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) / Privacy: [docs/PRIVACY.md](docs/PRIVACY.md)
 
-1. **بناء الـ APK**: كل push إلى `main` يبني الـ APK تلقائياً → **Actions → آخر تشغيل → Artifacts → `beaver-guardian-debug-apk`**.
-2. **Firebase**: اتبع [`docs/SETUP.md`](docs/SETUP.md) لإنشاء مشروع Firebase واستبدال `app/google-services.json`.
-3. **التركيب**: على جهازك → Parent → انسخ رمز الربط. على جهاز بنتك → Child → أدخل الرمز → فعّل الأذونات الستة.
-4. **منع الحذف (Device Owner)**: نفّذ خطوة ADB الوحيدة في [`docs/SETUP.md`](docs/SETUP.md).
-
-الدليل الكامل: **[docs/SETUP.md](docs/SETUP.md)** · البنية: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** · الخصوصية: **[docs/PRIVACY.md](docs/PRIVACY.md)**
-
----
-
-## 📁 بنية المشروع / Project layout
+## Project layout
 
 ```
 app/src/main/java/com/microbeaver/guardian/
@@ -48,8 +38,6 @@ app/src/main/java/com/microbeaver/guardian/
 └── data/          Models · FirebaseRepo
 ```
 
----
+## Legal and ethical use
 
-## ⚖️ الاستخدام القانوني / Legal & ethical use
-
-هذا التطبيق مُصمّم **حصراً** لاستخدام وليّ الأمر لمراقبة طفله القاصر مع علم الطفل. لا تُركّبه على جهاز شخص بالغ دون علمه. راجع [`docs/PRIVACY.md`](docs/PRIVACY.md).
+This app is made for a parent supervising their own minor kid, with the kid knowing about it. Don't install it on an adult's phone without their knowledge. See [docs/PRIVACY.md](docs/PRIVACY.md).
