@@ -110,15 +110,33 @@
                     app:iconGravity="textStart" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRefresh"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="تحديث البيانات"
-                app:icon="@drawable/ic_refresh"
-                app:iconGravity="textStart" />
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:text="الموقع والخريطة"
+                    app:icon="@drawable/ic_place"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRefresh"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:text="تحديث"
+                    app:icon="@drawable/ic_refresh"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -137,7 +155,7 @@
         android:layout_height="wrap_content"
         android:padding="24dp"
         android:gravity="center"
-        android:text="لا بيانات بعد. تأكد من تفعيل (الوصول لإحصاءات الاستخدام) على جهاز الطفل، ثم اضغط تحديث."
+        android:text="لا بيانات بعد. فعّل (الوصول لإحصاءات الاستخدام) على جهاز الطفل ثم اضغط تحديث."
         android:textColor="#6B7280"
         android:visibility="gone" />
 

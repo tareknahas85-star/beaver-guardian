@@ -1,5 +1,8 @@
 package com.microbeaver.guardian.ui
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +10,8 @@ import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.microbeaver.guardian.Prefs
@@ -14,6 +19,7 @@ import com.microbeaver.guardian.data.Command
 import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.data.Policy
 import com.microbeaver.guardian.databinding.ActivityParentBinding
+import com.microbeaver.guardian.parent.ParentEventService
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,7 +40,7 @@ class ParentActivity : AppCompatActivity() {
         b = ActivityParentBinding.inflate(layoutInflater)
         setContentView(b.root)
         setSupportActionBar(b.toolbar)
-        b.toolbar.subtitle = "v2.0"
+        b.toolbar.subtitle = "v3.0"
 
         code = Prefs.getPairCode(this) ?: genCode().also { Prefs.setPairCode(this, it) }
         b.tvPairCode.text = code
@@ -48,12 +54,26 @@ class ParentActivity : AppCompatActivity() {
 
         b.swipe.setOnRefreshListener { refresh() }
         b.btnRefresh.setOnClickListener { refresh() }
+        b.btnMap.setOnClickListener { startActivity(Intent(this, MapActivity::class.java)) }
         b.btnLock.setOnClickListener { send("LOCK_NOW") }
         b.btnUnlock.setOnClickListener { send("UNLOCK") }
         b.btnNetOff.setOnClickListener { send("BLOCK_INTERNET") }
         b.btnNetOn.setOnClickListener { send("ALLOW_INTERNET") }
 
+        requestNotifPerm()
+        ParentEventService.start(this)
         listenAll()
+    }
+
+    private fun requestNotifPerm() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 200
+            )
+        }
     }
 
     private fun listenAll() {
