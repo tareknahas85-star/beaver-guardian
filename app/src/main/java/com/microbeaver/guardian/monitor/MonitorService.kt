@@ -23,11 +23,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * Persistent foreground service on the child device. It:
- *  - listens to Policy + Commands from the parent (near real-time),
- *  - every minute: reports usage, calls, location, and enforces limits.
- */
 class MonitorService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -66,6 +61,7 @@ class MonitorService : Service() {
         val date = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
         val usage = UsageTracker.todayUsageMinutes(this)
         usage.forEach { (pkg, min) -> FirebaseRepo.reportUsage(code, date, pkg, min) }
+        AppInfoReporter.reportUsedApps(this, code, usage)
         enforceLimits(usage)
         CallLogReporter.reportRecent(this, code)
         LocationReporter.reportOnce(this, code)
@@ -86,7 +82,6 @@ class MonitorService : Service() {
         set.addAll(overLimit)
         if (policy.locked) set.add("*")
         AppBlockService.blockedPackages = set
-        // Over-limit apps get hard-hidden too when we are Device Owner.
         overLimit.forEach { policyMgr.setAppHidden(it, true) }
     }
 
@@ -103,6 +98,7 @@ class MonitorService : Service() {
 
     private fun handleCommand(c: Command) {
         when (c.type) {
+            "SYNC_NOW" -> cycle()
             "LOCK_NOW" -> { policyMgr.lockNow(); FirebaseRepo.updatePolicy(code, mapOf("locked" to true)) }
             "UNLOCK" -> FirebaseRepo.updatePolicy(code, mapOf("locked" to false))
             "BLOCK_INTERNET" -> {
@@ -137,8 +133,6 @@ class MonitorService : Service() {
 
     override fun onDestroy() {
         handler.removeCallbacks(tick)
-        // START_STICKY + BootReceiver bring the service back; do not relaunch here
-        // (starting an FGS from background is restricted on Android 12+).
         super.onDestroy()
     }
 

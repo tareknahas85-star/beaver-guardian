@@ -6,10 +6,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-/**
- * All parent<->child sync goes through Realtime Database under /devices/{pairCode}.
- * The pairing code is the shared key that links the two installs.
- */
+/** All parent<->child sync goes through Realtime Database under /devices/{pairCode}. */
 object FirebaseRepo {
     private val db get() = FirebaseDatabase.getInstance()
     private fun root(code: String) = db.getReference("devices").child(code)
@@ -62,9 +59,13 @@ object FirebaseRepo {
 
     // ---------- Reports (child -> parent) ----------
     fun reportUsage(code: String, date: String, pkg: String, minutes: Int) {
-        // Firebase keys cannot contain '.', so store package with '_'.
         root(code).child("reports").child("usage").child(date)
             .child(pkg.replace('.', '_')).setValue(minutes)
+    }
+
+    fun reportApp(code: String, pkg: String, name: String, iconB64: String) {
+        val m = mapOf<String, Any>("name" to name, "icon" to iconB64)
+        root(code).child("apps").child(pkg.replace('.', '_')).updateChildren(m)
     }
 
     fun reportCall(code: String, rec: CallRecord) {
@@ -92,6 +93,25 @@ object FirebaseRepo {
                     map[child.key?.replace('_', '.') ?: ""] = v
                 }
                 onData(map)
+            }
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
+    fun listenApps(code: String, onData: (Map<String, String>, Map<String, String>) -> Unit): ValueEventListener {
+        val ref = root(code).child("apps")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                val names = HashMap<String, String>()
+                val icons = HashMap<String, String>()
+                for (c in s.children) {
+                    val pkg = c.key?.replace('_', '.') ?: continue
+                    names[pkg] = c.child("name").getValue(String::class.java) ?: pkg
+                    icons[pkg] = c.child("icon").getValue(String::class.java) ?: ""
+                }
+                onData(names, icons)
             }
             override fun onCancelled(e: DatabaseError) {}
         }
