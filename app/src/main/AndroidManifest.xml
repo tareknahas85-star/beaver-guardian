@@ -44,6 +44,7 @@
         <activity android:name=".ui.ParentActivity" android:exported="false" />
         <activity android:name=".ui.ChildSetupActivity" android:exported="false" />
         <activity android:name=".ui.MapActivity" android:exported="false" />
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
 
         <receiver
             android:name=".admin.GuardianDeviceAdminReceiver"
