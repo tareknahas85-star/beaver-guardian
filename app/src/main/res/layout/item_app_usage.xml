@@ -3,29 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginTop="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp">
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/card">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="12dp">
+        android:padding="14dp">
 
         <ImageView
             android:id="@+id/imgIcon"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_tile"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:contentDescription="icon" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -34,7 +37,8 @@
                 android:layout_height="wrap_content"
                 android:text="App"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="16sp"
+                android:textColor="@color/on_surface"
                 android:maxLines="1"
                 android:ellipsize="end" />
 
@@ -42,40 +46,32 @@
                 android:id="@+id/tvUsage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 د"
+                android:layout_marginTop="2dp"
+                android:text="Used: 0m"
                 android:textSize="13sp"
-                android:textColor="#6B7280" />
+                android:textColor="@color/slate" />
 
             <TextView
                 android:id="@+id/tvLimit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="بدون حد"
+                android:text=""
                 android:textSize="12sp"
-                android:textColor="@color/accent" />
+                android:textColor="@color/danger"
+                android:visibility="gone" />
         </LinearLayout>
 
-        <LinearLayout
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLimit"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switchBlock"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLimit"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="وقت"
-                android:minWidth="0dp"
-                android:paddingHorizontal="14dp"
-                app:icon="@drawable/ic_timer"
-                app:iconGravity="textStart" />
-        </LinearLayout>
+            android:text=""
+            android:minWidth="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:paddingHorizontal="16dp"
+            app:icon="@drawable/ic_edit"
+            app:iconGravity="textStart" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
