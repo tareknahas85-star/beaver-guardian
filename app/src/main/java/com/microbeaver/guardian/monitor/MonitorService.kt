@@ -21,6 +21,7 @@ import com.microbeaver.guardian.data.Policy
 import com.microbeaver.guardian.ui.RoleSelectActivity
 import com.microbeaver.guardian.vpn.FilterVpnService
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -81,6 +82,14 @@ class MonitorService : Service() {
         lastInsideZone = inside
     }
 
+    private fun bedtimeActive(): Boolean {
+        if (!policy.bedtimeEnabled) return false
+        val cal = Calendar.getInstance()
+        val nowMin = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        val bedMin = policy.bedtimeHour * 60 + policy.bedtimeMinute
+        return nowMin >= bedMin
+    }
+
     private fun enforceLimits(usage: Map<String, Int>) {
         val overLimit = HashSet<String>()
         policy.limits.forEach { entry ->
@@ -93,7 +102,12 @@ class MonitorService : Service() {
         }
         val set = HashSet<String>(policy.blockedApps)
         set.addAll(overLimit)
-        if (policy.locked) set.add("*")
+        val total = usage.values.sum()
+        val overDaily = policy.dailyLimitMinutes > 0 && total >= policy.dailyLimitMinutes
+        if (policy.locked || overDaily || bedtimeActive()) {
+            set.add("*")
+            policyMgr.lockNow()
+        }
         AppBlockService.blockedPackages = set
         overLimit.forEach { policyMgr.setAppHidden(it, true) }
     }
@@ -139,7 +153,7 @@ class MonitorService : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, App.CH_MONITOR)
-            .setContentTitle("Beaver Guardian")
+            .setContentTitle("SafeGuard")
             .setContentText("هذا الجهاز تحت إشراف وليّ الأمر / Supervised device")
             .setSmallIcon(R.drawable.ic_launcher)
             .setOngoing(true)

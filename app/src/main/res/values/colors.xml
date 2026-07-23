@@ -1,11 +1,20 @@
 <resources>
     <color name="brand">#4F46E5</color>
-    <color name="brand_dark">#3730A3</color>
-    <color name="brand_container">#E0E7FF</color>
-    <color name="on_brand_container">#1E1B4B</color>
-    <color name="accent">#0EA5A5</color>
-    <color name="danger">#DC2626</color>
-    <color name="bg">#F4F5FB</color>
+    <color name="brand_dark">#3525CD</color>
+    <color name="brand_container">#E2DFFF</color>
+    <color name="on_brand_container">#0F0069</color>
+    <color name="emerald">#10B981</color>
+    <color name="emerald_dark">#006C49</color>
+    <color name="amber">#F59E0B</color>
+    <color name="accent">#10B981</color>
+    <color name="danger">#BA1A1A</color>
+    <color name="bg">#F8FAFC</color>
+    <color name="card">#FFFFFF</color>
+    <color name="on_surface">#0B1C30</color>
+    <color name="on_surface_variant">#464555</color>
+    <color name="slate">#64748B</color>
+    <color name="track">#E5EEFF</color>
+    <color name="tile">#EFF4FF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
 </resources>

@@ -19,7 +19,11 @@ data class Policy(
     var geoEnabled: Boolean = false,
     var geoLat: Double = 0.0,
     var geoLng: Double = 0.0,
-    var geoRadius: Double = 300.0
+    var geoRadius: Double = 300.0,
+    var dailyLimitMinutes: Int = 0,
+    var bedtimeEnabled: Boolean = false,
+    var bedtimeHour: Int = 21,
+    var bedtimeMinute: Int = 0
 )
 
 /** Call metadata only (number/time/duration). */
