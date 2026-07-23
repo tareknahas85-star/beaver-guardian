@@ -106,21 +106,24 @@ class MonitorService : Service() {
 
         FilterVpnService.internetBlocked = p.internetBlocked
         FilterVpnService.blockedDomains = HashSet(p.blockedDomains)
-        if (p.internetBlocked) startService(Intent(this, FilterVpnService::class.java))
+        val vpnIntent = Intent(this, FilterVpnService::class.java)
+        if (p.internetBlocked) startService(vpnIntent) else stopService(vpnIntent)
     }
 
     private fun handleCommand(c: Command) {
+        val vpnIntent = Intent(this, FilterVpnService::class.java)
         when (c.type) {
             "SYNC_NOW" -> cycle()
             "LOCK_NOW" -> { policyMgr.lockNow(); FirebaseRepo.updatePolicy(code, mapOf("locked" to true)) }
             "UNLOCK" -> FirebaseRepo.updatePolicy(code, mapOf("locked" to false))
             "BLOCK_INTERNET" -> {
                 FilterVpnService.internetBlocked = true
-                startService(Intent(this, FilterVpnService::class.java))
+                startService(vpnIntent)
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to true))
             }
             "ALLOW_INTERNET" -> {
                 FilterVpnService.internetBlocked = false
+                stopService(vpnIntent)
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to false))
             }
             "BLOCK_APP" -> policyMgr.setAppHidden(c.payload, true)
