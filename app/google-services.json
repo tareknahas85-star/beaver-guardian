@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "beaver-guardian-REPLACE-ME",
-    "firebase_url": "https://beaver-guardian-REPLACE-ME-default-rtdb.firebaseio.com",
-    "storage_bucket": "beaver-guardian-REPLACE-ME.appspot.com"
+    "project_number": "500497796409",
+    "firebase_url": "https://beaver-guardian-default-rtdb.firebaseio.com",
+    "project_id": "beaver-guardian",
+    "storage_bucket": "beaver-guardian.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:500497796409:android:0d1211b313fb4ad4d1ace8",
         "android_client_info": {
           "package_name": "com.microbeaver.guardian"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA0000000000000000000000000000000000"
+          "current_key": "AIzaSyB2qUUsiZi4MHoVjVJPFQ0jeN3LwjY-XIM"
         }
       ],
       "services": {
