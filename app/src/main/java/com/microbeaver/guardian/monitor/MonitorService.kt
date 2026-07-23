@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -28,6 +29,7 @@ class MonitorService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var policyMgr: PolicyManager
     private var code: String = ""
+    private var lastInsideZone = true
 
     @Volatile
     private var policy: Policy = Policy()
@@ -64,8 +66,19 @@ class MonitorService : Service() {
         AppInfoReporter.reportUsedApps(this, code, usage)
         enforceLimits(usage)
         CallLogReporter.reportRecent(this, code)
-        LocationReporter.reportOnce(this, code)
+        LocationReporter.report(this, code) { lat, lng -> checkGeofence(lat, lng) }
         FirebaseRepo.setChildInfo(code, "${Build.MANUFACTURER} ${Build.MODEL}")
+    }
+
+    private fun checkGeofence(lat: Double, lng: Double) {
+        if (!policy.geoEnabled) { lastInsideZone = true; return }
+        val res = FloatArray(1)
+        Location.distanceBetween(lat, lng, policy.geoLat, policy.geoLng, res)
+        val inside = res[0] <= policy.geoRadius
+        if (!inside && lastInsideZone) {
+            FirebaseRepo.pushEvent(code, "GEOFENCE_EXIT", "خرج من المنطقة الآمنة (${res[0].toInt()} م)")
+        }
+        lastInsideZone = inside
     }
 
     private fun enforceLimits(usage: Map<String, Int>) {
@@ -112,7 +125,7 @@ class MonitorService : Service() {
             }
             "BLOCK_APP" -> policyMgr.setAppHidden(c.payload, true)
             "UNBLOCK_APP" -> policyMgr.setAppHidden(c.payload, false)
-            "LOCATE" -> LocationReporter.reportOnce(this, code)
+            "LOCATE" -> LocationReporter.report(this, code) { lat, lng -> checkGeofence(lat, lng) }
         }
         FirebaseRepo.markDone(code, c.id)
     }

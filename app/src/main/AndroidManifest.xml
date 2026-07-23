@@ -11,22 +11,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
-    <!-- Usage stats (special access, granted from Settings) -->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-
-    <!-- Listing installed apps to manage them -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
-
-    <!-- Overlay for the block screen -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- Call log (metadata only: number, time, duration) -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
-
-    <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -50,15 +41,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.ParentActivity"
-            android:exported="false" />
+        <activity android:name=".ui.ParentActivity" android:exported="false" />
+        <activity android:name=".ui.ChildSetupActivity" android:exported="false" />
+        <activity android:name=".ui.MapActivity" android:exported="false" />
 
-        <activity
-            android:name=".ui.ChildSetupActivity"
-            android:exported="false" />
-
-        <!-- Device Admin / Device Owner -->
         <receiver
             android:name=".admin.GuardianDeviceAdminReceiver"
             android:description="@string/admin_description"
@@ -74,7 +60,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- App-blocking accessibility service -->
         <service
             android:name=".monitor.AppBlockService"
             android:exported="true"
@@ -88,7 +73,6 @@
                 android:resource="@xml/accessibility_config" />
         </service>
 
-        <!-- Foreground monitor (usage + enforcement + reporting) -->
         <service
             android:name=".monitor.MonitorService"
             android:exported="false"
@@ -98,7 +82,11 @@
                 android:value="parental_control_monitoring" />
         </service>
 
-        <!-- Local VPN content filter / internet control -->
+        <service
+            android:name=".parent.ParentEventService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
         <service
             android:name=".vpn.FilterVpnService"
             android:exported="false"
@@ -112,7 +100,6 @@
                 android:value="parental_control_filter" />
         </service>
 
-        <!-- FCM command channel -->
         <service
             android:name=".fcm.CommandMessagingService"
             android:exported="false">

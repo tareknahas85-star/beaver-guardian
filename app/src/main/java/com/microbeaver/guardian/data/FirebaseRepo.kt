@@ -57,6 +57,30 @@ object FirebaseRepo {
         if (cmdId.isNotEmpty()) root(code).child("commands").child(cmdId).child("done").setValue(true)
     }
 
+    // ---------- Events (child activity feed) ----------
+    fun pushEvent(code: String, type: String, text: String) {
+        val e = mapOf<String, Any>("type" to type, "text" to text, "ts" to System.currentTimeMillis())
+        root(code).child("events").push().setValue(e)
+    }
+
+    fun listenEvents(code: String, onEvent: (String, String, Long) -> Unit): ChildEventListener {
+        val ref = root(code).child("events").limitToLast(50)
+        val l = object : ChildEventListener {
+            override fun onChildAdded(s: DataSnapshot, prev: String?) {
+                val type = s.child("type").getValue(String::class.java) ?: ""
+                val text = s.child("text").getValue(String::class.java) ?: ""
+                val ts = s.child("ts").getValue(Long::class.java) ?: 0L
+                onEvent(type, text, ts)
+            }
+            override fun onChildChanged(s: DataSnapshot, prev: String?) {}
+            override fun onChildRemoved(s: DataSnapshot) {}
+            override fun onChildMoved(s: DataSnapshot, prev: String?) {}
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addChildEventListener(l)
+        return l
+    }
+
     // ---------- Reports (child -> parent) ----------
     fun reportUsage(code: String, date: String, pkg: String, minutes: Int) {
         root(code).child("reports").child("usage").child(date)
@@ -112,6 +136,21 @@ object FirebaseRepo {
                     icons[pkg] = c.child("icon").getValue(String::class.java) ?: ""
                 }
                 onData(names, icons)
+            }
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
+    fun listenLocation(code: String, cb: (Double, Double, Long) -> Unit): ValueEventListener {
+        val ref = root(code).child("reports").child("location").child("latest")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                val lat = s.child("lat").getValue(Double::class.java) ?: return
+                val lng = s.child("lng").getValue(Double::class.java) ?: return
+                val ts = s.child("ts").getValue(Long::class.java) ?: 0L
+                cb(lat, lng, ts)
             }
             override fun onCancelled(e: DatabaseError) {}
         }

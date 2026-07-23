@@ -16,11 +16,15 @@ class App : Application() {
             nm.createNotificationChannel(
                 NotificationChannel(CH_VPN, "Internet filter", NotificationManager.IMPORTANCE_MIN)
             )
+            nm.createNotificationChannel(
+                NotificationChannel(CH_ALERT, "Alerts", NotificationManager.IMPORTANCE_HIGH)
+            )
         }
     }
 
     companion object {
         const val CH_MONITOR = "monitor"
         const val CH_VPN = "vpn_filter"
+        const val CH_ALERT = "alerts"
     }
 }
