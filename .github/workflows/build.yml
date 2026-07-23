@@ -35,9 +35,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.7"
+          cache-disabled: true
 
-      - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+      - name: Build debug APK (clean)
+        run: gradle clean assembleDebug --no-daemon --stacktrace
 
       - name: Stage APK
         run: |
@@ -57,5 +58,5 @@ jobs:
         with:
           tag_name: latest
           name: Beaver Guardian — latest build
-          body: "أحدث APK للتجربة. نزّل beaver-guardian.apk وثبّته على الجهازين. Latest test APK — download and install beaver-guardian.apk."
+          body: "أحدث APK للتجربة. نزّل beaver-guardian.apk وثبّته على الجهازين."
           files: dist/beaver-guardian.apk
