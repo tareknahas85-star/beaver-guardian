@@ -1,6 +1,5 @@
 package com.microbeaver.guardian.ui
 
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.GradientDrawable
@@ -27,7 +26,6 @@ import com.microbeaver.guardian.data.Policy
 import com.microbeaver.guardian.databinding.ActivityParentBinding
 import com.microbeaver.guardian.parent.ParentEventService
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -45,9 +43,9 @@ class ParentActivity : AppCompatActivity() {
     private val segColors by lazy {
         intArrayOf(
             ContextCompat.getColor(this, R.color.brand),
-            ContextCompat.getColor(this, R.color.emerald),
+            ContextCompat.getColor(this, R.color.accent),
             ContextCompat.getColor(this, R.color.amber),
-            0xFF8B5CF6.toInt(),
+            ContextCompat.getColor(this, R.color.emerald),
             ContextCompat.getColor(this, R.color.slate)
         )
     }
@@ -75,7 +73,7 @@ class ParentActivity : AppCompatActivity() {
 
         b.swipe.setOnRefreshListener { refresh() }
         b.btnRefresh.setOnClickListener { refresh() }
-        b.btnMap.setOnClickListener { startActivity(Intent(this, MapActivity::class.java)) }
+        b.btnMap.setOnClickListener { startActivity(Intent(this, ActivityActivity::class.java)) }
         b.btnNet.setOnClickListener {
             if (policy.internetBlocked) send("ALLOW_INTERNET") else send("BLOCK_INTERNET")
         }
@@ -87,8 +85,9 @@ class ParentActivity : AppCompatActivity() {
         b.bottomNav.selectedItemId = R.id.nav_dashboard
         b.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_kids -> { startActivity(Intent(this, KidsActivity::class.java)); false }
+                R.id.nav_activity -> { startActivity(Intent(this, ActivityActivity::class.java)); false }
                 R.id.nav_settings -> { startActivity(Intent(this, ProfileActivity::class.java)); false }
-                R.id.nav_activity -> { startActivity(Intent(this, MapActivity::class.java)); false }
                 else -> true
             }
         }
@@ -103,9 +102,7 @@ class ParentActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 200
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 200)
         }
     }
 
@@ -132,14 +129,7 @@ class ParentActivity : AppCompatActivity() {
     private fun render() {
         val pkgs = (usage.keys + names.keys).toMutableSet()
         val rows = pkgs.map { pkg ->
-            AppRow(
-                pkg = pkg,
-                name = names[pkg] ?: pkg,
-                iconB64 = icons[pkg] ?: "",
-                minutes = usage[pkg] ?: 0,
-                limit = limitOf(pkg),
-                blocked = policy.blockedApps.contains(pkg)
-            )
+            AppRow(pkg, names[pkg] ?: pkg, icons[pkg] ?: "", usage[pkg] ?: 0, limitOf(pkg), policy.blockedApps.contains(pkg))
         }.sortedByDescending { it.minutes }
         val total = rows.sumOf { it.minutes }
 
@@ -148,8 +138,7 @@ class ParentActivity : AppCompatActivity() {
             b.tvEmpty.visibility = if (rows.isEmpty()) View.VISIBLE else View.GONE
             b.tvTotalUsage.text = fmt(total)
             b.tvDowntime.text = if (policy.locked) "Active" else "Off"
-            b.tvBedtime.text =
-                if (policy.bedtimeEnabled) String.format("%02d:%02d", policy.bedtimeHour, policy.bedtimeMinute) else "Off"
+            b.tvBedtime.text = if (policy.bedtimeEnabled) String.format("%02d:%02d", policy.bedtimeHour, policy.bedtimeMinute) else "Off"
             b.tvStatus.text = if (policy.locked) "مقفول 🔒" else ""
             b.btnNet.text = if (policy.internetBlocked) "سماح النت" else "قطع النت"
             b.btnNet.setIconResource(if (policy.internetBlocked) R.drawable.ic_wifi else R.drawable.ic_wifi_off)
@@ -190,19 +179,16 @@ class ParentActivity : AppCompatActivity() {
             tv.text = "${row.name} (${fmt(row.minutes)})"
             tv.textSize = 13f
             tv.setTextColor(ContextCompat.getColor(this, R.color.on_surface_variant))
-            legendRow.addView(dot)
-            legendRow.addView(tv)
+            legendRow.addView(dot); legendRow.addView(tv)
             b.llLegend.addView(legendRow)
         }
     }
 
     private fun pickBedtime() {
-        val dlg = TimePickerDialog(this, { _, h, m ->
-            FirebaseRepo.updatePolicy(
-                code, mapOf("bedtimeEnabled" to true, "bedtimeHour" to h, "bedtimeMinute" to m)
-            )
+        val dlg = android.app.TimePickerDialog(this, { _, h, m ->
+            FirebaseRepo.updatePolicy(code, mapOf("bedtimeEnabled" to true, "bedtimeHour" to h, "bedtimeMinute" to m))
         }, policy.bedtimeHour, policy.bedtimeMinute, true)
-        dlg.setButton(TimePickerDialog.BUTTON_NEUTRAL, "إيقاف") { _, _ ->
+        dlg.setButton(android.app.TimePickerDialog.BUTTON_NEUTRAL, "إيقاف") { _, _ ->
             FirebaseRepo.updatePolicy(code, mapOf("bedtimeEnabled" to false))
         }
         dlg.show()
@@ -219,9 +205,7 @@ class ParentActivity : AppCompatActivity() {
             .setMessage("حدّد الوقت المسموح يومياً (دقائق). فارغ = بدون حد.")
             .setView(input)
             .setPositiveButton("حفظ") { _, _ -> setLimit(row.pkg, input.text.toString().toIntOrNull() ?: 0) }
-            .setNeutralButton(if (row.blocked) "رفع الحظر" else "حظر التطبيق") { _, _ ->
-                setBlocked(row.pkg, !row.blocked)
-            }
+            .setNeutralButton(if (row.blocked) "رفع الحظر" else "حظر التطبيق") { _, _ -> setBlocked(row.pkg, !row.blocked) }
             .setNegativeButton("إلغاء", null)
             .show()
     }
@@ -241,8 +225,7 @@ class ParentActivity : AppCompatActivity() {
     private fun send(type: String) = FirebaseRepo.pushCommand(code, Command(type = type))
 
     private fun fmt(min: Int): String {
-        val h = min / 60
-        val m = min % 60
+        val h = min / 60; val m = min % 60
         return if (h > 0) "${h}h ${String.format("%02d", m)}m" else "${m}m"
     }
 

@@ -29,8 +29,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="104dp"
                 android:layout_height="104dp"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="52dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="24dp"
                 app:strokeColor="@color/emerald"
                 app:strokeWidth="3dp"
                 app:cardElevation="0dp">
@@ -38,10 +38,8 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="22dp"
-                    android:src="@drawable/ic_kids"
-                    app:tint="@color/brand"
-                    android:contentDescription="avatar" />
+                    android:src="@drawable/ic_launcher"
+                    android:contentDescription="icon" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -64,7 +62,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="22dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/card">
@@ -80,29 +78,31 @@
                         android:layout_height="wrap_content"
                         android:text="التوقيع الإلكتروني / E-signature"
                         android:textColor="@color/slate"
-                        android:textSize="12sp"
-                        android:letterSpacing="0.04" />
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="TRL"
+                        android:fontFamily="cursive"
+                        android:textStyle="bold|italic"
+                        android:textSize="44sp"
+                        android:textColor="@color/brand" />
+
+                    <ImageView
+                        android:id="@+id/imgSignature"
+                        android:layout_width="match_parent"
+                        android:layout_height="96dp"
+                        android:layout_marginTop="4dp"
+                        android:scaleType="fitStart"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="signature" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="TRL"
-                        android:fontFamily="cursive"
-                        android:textStyle="bold|italic"
-                        android:textSize="56sp"
-                        android:textColor="@color/brand" />
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="2dp"
-                        android:background="@color/brand" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:text="Tarek Nahas — وليّ الأمر"
                         android:textColor="@color/slate"
                         android:textSize="13sp" />
@@ -121,7 +121,71 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="تفعيل الأذونات المطلوبة"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/on_surface"
+                        android:layout_marginBottom="10dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPermNotif"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="أذونات الإشعارات"
+                        app:icon="@drawable/ic_bell"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPermUsage"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="الوصول لإحصاءات الاستخدام"
+                        app:icon="@drawable/ic_activity"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPermAcc"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="خدمة الوصول (Accessibility)"
+                        app:icon="@drawable/ic_settings"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPermBattery"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="إلغاء تحسين البطارية"
+                        app:icon="@drawable/ic_timer"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -136,7 +200,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="v4.0"
+                        android:text="v5.0"
                         android:textColor="@color/slate"
                         android:textSize="13sp" />
                 </LinearLayout>
