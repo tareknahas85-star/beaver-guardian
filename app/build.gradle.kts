@@ -12,20 +12,15 @@ android {
         applicationId = "com.microbeaver.guardian"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "2.0"
+        versionCode = 5
+        versionName = "5.0"
     }
 
     buildTypes {
-        debug {
-            isMinifyEnabled = false
-        }
+        debug { isMinifyEnabled = false }
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -33,12 +28,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    buildFeatures {
-        viewBinding = true
-    }
+    kotlinOptions { jvmTarget = "17" }
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
