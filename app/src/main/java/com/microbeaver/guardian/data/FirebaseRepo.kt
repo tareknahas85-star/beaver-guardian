@@ -20,9 +20,7 @@ object FirebaseRepo {
     fun listenPolicy(code: String, onChange: (Policy) -> Unit): ValueEventListener {
         val ref = root(code).child("policy")
         val l = object : ValueEventListener {
-            override fun onDataChange(s: DataSnapshot) {
-                onChange(s.getValue(Policy::class.java) ?: Policy())
-            }
+            override fun onDataChange(s: DataSnapshot) { onChange(s.getValue(Policy::class.java) ?: Policy()) }
             override fun onCancelled(e: DatabaseError) {}
         }
         ref.addValueEventListener(l)
@@ -57,7 +55,7 @@ object FirebaseRepo {
         if (cmdId.isNotEmpty()) root(code).child("commands").child(cmdId).child("done").setValue(true)
     }
 
-    // ---------- Events (child activity feed) ----------
+    // ---------- Events ----------
     fun pushEvent(code: String, type: String, text: String) {
         val e = mapOf<String, Any>("type" to type, "text" to text, "ts" to System.currentTimeMillis())
         root(code).child("events").push().setValue(e)
@@ -81,15 +79,70 @@ object FirebaseRepo {
         return l
     }
 
+    fun listenRecentEvents(code: String, limit: Int, cb: (List<Triple<String, String, Long>>) -> Unit): ValueEventListener {
+        val ref = root(code).child("events").limitToLast(limit)
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                val list = ArrayList<Triple<String, String, Long>>()
+                for (c in s.children) {
+                    list.add(
+                        Triple(
+                            c.child("type").getValue(String::class.java) ?: "",
+                            c.child("text").getValue(String::class.java) ?: "",
+                            c.child("ts").getValue(Long::class.java) ?: 0L
+                        )
+                    )
+                }
+                list.reverse()
+                cb(list)
+            }
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
+    // ---------- Child profile ----------
+    fun setChild(code: String, name: String, age: String, gender: String, notes: String) {
+        root(code).child("child").updateChildren(
+            mapOf("name" to name, "age" to age, "gender" to gender, "notes" to notes)
+        )
+    }
+
+    fun listenChild(code: String, cb: (String, String, String, String) -> Unit): ValueEventListener {
+        val ref = root(code).child("child")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                cb(
+                    s.child("name").getValue(String::class.java) ?: "",
+                    s.child("age").getValue(String::class.java) ?: "",
+                    s.child("gender").getValue(String::class.java) ?: "",
+                    s.child("notes").getValue(String::class.java) ?: ""
+                )
+            }
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
+    fun listenDeviceModel(code: String, cb: (String) -> Unit): ValueEventListener {
+        val ref = root(code).child("info").child("model")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) { cb(s.getValue(String::class.java) ?: "—") }
+            override fun onCancelled(e: DatabaseError) {}
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
     // ---------- Reports (child -> parent) ----------
     fun reportUsage(code: String, date: String, pkg: String, minutes: Int) {
-        root(code).child("reports").child("usage").child(date)
-            .child(pkg.replace('.', '_')).setValue(minutes)
+        root(code).child("reports").child("usage").child(date).child(pkg.replace('.', '_')).setValue(minutes)
     }
 
     fun reportApp(code: String, pkg: String, name: String, iconB64: String) {
-        val m = mapOf<String, Any>("name" to name, "icon" to iconB64)
-        root(code).child("apps").child(pkg.replace('.', '_')).updateChildren(m)
+        root(code).child("apps").child(pkg.replace('.', '_')).updateChildren(mapOf<String, Any>("name" to name, "icon" to iconB64))
     }
 
     fun reportCall(code: String, rec: CallRecord) {
