@@ -14,9 +14,9 @@ import com.microbeaver.guardian.R
 import com.microbeaver.guardian.data.FirebaseRepo
 
 /**
- * Runs on the PARENT device. Keeps a live connection to the child's event feed
- * and raises a high-priority local notification for each new activity — no server
- * or paid plan needed.
+ * Runs on the PARENT device only. Raises a local notification for each new
+ * event reported by the child. If somehow started on a non-parent device it
+ * shuts itself down.
  */
 class ParentEventService : Service() {
 
@@ -26,6 +26,11 @@ class ParentEventService : Service() {
     override fun onCreate() {
         super.onCreate()
         startForeground(3, baseNotification())
+        if (Prefs.getRole(this) != Prefs.ROLE_PARENT) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return
+        }
         val code = Prefs.getPairCode(this) ?: return
         FirebaseRepo.listenEvents(code) { type, text, ts ->
             if (ts >= startTs - 3000) notifyAlert(type, text)
@@ -36,7 +41,7 @@ class ParentEventService : Service() {
         val title = when (type) {
             "GEOFENCE_EXIT" -> "⚠️ تنبيه موقع"
             "APP_OPEN" -> "نشاط على جهاز الطفل"
-            else -> "Beaver Guardian"
+            else -> "SafeGuard"
         }
         val n = NotificationCompat.Builder(this, App.CH_ALERT)
             .setContentTitle(title)
@@ -51,14 +56,13 @@ class ParentEventService : Service() {
 
     private fun baseNotification(): Notification =
         NotificationCompat.Builder(this, App.CH_MONITOR)
-            .setContentTitle("Beaver Guardian")
+            .setContentTitle("SafeGuard")
             .setContentText("مراقبة نشاط الطفل فعّالة / Live activity monitoring")
             .setSmallIcon(R.drawable.ic_launcher)
             .setOngoing(true)
             .build()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
-
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {

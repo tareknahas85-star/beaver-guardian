@@ -3,9 +3,11 @@ package com.microbeaver.guardian.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.InputType
+import android.view.Gravity
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -28,6 +30,8 @@ class ActivityActivity : AppCompatActivity() {
     private var lastLat = 0.0
     private var lastLng = 0.0
     private var policy = Policy()
+    private val usage = HashMap<String, Int>()
+    private val names = HashMap<String, String>()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +62,10 @@ class ActivityActivity : AppCompatActivity() {
             pushMap()
         }
         FirebaseRepo.listenRecentEvents(code, 3) { list -> runOnUiThread { renderEvents(list) } }
+
+        val today = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
+        FirebaseRepo.listenUsageToday(code, today) { u -> usage.clear(); usage.putAll(u); runOnUiThread { renderApps() } }
+        FirebaseRepo.listenApps(code) { n, _ -> names.clear(); names.putAll(n); runOnUiThread { renderApps() } }
     }
 
     private fun pushMap() {
@@ -68,13 +76,7 @@ class ActivityActivity : AppCompatActivity() {
 
     private fun renderEvents(list: List<Triple<String, String, Long>>) {
         b.llEvents.removeAllViews()
-        if (list.isEmpty()) {
-            val tv = TextView(this)
-            tv.text = "لا أحداث بعد"
-            tv.setTextColor(ContextCompat.getColor(this, R.color.slate))
-            b.llEvents.addView(tv)
-            return
-        }
+        if (list.isEmpty()) { b.llEvents.addView(muted("لا أحداث بعد")); return }
         val fmt = SimpleDateFormat("HH:mm", Locale.US)
         for (t in list) {
             val row = TextView(this)
@@ -84,6 +86,38 @@ class ActivityActivity : AppCompatActivity() {
             row.setTextColor(ContextCompat.getColor(this, R.color.on_surface))
             b.llEvents.addView(row)
         }
+    }
+
+    private fun renderApps() {
+        b.llApps.removeAllViews()
+        val rows = usage.entries.filter { it.value > 0 }.sortedByDescending { it.value }
+        if (rows.isEmpty()) { b.llApps.addView(muted("لا بيانات استخدام بعد")); return }
+        for (e in rows.take(15)) {
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.gravity = Gravity.CENTER_VERTICAL
+            row.setPadding(0, dp(6), 0, dp(6))
+            val nameTv = TextView(this)
+            val lp = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            nameTv.layoutParams = lp
+            nameTv.text = names[e.key] ?: e.key
+            nameTv.textSize = 14f
+            nameTv.setTextColor(ContextCompat.getColor(this, R.color.on_surface))
+            val minTv = TextView(this)
+            minTv.text = fmt(e.value)
+            minTv.textSize = 14f
+            minTv.setTextColor(ContextCompat.getColor(this, R.color.brand))
+            row.addView(nameTv)
+            row.addView(minTv)
+            b.llApps.addView(row)
+        }
+    }
+
+    private fun muted(text: String): TextView {
+        val tv = TextView(this)
+        tv.text = text
+        tv.setTextColor(ContextCompat.getColor(this, R.color.slate))
+        return tv
     }
 
     private fun zoneDialog() {
@@ -101,6 +135,11 @@ class ActivityActivity : AppCompatActivity() {
             }
             .setNegativeButton("إلغاء", null)
             .show()
+    }
+
+    private fun fmt(min: Int): String {
+        val h = min / 60; val m = min % 60
+        return if (h > 0) "${h}h ${String.format("%02d", m)}m" else "${m}m"
     }
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()

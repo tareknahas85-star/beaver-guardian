@@ -7,14 +7,17 @@ import com.microbeaver.guardian.Prefs
 import com.microbeaver.guardian.data.FirebaseRepo
 
 /**
- * Enforces app blocking + time limits, AND emits a real-time APP_OPEN event
- * every time the child opens a different app (drives parent notifications).
+ * Runs only meaningfully on the CHILD device: enforces app blocking and emits
+ * a real-time APP_OPEN event on each app switch. On the parent device (role !=
+ * child) it does nothing, so the parent never reports its own activity.
  */
 class AppBlockService : AccessibilityService() {
 
     private var lastEventPkg = ""
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        // Only act on the child device.
+        if (Prefs.getRole(this) != Prefs.ROLE_CHILD) return
         if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
         val pkg = event.packageName?.toString() ?: return
         if (pkg == packageName) return
@@ -23,11 +26,7 @@ class AppBlockService : AccessibilityService() {
         val isBlocked = blocked.contains("*") || blocked.contains(pkg)
         if (isBlocked && !isSystemUi(pkg)) {
             performGlobalAction(GLOBAL_ACTION_HOME)
-            Toast.makeText(
-                this,
-                "التطبيق محظور من وليّ الأمر / Blocked by parent",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "التطبيق محظور من وليّ الأمر / Blocked by parent", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -42,9 +41,7 @@ class AppBlockService : AccessibilityService() {
         val label = try {
             val ai = packageManager.getApplicationInfo(pkg, 0)
             packageManager.getApplicationLabel(ai).toString()
-        } catch (_: Exception) {
-            pkg
-        }
+        } catch (_: Exception) { pkg }
         FirebaseRepo.pushEvent(code, "APP_OPEN", "فتح: $label")
     }
 
