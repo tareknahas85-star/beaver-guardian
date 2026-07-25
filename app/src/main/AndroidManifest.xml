@@ -22,9 +22,9 @@
     <application
         android:name=".App"
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.BeaverGuardian"
         tools:targetApi="34">
@@ -40,7 +40,7 @@
         <activity android:name=".ui.ChildSetupActivity" android:exported="false" />
         <activity android:name=".ui.MapActivity" android:exported="false" />
         <activity android:name=".ui.ProfileActivity" android:exported="false" />
-        <activity android:name=".ui.KidsActivity" android:exported="false" />
+        <activity android:name=".ui.AboutActivity" android:exported="false" />
         <activity android:name=".ui.ActivityActivity" android:exported="false" />
 
         <receiver
