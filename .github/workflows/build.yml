@@ -31,13 +31,13 @@ jobs:
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Decode launcher icon assets
+      - name: Decode launcher icon (single source, all densities)
         run: |
-          mkdir -p app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi
-          base64 -d icon_assets/ic_launcher_mdpi.b64 > app/src/main/res/mipmap-mdpi/ic_launcher.png
-          base64 -d icon_assets/ic_launcher_hdpi.b64 > app/src/main/res/mipmap-hdpi/ic_launcher.png
-          base64 -d icon_assets/ic_launcher_xhdpi.b64 > app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          base64 -d icon_assets/ic_launcher_xxhdpi.b64 > app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          mkdir -p app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi app/src/main/res/mipmap-xxxhdpi
+          base64 -d icon_assets/ic_launcher_mdpi.b64 > /tmp/ic_launcher_src.png
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp /tmp/ic_launcher_src.png app/src/main/res/mipmap-$d/ic_launcher.png
+          done
 
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
