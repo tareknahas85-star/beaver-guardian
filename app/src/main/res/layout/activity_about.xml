@@ -1,192 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg">
+    android:background="#F0F4FF">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/brand"
-        app:title="حول / About"
-        app:titleTextColor="@color/white"
-        app:navigationIconTint="@color/white" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <!-- ── App icon ── -->
+        <ImageView
+            android:id="@+id/ivAppIcon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="App icon" />
 
-        <LinearLayout
+        <!-- ── User display name ── -->
+        <TextView
+            android:id="@+id/tvDisplayName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ولي الأمر"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A2E" />
+
+        <!-- ── Role subtitle ── -->
+        <TextView
+            android:id="@+id/tvRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ولي الأمر — Parent"
+            android:textSize="14sp"
+            android:textColor="#555577"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ── E-Signature card ── -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:gravity="center_horizontal">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:layout_marginTop="8dp"
-                app:cardCornerRadius="24dp"
-                app:strokeColor="@color/emerald"
-                app:strokeWidth="3dp"
-                app:cardElevation="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="التوقيع الإلكتروني / E-signature"
+                    android:textSize="13sp"
+                    android:textColor="#888888"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="4dp" />
+
+                <!-- SignaturePad — user draws signature with finger -->
+                <com.github.gcacace.signaturepad.views.SignaturePad
+                    android:id="@+id/signaturePad"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:background="#FFFFFF"
+                    app:penColor="#1565C0"
+                    app:penMinWidth="4dp"
+                    app:penMaxWidth="8dp" />
+
+                <!-- Saved signature preview (shown instead of pad when signature exists) -->
                 <ImageView
-                    android:id="@+id/imgAppIcon"
+                    android:id="@+id/ivSignaturePreview"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="icon" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_height="160dp"
+                    android:background="#FFFFFF"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    android:contentDescription="Saved signature" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:text="Tarek"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                android:textColor="@color/on_surface" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Tarek Nahas — وليّ الأمر"
-                android:textSize="13sp"
-                android:textColor="@color/slate" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/card">
-
+                <!-- Buttons row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center_horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginTop="8dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="التوقيع الإلكتروني / E-signature"
-                        android:textColor="@color/slate"
-                        android:textSize="12sp" />
-
-                    <ImageView
-                        android:id="@+id/imgSignature"
+                    <Button
+                        android:id="@+id/btnClearSignature"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="88dp"
-                        android:layout_marginTop="8dp"
-                        android:scaleType="fitCenter"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="signature" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:layout_height="wrap_content"
+                        android:text="مسح / Clear"
+                        android:textColor="#E91E63" />
 
-            <com.google.android.material.card.MaterialCardView
+                    <Button
+                        android:id="@+id/btnSaveSignature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="حفظ / Save"
+                        android:backgroundTint="#1565C0"
+                        android:layout_marginStart="8dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── Contact info card ── -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/card">
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="معلومات التواصل / Contact"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Email -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="معلومات التواصل / Contact"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/on_surface"
-                        android:layout_marginBottom="12dp" />
-
-                    <TextView
-                        android:id="@+id/tvEmail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="10dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/on_surface"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="10dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="✉  " android:textSize="16sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="tareknahas85@gmail.com"
                         android:textSize="14sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:text="📧  tareknahas85@gmail.com" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/track" />
-
-                    <TextView
-                        android:id="@+id/tvGithub"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="10dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:text="🔗  github.com/tareknahas85-star" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/track" />
-
-                    <TextView
-                        android:id="@+id/tvPhone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="10dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:text="📞  +963 945 830 002" />
+                        android:textColor="#1A1A2E" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/card">
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
 
+                <!-- GitHub -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SafeGuard — Beaver Guardian"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:textColor="@color/on_surface" />
-
-                    <TextView
-                        android:id="@+id/tvVersion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="v6.0"
-                        android:textColor="@color/slate"
-                        android:textSize="13sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="10dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="🔗  " android:textSize="16sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="github.com/tareknahas85-star"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
+
+                <!-- Phone -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="📞  " android:textSize="16sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="+963 945 830 002"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── App info card ── -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SafeGuard — Beaver Guardian"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E" />
+
+                <TextView
+                    android:id="@+id/tvVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="v1.0"
+                    android:textSize="13sp"
+                    android:textColor="#888888" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

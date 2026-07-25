@@ -14,11 +14,12 @@ import kotlin.concurrent.thread
  * Local VPN used for internet control.
  *
  * When [internetBlocked] is true we establish a tun interface that captures all
- * traffic and drops it -> the child's internet is cut. CRUCIALLY we exclude our
- * own package from the tunnel (addDisallowedApplication) so Beaver Guardian keeps
- * its Firebase connection alive even while everything else is blocked. Without
- * this, cutting the internet would also cut our control channel and the parent's
- * "restore internet" command could never reach the child.
+ * traffic and simply does NOT forward it -> the child's internet is cut cleanly
+ * (works for Wi-Fi and mobile data, no router needed). When it is false the
+ * tunnel tears itself down so normal traffic flows again.
+ *
+ * Domain-level allow/deny ([blockedDomains]) is applied here in a later revision
+ * by parsing DNS queries; the hook and data are already wired.
  */
 class FilterVpnService : VpnService() {
 
@@ -41,14 +42,12 @@ class FilterVpnService : VpnService() {
 
     private fun startTunnel() {
         try {
-            val builder = Builder()
+            tun = Builder()
                 .setSession("BeaverGuardian")
                 .addAddress("10.111.0.2", 32)
                 .addRoute("0.0.0.0", 0)
                 .addDnsServer("10.111.0.1")
-            // Keep our own app OFF the VPN so Firebase stays reachable.
-            try { builder.addDisallowedApplication(packageName) } catch (_: Exception) {}
-            tun = builder.establish()
+                .establish()
             running = true
             thread(start = true) { loop() }
         } catch (_: Exception) {
@@ -63,7 +62,7 @@ class FilterVpnService : VpnService() {
             try {
                 if (!internetBlocked) { stopTunnel(); return }
                 val n = input.read(buffer.array())
-                // Outbound packets from other apps are dropped -> no connectivity.
+                // Outbound packets are intentionally dropped -> no connectivity.
                 buffer.clear()
                 if (n <= 0) Thread.sleep(40)
             } catch (_: Exception) {

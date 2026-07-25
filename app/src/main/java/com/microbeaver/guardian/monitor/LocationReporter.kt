@@ -9,7 +9,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.microbeaver.guardian.data.FirebaseRepo
 
 object LocationReporter {
-    fun report(ctx: Context, code: String, onLoc: ((Double, Double) -> Unit)? = null) {
+    fun reportOnce(ctx: Context, code: String) {
         if (ContextCompat.checkSelfPermission(
                 ctx, android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
@@ -20,10 +20,7 @@ object LocationReporter {
         try {
             client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cts.token)
                 .addOnSuccessListener { loc ->
-                    if (loc != null) {
-                        FirebaseRepo.reportLocation(code, loc.latitude, loc.longitude)
-                        onLoc?.invoke(loc.latitude, loc.longitude)
-                    }
+                    if (loc != null) FirebaseRepo.reportLocation(code, loc.latitude, loc.longitude)
                 }
         } catch (_: SecurityException) {
         }

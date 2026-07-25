@@ -1,34 +1,34 @@
-# 🧩 Architecture
+# 🧩 Architecture / البنية التقنية
 
-## Components
+## المكوّنات / Components
 
-### UI (`ui/`)
-- **RoleSelectActivity**: first screen, pick Parent or Child. The choice is stored locally and can't be changed on the kid's device.
-- **ParentActivity**: parent dashboard, pairing code, instant commands, live usage reports.
-- **ChildSetupActivity**: enter the pairing code + enable the six permissions.
+### واجهة / UI (`ui/`)
+- **RoleSelectActivity** — الشاشة الأولى: اختيار Parent/Child. الاختيار يُخزَّن محلياً ولا يتغيّر على جهاز الطفل.
+- **ParentActivity** — لوحة وليّ الأمر: رمز الربط، أوامر فورية، تقارير الاستخدام الحية.
+- **ChildSetupActivity** — إدخال رمز الربط + تفعيل الأذونات الستة.
 
-### Admin (`admin/`)
-- **GuardianDeviceAdminReceiver**: receives Device Admin/Owner activation and applies the policies.
-- **PolicyManager**: wrapper around `DevicePolicyManager`: `lockNow`, `setUninstallBlocked`, `setApplicationHidden`, user restrictions.
+### الإشراف / Admin (`admin/`)
+- **GuardianDeviceAdminReceiver** — يستقبل تفعيل Device Admin/Owner ويطبّق السياسات الأساسية.
+- **PolicyManager** — غلاف `DevicePolicyManager`: `lockNow`, `setUninstallBlocked`, `setApplicationHidden`, قيود المستخدم.
 
-### Monitoring (`monitor/`)
-- **MonitorService**: permanent foreground service, the heart of the app. Listens to `policy` + `commands`, and every minute uploads reports and enforces the limits.
-- **UsageTracker**: reads `UsageStatsManager`.
-- **AppBlockService**: `AccessibilityService` that sends the kid back to Home when a blocked app opens.
-- **CallLogReporter / LocationReporter**: upload call info and location.
-- **BootReceiver**: restarts the service after boot.
+### المراقبة والتطبيق / Monitoring (`monitor/`)
+- **MonitorService** — Foreground Service دائم. القلب: يستمع لـ `policy`+`commands`، وكل دقيقة يرفع التقارير ويطبّق الحدود.
+- **UsageTracker** — يقرأ `UsageStatsManager`.
+- **AppBlockService** — `AccessibilityService` يعيد الطفل للـ Home عند فتح تطبيق محظور أو متجاوز للحد.
+- **CallLogReporter / LocationReporter** — يرفعان بيانات المكالمات والموقع.
+- **BootReceiver** — يعيد تشغيل الخدمة بعد الإقلاع.
 
-### VPN (`vpn/`)
-- **FilterVpnService**: local VPN that cuts traffic when `internetBlocked` is on. Ready for DNS domain filtering later.
+### التحكم بالنت / VPN (`vpn/`)
+- **FilterVpnService** — VPN محلي يقطع الترافيك عند `internetBlocked`. جاهز لفلترة النطاقات (DNS) مستقبلاً عبر `blockedDomains`.
 
-### FCM (`fcm/`)
-- **CommandMessagingService**: wakes the service when a push arrives.
+### الدفع / FCM (`fcm/`)
+- **CommandMessagingService** — إيقاظ الخدمة عند وصول إشعار لضمان تطبيق الأوامر بسرعة.
 
-### Data (`data/`)
-- **Models**: `Command`, `Policy`, `CallRecord`.
-- **FirebaseRepo**: every read/write lives under `/devices/{pairCode}`.
+### البيانات / Data (`data/`)
+- **Models** — `Command`, `Policy`, `CallRecord`.
+- **FirebaseRepo** — كل قراءة/كتابة تحت `/devices/{pairCode}`.
 
-## DB schema
+## مخطط قاعدة البيانات / DB schema
 ```
 /devices/{PAIRCODE}
 ├── info        { model, role, lastSeen }
@@ -40,9 +40,9 @@
     └── location/latest          { lat, lng, ts }
 ```
 
-## Roadmap
-- UI for managing limits and blocked apps from the parent device (right now it's through the DB).
-- DNS level domain filtering inside `FilterVpnService`.
-- Time schedules (bedtime / school hours) for policies.
-- Tighter Firebase rules + Auth.
-- Location map inside the parent app.
+## خارطة الطريق / Roadmap
+- واجهة إدارة الحدود وحظر التطبيقات من جهاز وليّ الأمر (حالياً عبر DB).
+- فلترة النطاقات على مستوى DNS داخل `FilterVpnService`.
+- جدولة زمنية (Bedtime / school hours) للسياسات.
+- تشديد قواعد Firebase + Auth.
+- خريطة الموقع داخل تطبيق وليّ الأمر.

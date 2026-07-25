@@ -1,114 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="18dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="14dp">
-
-            <ImageView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:src="@drawable/ic_launcher" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="SafeGuard"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="@color/brand" />
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/card">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="هذا الجهاز تحت إشراف وليّ الأمر"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="@color/on_surface" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="This device is supervised by a parent."
-                    android:textSize="12sp"
-                    android:textColor="@color/slate"
-                    android:layout_marginBottom="12dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="رمز الربط / Pairing code">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPairCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textCapCharacters"
-                        android:autofillHints="off" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPair"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="ربط الجهاز / Pair" />
-
-                <TextView
-                    android:id="@+id/tvStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text=""
-                    android:textColor="@color/emerald_dark"
-                    android:textSize="13sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        android:padding="24dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="8dp"
-            android:text="خطوات الأذونات (بالترتيب)"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:textColor="@color/on_surface" />
+            android:text="@string/child_notice"
+            android:textSize="16sp"
+            android:layout_marginBottom="24dp" />
 
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnPermUsage" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="1) الوصول لإحصاءات الاستخدام" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnPermAccessibility" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="2) خدمة الوصول (حظر التطبيقات)" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnPermOverlay" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="3) الظهور فوق التطبيقات" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnPermLocation" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="4) الموقع + المكالمات + الإشعارات" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnPermAdmin" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="5) تفعيل مشرف الجهاز" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) تشغيل فلتر الإنترنت" />
+        <EditText
+            android:id="@+id/etPairCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pair_code"
+            android:inputType="textCapCharacters"
+            android:autofillHints="off"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnPair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ربط الجهاز / Pair device"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="خطوات الأذونات / Permission steps"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Button android:id="@+id/btnPermUsage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1) الوصول لإحصاءات الاستخدام" />
+        <Button android:id="@+id/btnPermAccessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2) خدمة الوصول (حظر التطبيقات)" />
+        <Button android:id="@+id/btnPermOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3) الظهور فوق التطبيقات" />
+        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) الموقع + المكالمات + الإشعارات" />
+        <Button android:id="@+id/btnPermAdmin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5) تفعيل مشرف الجهاز" />
+        <Button android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) تشغيل فلتر الإنترنت" />
     </LinearLayout>
 </ScrollView>

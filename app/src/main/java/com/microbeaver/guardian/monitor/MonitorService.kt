@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -21,16 +20,19 @@ import com.microbeaver.guardian.data.Policy
 import com.microbeaver.guardian.ui.RoleSelectActivity
 import com.microbeaver.guardian.vpn.FilterVpnService
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Persistent foreground service on the child device. It:
+ *  - listens to Policy + Commands from the parent (near real-time),
+ *  - every minute: reports usage, calls, location, and enforces limits.
+ */
 class MonitorService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var policyMgr: PolicyManager
     private var code: String = ""
-    private var lastInsideZone = true
 
     @Volatile
     private var policy: Policy = Policy()
@@ -64,30 +66,10 @@ class MonitorService : Service() {
         val date = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
         val usage = UsageTracker.todayUsageMinutes(this)
         usage.forEach { (pkg, min) -> FirebaseRepo.reportUsage(code, date, pkg, min) }
-        AppInfoReporter.reportUsedApps(this, code, usage)
         enforceLimits(usage)
         CallLogReporter.reportRecent(this, code)
-        LocationReporter.report(this, code) { lat, lng -> checkGeofence(lat, lng) }
+        LocationReporter.reportOnce(this, code)
         FirebaseRepo.setChildInfo(code, "${Build.MANUFACTURER} ${Build.MODEL}")
-    }
-
-    private fun checkGeofence(lat: Double, lng: Double) {
-        if (!policy.geoEnabled) { lastInsideZone = true; return }
-        val res = FloatArray(1)
-        Location.distanceBetween(lat, lng, policy.geoLat, policy.geoLng, res)
-        val inside = res[0] <= policy.geoRadius
-        if (!inside && lastInsideZone) {
-            FirebaseRepo.pushEvent(code, "GEOFENCE_EXIT", "خرج من المنطقة الآمنة (${res[0].toInt()} م)")
-        }
-        lastInsideZone = inside
-    }
-
-    private fun bedtimeActive(): Boolean {
-        if (!policy.bedtimeEnabled) return false
-        val cal = Calendar.getInstance()
-        val nowMin = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
-        val bedMin = policy.bedtimeHour * 60 + policy.bedtimeMinute
-        return nowMin >= bedMin
     }
 
     private fun enforceLimits(usage: Map<String, Int>) {
@@ -102,13 +84,9 @@ class MonitorService : Service() {
         }
         val set = HashSet<String>(policy.blockedApps)
         set.addAll(overLimit)
-        val total = usage.values.sum()
-        val overDaily = policy.dailyLimitMinutes > 0 && total >= policy.dailyLimitMinutes
-        if (policy.locked || overDaily || bedtimeActive()) {
-            set.add("*")
-            policyMgr.lockNow()
-        }
+        if (policy.locked) set.add("*")
         AppBlockService.blockedPackages = set
+        // Over-limit apps get hard-hidden too when we are Device Owner.
         overLimit.forEach { policyMgr.setAppHidden(it, true) }
     }
 
@@ -120,29 +98,25 @@ class MonitorService : Service() {
 
         FilterVpnService.internetBlocked = p.internetBlocked
         FilterVpnService.blockedDomains = HashSet(p.blockedDomains)
-        val vpnIntent = Intent(this, FilterVpnService::class.java)
-        if (p.internetBlocked) startService(vpnIntent) else stopService(vpnIntent)
+        if (p.internetBlocked) startService(Intent(this, FilterVpnService::class.java))
     }
 
     private fun handleCommand(c: Command) {
-        val vpnIntent = Intent(this, FilterVpnService::class.java)
         when (c.type) {
-            "SYNC_NOW" -> cycle()
             "LOCK_NOW" -> { policyMgr.lockNow(); FirebaseRepo.updatePolicy(code, mapOf("locked" to true)) }
             "UNLOCK" -> FirebaseRepo.updatePolicy(code, mapOf("locked" to false))
             "BLOCK_INTERNET" -> {
                 FilterVpnService.internetBlocked = true
-                startService(vpnIntent)
+                startService(Intent(this, FilterVpnService::class.java))
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to true))
             }
             "ALLOW_INTERNET" -> {
                 FilterVpnService.internetBlocked = false
-                stopService(vpnIntent)
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to false))
             }
             "BLOCK_APP" -> policyMgr.setAppHidden(c.payload, true)
             "UNBLOCK_APP" -> policyMgr.setAppHidden(c.payload, false)
-            "LOCATE" -> LocationReporter.report(this, code) { lat, lng -> checkGeofence(lat, lng) }
+            "LOCATE" -> LocationReporter.reportOnce(this, code)
         }
         FirebaseRepo.markDone(code, c.id)
     }
@@ -153,7 +127,7 @@ class MonitorService : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, App.CH_MONITOR)
-            .setContentTitle("SafeGuard")
+            .setContentTitle("Beaver Guardian")
             .setContentText("هذا الجهاز تحت إشراف وليّ الأمر / Supervised device")
             .setSmallIcon(R.drawable.ic_launcher)
             .setOngoing(true)
@@ -163,6 +137,8 @@ class MonitorService : Service() {
 
     override fun onDestroy() {
         handler.removeCallbacks(tick)
+        // START_STICKY + BootReceiver bring the service back; do not relaunch here
+        // (starting an FGS from background is restricted on Android 12+).
         super.onDestroy()
     }
 

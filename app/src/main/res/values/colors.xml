@@ -1,20 +1,11 @@
 <resources>
-    <color name="brand">#2E6FC9</color>
-    <color name="brand_dark">#1E4E9E</color>
-    <color name="brand_container">#DCEBFB</color>
-    <color name="on_brand_container">#0E2C5A</color>
-    <color name="emerald">#10B981</color>
-    <color name="emerald_dark">#047857</color>
-    <color name="amber">#F59E0B</color>
-    <color name="accent">#EC4E6B</color>
-    <color name="danger">#DC2626</color>
-    <color name="bg">#F5F8FD</color>
-    <color name="card">#FFFFFF</color>
-    <color name="on_surface">#0B1C30</color>
-    <color name="on_surface_variant">#464555</color>
-    <color name="slate">#64748B</color>
-    <color name="track">#E3EDFA</color>
-    <color name="tile">#EAF2FC</color>
+    <color name="purple_500">#6750A4</color>
+    <color name="purple_700">#4F378B</color>
+    <color name="teal">#0EA5A5</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+    <color name="danger">#D92D20</color>
+
+    <!-- Adaptive icon background — used by mipmap-anydpi-v26/ic_launcher.xml -->
+    <color name="ic_launcher_background">#1565C0</color>
 </resources>

@@ -1,28 +1,28 @@
-# 🔐 Privacy & Responsible Use
+# 🔐 الخصوصية والاستخدام المسؤول / Privacy & Responsible Use
 
-## The idea
-Beaver Guardian is **transparent parental supervision** for a minor. It's built to be known to the kid, not hidden:
-- The kid's device shows a **permanent notification**: "This device is supervised by a parent".
-- The child setup screen tells them their device is being managed.
+## المبدأ / Principle
+Beaver Guardian أداة **إشراف أبوي شفّاف** لطفل قاصر. صُمّمت لتكون معروفة للطفل، لا مخفية:
+- جهاز الطفل يعرض **إشعاراً دائماً**: "هذا الجهاز تحت إشراف وليّ الأمر".
+- شاشة إعداد الطفل تُعلمه بأنه الطرف المُدار.
 
-## What gets collected
-- App usage times (minutes per day, per app).
-- Call **info**: number, direction, time, duration. **No** audio recording (not technically possible anyway).
-- Last device location.
-- No message content, no passwords, no call audio. None of that is touched.
+## ماذا يُجمع / What is collected
+- أوقات استخدام التطبيقات (دقائق/يوم لكل تطبيق).
+- **بيانات** المكالمات: الرقم، الاتجاه، الوقت، المدة — **بدون** تسجيل صوتي (غير ممكن تقنياً).
+- آخر موقع للجهاز.
+- لا يُقرأ محتوى الرسائل، ولا كلمات المرور، ولا محتوى المكالمات.
 
-## Where it lives
-- In **your own Firebase project** only. Nothing passes through anyone else's servers.
-- You're in full control: you can wipe the data any time from the Firebase Console.
+## أين تُخزَّن / Where it lives
+- في مشروع **Firebase الخاص بك أنت** فقط. لا يمرّ شيء عبر خوادم طرف ثالث آخر.
+- أنت المتحكم الكامل: يمكنك حذف البيانات في أي وقت من Firebase Console.
 
-## Security tips
-1. **Tighten your Firebase rules**: enable Authentication and restrict `.read`/`.write` to your account.
-2. Don't share your real `google-services.json` publicly (the one in the repo is a placeholder).
-3. Check the data now and then and delete old stuff.
+## توصيات أمنية / Security recommendations
+1. **شدّد قواعد Firebase**: فعّل Authentication وقيّد `.read`/`.write` على حسابك.
+2. لا تشارك ملف `google-services.json` الحقيقي علناً (الموجود في الريبو مؤقت/وهمي).
+3. راجع البيانات دورياً واحذف القديم منها.
 
-## Legal limits
-- OK: a parent supervising their own **minor** kid (under 18) with the kid's knowledge.
-- Not OK and illegal: installing it on an **adult's** device without their knowledge and consent.
-- As the kid gets older, talking beats silent monitoring.
+## حدود قانونية / Legal boundaries
+- مسموح: مراقبة وليّ الأمر لطفله **القاصر** (تحت 18) مع علمه.
+- ممنوع وغير قانوني: تركيبه على جهاز **بالغ** دون علمه وموافقته (يُعدّ تجسّساً/stalkerware في معظم القوانين).
+- مع تقدّم عمر الطفل، الشفافية والحوار أفضل من المراقبة الصامتة.
 
-> By using this project you take responsibility for following your country's laws.
+> باستخدامك هذا المشروع أنت تتحمّل مسؤولية الالتزام بقوانين بلدك.

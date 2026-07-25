@@ -11,6 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Required for: com.github.gcacace:signature-pad
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
