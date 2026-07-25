@@ -1,8 +1,10 @@
 package com.microbeaver.guardian.ui
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.view.MenuItem
@@ -66,11 +68,26 @@ class AboutActivity : AppCompatActivity() {
 
         // ── SignaturePad listener ─────────────────────────────────────────────
         b.signaturePad.setOnSignedListener(object : SignaturePad.OnSignedListener {
-            override fun onStartSigning() {}
+            override fun onStartSigning() {
+                // Hide the "sign here" hint as soon as the user starts drawing
+                b.tvSignatureHint.visibility = View.GONE
+            }
             override fun onSigned() { b.btnSaveSignature.isEnabled = true }
-            override fun onClear() { b.btnSaveSignature.isEnabled = false }
+            override fun onClear() {
+                b.btnSaveSignature.isEnabled = false
+                // Restore hint when pad is cleared
+                b.tvSignatureHint.visibility = View.VISIBLE
+            }
         })
         b.btnSaveSignature.isEnabled = false
+
+        // ── LinkedIn click — TODO: confirm profile URL (see layout comment) ──
+        // A public LinkedIn profile for tareknahas85 was not found during automated search.
+        // Replace URL once confirmed, or remove this block if not applicable.
+        b.rowLinkedIn.setOnClickListener {
+            val url = "https://www.linkedin.com/in/tareknahas85"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
 
         // ── Save button ───────────────────────────────────────────────────────
         b.btnSaveSignature.setOnClickListener {
@@ -97,16 +114,18 @@ class AboutActivity : AppCompatActivity() {
 
     private fun showPad() {
         signatureMode = SignatureMode.DRAWING
-        b.signaturePad.visibility  = View.VISIBLE
+        b.signaturePad.visibility       = View.VISIBLE
+        b.tvSignatureHint.visibility    = View.VISIBLE   // show "sign here" hint
         b.ivSignaturePreview.visibility = View.GONE
     }
 
     private fun showPreview(bmp: Bitmap) {
         signatureMode = SignatureMode.PREVIEW
         b.ivSignaturePreview.setImageBitmap(bmp)
-        b.signaturePad.visibility  = View.GONE
+        b.signaturePad.visibility       = View.GONE
+        b.tvSignatureHint.visibility    = View.GONE       // hide hint in preview mode
         b.ivSignaturePreview.visibility = View.VISIBLE
-        b.btnSaveSignature.isEnabled = false
+        b.btnSaveSignature.isEnabled    = false
     }
 
     // ── Persistence ───────────────────────────────────────────────────────────

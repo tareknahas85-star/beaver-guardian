@@ -65,25 +65,45 @@
                     android:layout_gravity="end"
                     android:layout_marginBottom="4dp" />
 
-                <!-- SignaturePad — user draws signature with finger -->
-                <com.github.gcacace.signaturepad.views.SignaturePad
-                    android:id="@+id/signaturePad"
+                <!-- SignaturePad wrapper: FrameLayout lets hint overlay the drawing area -->
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:background="#FFFFFF"
-                    app:penColor="#1565C0"
-                    app:penMinWidth="4dp"
-                    app:penMaxWidth="8dp" />
+                    android:layout_height="160dp">
 
-                <!-- Saved signature preview (shown instead of pad when signature exists) -->
-                <ImageView
-                    android:id="@+id/ivSignaturePreview"
-                    android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:background="#FFFFFF"
-                    android:scaleType="fitCenter"
-                    android:visibility="gone"
-                    android:contentDescription="Saved signature" />
+                    <!-- Drawing pad — user draws signature with finger -->
+                    <com.github.gcacace.signaturepad.views.SignaturePad
+                        android:id="@+id/signaturePad"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:background="#FFFFFF"
+                        app:penColor="#1565C0"
+                        app:penMinWidth="4dp"
+                        app:penMaxWidth="8dp" />
+
+                    <!-- Hint: visible when pad is empty, hidden as soon as user starts signing -->
+                    <TextView
+                        android:id="@+id/tvSignatureHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="✍  وقّع هنا / Sign here"
+                        android:textColor="#BBBBBB"
+                        android:textSize="15sp"
+                        android:background="@drawable/border_signature_hint"
+                        android:clickable="false"
+                        android:focusable="false" />
+
+                    <!-- Saved signature preview (shown instead of pad when signature exists) -->
+                    <ImageView
+                        android:id="@+id/ivSignaturePreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:background="#FFFFFF"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone"
+                        android:contentDescription="Saved signature" />
+
+                </FrameLayout>
 
                 <!-- Buttons row -->
                 <LinearLayout
@@ -178,13 +198,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:paddingBottom="10dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="📞  " android:textSize="16sp" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="+963 945 830 002"
                         android:textSize="14sp"
                         android:textColor="#1A1A2E" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
+
+                <!-- LinkedIn — TODO: verify profile URL for Tarek Nahas (tareknahas85).
+                     A public LinkedIn profile matching github.com/tareknahas85-star was not found
+                     during automated search. Replace the URL below once confirmed. -->
+                <LinearLayout
+                    android:id="@+id/rowLinkedIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="💼  " android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvLinkedIn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="linkedin.com/in/tareknahas85"
+                        android:textSize="14sp"
+                        android:textColor="#0077B5" />
                 </LinearLayout>
 
             </LinearLayout>

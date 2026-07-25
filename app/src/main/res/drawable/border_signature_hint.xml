@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dashed border shown as hint inside the signature pad area -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:width="1dp"
+        android:color="#CCCCCC"
+        android:dashWidth="6dp"
+        android:dashGap="4dp" />
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="4dp" />
+</shape>
