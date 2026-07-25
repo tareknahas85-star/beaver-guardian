@@ -1,14 +1,11 @@
 package com.microbeaver.guardian.ui
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Base64
 import androidx.appcompat.app.AppCompatActivity
-import com.microbeaver.guardian.R
 import com.microbeaver.guardian.databinding.ActivityProfileBinding
 
 class ProfileActivity : AppCompatActivity() {
@@ -19,16 +16,6 @@ class ProfileActivity : AppCompatActivity() {
         setSupportActionBar(b.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         b.toolbar.setNavigationOnClickListener { finish() }
-
-        try {
-            b.tvVersion.text = "v" + packageManager.getPackageInfo(packageName, 0).versionName
-        } catch (_: Exception) {}
-
-        try {
-            val b64 = resources.openRawResource(R.raw.rt_signature).bufferedReader().use { it.readText() }.trim()
-            val bytes = Base64.decode(b64, Base64.DEFAULT)
-            b.imgSignature.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
-        } catch (_: Exception) {}
 
         b.btnPermNotif.setOnClickListener { openNotif() }
         b.btnPermUsage.setOnClickListener { safeStart(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) }
