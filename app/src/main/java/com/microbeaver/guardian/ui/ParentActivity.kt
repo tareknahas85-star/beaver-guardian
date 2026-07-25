@@ -85,8 +85,8 @@ class ParentActivity : AppCompatActivity() {
         b.bottomNav.selectedItemId = R.id.nav_dashboard
         b.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_kids -> { startActivity(Intent(this, KidsActivity::class.java)); false }
                 R.id.nav_activity -> { startActivity(Intent(this, ActivityActivity::class.java)); false }
+                R.id.nav_about -> { startActivity(Intent(this, AboutActivity::class.java)); false }
                 R.id.nav_settings -> { startActivity(Intent(this, ProfileActivity::class.java)); false }
                 else -> true
             }
