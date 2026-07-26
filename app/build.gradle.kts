@@ -38,6 +38,9 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        // AGP 8 no longer generates BuildConfig unless asked.
+        // AboutActivity reads BuildConfig.VERSION_NAME, so this must stay on.
+        buildConfig = true
     }
 }
 
