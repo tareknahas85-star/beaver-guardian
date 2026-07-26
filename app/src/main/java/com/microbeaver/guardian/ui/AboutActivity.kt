@@ -33,10 +33,6 @@ import java.io.ByteArrayOutputStream
  *  • App name + version
  *
  * NOTE: the signature never leaves the device — it is not uploaded anywhere.
- *
- * IMPORTANT: google-services.json contains placeholder values.
- *            Replace it with the real file from your Firebase Console
- *            before building a production APK.
  */
 class AboutActivity : AppCompatActivity() {
 

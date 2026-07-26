@@ -26,10 +26,28 @@
     <!-- Call log (metadata only: number, time, duration) -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
+    <!-- Call filtering: match incoming numbers against the address book -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- Needed by CallScreeningService to see the caller's number -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Android 11+ package visibility. Without this, resolving Truecaller or a
+         maps/dialer target from the parent's alert notification silently fails. -->
+    <queries>
+        <package android:name="com.truecaller" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+        </intent>
+    </queries>
 
     <application
         android:name=".App"
@@ -62,6 +80,12 @@
             android:name=".ui.AboutActivity"
             android:exported="false"
             android:label="About / حول"
+            android:parentActivityName=".ui.ParentActivity" />
+
+        <activity
+            android:name=".ui.GuardSettingsActivity"
+            android:exported="false"
+            android:label="الإعدادات / Settings"
             android:parentActivityName=".ui.ParentActivity" />
 
         <!-- Device Admin / Device Owner -->
@@ -116,6 +140,18 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="parental_control_filter" />
+        </service>
+
+        <!-- Call screening — only bound while we hold ROLE_CALL_SCREENING (API 29+).
+             Emergency calls bypass this service entirely, and CallDecision
+             refuses to block them regardless of policy. -->
+        <service
+            android:name=".calls.GuardianCallScreeningService"
+            android:exported="true"
+            android:permission="android.permission.BIND_SCREENING_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService" />
+            </intent-filter>
         </service>
 
         <!-- FCM command channel -->

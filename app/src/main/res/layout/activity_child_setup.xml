@@ -43,8 +43,52 @@
         <Button android:id="@+id/btnPermUsage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1) الوصول لإحصاءات الاستخدام" />
         <Button android:id="@+id/btnPermAccessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2) خدمة الوصول (حظر التطبيقات)" />
         <Button android:id="@+id/btnPermOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3) الظهور فوق التطبيقات" />
-        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) الموقع + المكالمات + الإشعارات" />
+        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) الموقع + المكالمات + جهات الاتصال + الإشعارات" />
         <Button android:id="@+id/btnPermAdmin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5) تفعيل مشرف الجهاز" />
         <Button android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) تشغيل فلتر الإنترنت" />
+
+        <Button
+            android:id="@+id/btnPermCallScreening"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="7) صلاحية فلترة المكالمات" />
+
+        <TextView
+            android:id="@+id/tvCallScreeningStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#E65100"
+            android:paddingStart="4dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvProtectionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#2E7D32"
+            android:paddingStart="4dp"
+            android:paddingBottom="16dp" />
+
+        <!-- ═══ SOS ═══ Always reachable, deliberately large and unmissable. -->
+        <Button
+            android:id="@+id/btnSos"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:text="🆘  استغاثة / SOS"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:backgroundTint="#D32F2F"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="يرسل موقعك وتنبيهاً فورياً لوليّ أمرك / Sends your location and an instant alert to your parent"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:paddingTop="4dp" />
     </LinearLayout>
 </ScrollView>

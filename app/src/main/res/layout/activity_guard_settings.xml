@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F4FF">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#3B6FD4"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIconTint="#FFFFFF" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- ═══ Call filtering ═══ -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="فلترة المكالمات / Call filtering"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:paddingBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvScreeningStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="12sp"
+                        android:textColor="#E65100"
+                        android:paddingBottom="8dp" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swCallFilter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="تشغيل الفلترة / Enable filtering"
+                        android:textColor="#1A1A2E" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swBlockUnknown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="حجب الأرقام غير المعروفة / Block unknown numbers"
+                        android:textColor="#1A1A2E" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swAllowContacts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="السماح لجهات الاتصال المحفوظة / Allow saved contacts"
+                        android:textColor="#1A1A2E" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swRestrictOutgoing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="تقييد المكالمات الصادرة أيضاً / Restrict outgoing too"
+                        android:textColor="#1A1A2E" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="أرقام مسموحة (رقم في كل سطر) / Allowed numbers, one per line"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etAllowedNumbers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="3"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|phone"
+                        android:background="#F5F5F5"
+                        android:padding="10dp"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"
+                        android:hint="+963945830002"
+                        android:importantForAutofill="no" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="أرقام محجوبة دائماً / Always-blocked numbers"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etBlockedNumbers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="2"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|phone"
+                        android:background="#F5F5F5"
+                        android:padding="10dp"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"
+                        android:importantForAutofill="no" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="⚠ أرقام الطوارئ لا تُحجب أبداً / Emergency numbers are never blocked"
+                        android:textSize="11sp"
+                        android:textColor="#2E7D32"
+                        android:paddingTop="8dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ═══ Safe zones ═══ -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="المناطق الآمنة / Safe zones"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:paddingBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvZones"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="لا مناطق / No zones yet"
+                        android:textSize="13sp"
+                        android:textColor="#444444"
+                        android:paddingBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/etZoneName"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:hint="الاسم / Name"
+                            android:inputType="text"
+                            android:background="#F5F5F5"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            android:textColor="#1A1A2E"
+                            android:importantForAutofill="no" />
+
+                        <EditText
+                            android:id="@+id/etZoneRadius"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:hint="متر / m"
+                            android:inputType="number"
+                            android:text="200"
+                            android:background="#F5F5F5"
+                            android:padding="10dp"
+                            android:layout_marginStart="8dp"
+                            android:textSize="14sp"
+                            android:textColor="#1A1A2E"
+                            android:importantForAutofill="no" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnAddZoneHere"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="إضافة منطقة من موقعي الحالي / Add zone at my location"
+                        android:backgroundTint="#3B6FD4"
+                        android:layout_marginTop="8dp" />
+
+                    <Button
+                        android:id="@+id/btnClearZones"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="حذف كل المناطق / Clear all zones"
+                        android:textColor="#E91E63" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ═══ Schedules ═══ -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="الجدول الزمني / Schedule"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:paddingBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvSchedules"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="لا قواعد / No rules yet"
+                        android:textSize="13sp"
+                        android:textColor="#444444"
+                        android:paddingBottom="10dp" />
+
+                    <Button
+                        android:id="@+id/btnAddBedtime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="إضافة وقت النوم 22:00–07:00 / Add bedtime"
+                        android:backgroundTint="#3B6FD4" />
+
+                    <Button
+                        android:id="@+id/btnAddStudy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="إضافة وقت الدراسة 16:00–18:00 / Add study time"
+                        android:backgroundTint="#3B6FD4"
+                        android:layout_marginTop="6dp" />
+
+                    <Button
+                        android:id="@+id/btnClearSchedules"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="حذف كل القواعد / Clear all rules"
+                        android:textColor="#E91E63" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ═══ Other ═══ -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swSos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="زر الاستغاثة على جهاز الطفل / SOS button on child device"
+                        android:textColor="#1A1A2E" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swWeekly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="تقرير أسبوعي / Weekly report"
+                        android:textColor="#1A1A2E" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="حفظ الإعدادات / Save settings"
+                android:backgroundTint="#2E7D32"
+                android:layout_marginBottom="24dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

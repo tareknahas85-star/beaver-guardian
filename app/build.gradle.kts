@@ -52,8 +52,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
-    // Firebase (config comes from google-services.json)
-    // NOTE: google-services.json contains placeholder values — replace with the real file from Firebase Console
+    // Firebase (config comes from app/google-services.json — real project: beaver-guardian)
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")

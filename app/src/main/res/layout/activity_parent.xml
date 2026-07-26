@@ -37,6 +37,36 @@
         <Button android:id="@+id/btnBlockInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 قطع الإنترنت" />
         <Button android:id="@+id/btnAllowInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 السماح بالإنترنت" />
 
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="⚙️ المكالمات والمناطق والجدول / Calls, zones &amp; schedule" />
+
+        <Button
+            android:id="@+id/btnOpenPairing"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔗 فتح نافذة الربط 15 دقيقة / Open 15-min pairing window" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="آخر التنبيهات / Latest alerts"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvAlerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="لا تنبيهات / No alerts yet"
+            android:textSize="13sp"
+            android:textColor="#B71C1C" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

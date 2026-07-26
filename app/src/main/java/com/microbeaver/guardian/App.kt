@@ -10,9 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 /**
  * Application class — runs once at process start.
  *
- * IMPORTANT: google-services.json contains placeholder values.
- *            Replace it with the real file from your Firebase Console
- *            before building a production APK.
+ * Firebase is configured from `app/google-services.json`, which points at the
+ * real `beaver-guardian` project. Anonymous Authentication must stay enabled in
+ * the Firebase Console — the database rules require `auth != null`, so without
+ * it every read and write is rejected.
  */
 class App : Application() {
     override fun onCreate() {
@@ -40,9 +41,8 @@ class App : Application() {
 
         // ── Anonymous Firebase Auth ───────────────────────────────────────────
         // Ensures every install has a Firebase UID even before the user logs in.
-        // This is required for Realtime Database security rules that check auth != null.
-        // NOTE: Replace google-services.json with the real file from Firebase Console
-        //       for authentication to work in production.
+        // The database rules key off this UID: a device may only touch
+        // /devices/{code} once its UID is listed under that code's `members`.
         val auth = FirebaseAuth.getInstance()
         if (auth.currentUser == null) {
             auth.signInAnonymously()
