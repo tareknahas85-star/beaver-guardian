@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- The app theme is *.NoActionBar, so this screen supplies its own toolbar.
+     AboutActivity calls setSupportActionBar(toolbar) to get the back arrow. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#F0F4FF">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#3B6FD4"
+        app:title="About / حول"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIconTint="#FFFFFF" />
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,13 +131,24 @@
                     android:gravity="end"
                     android:layout_marginTop="8dp">
 
+                    <!-- Shown only in PREVIEW mode: switch to the drawing pad -->
+                    <Button
+                        android:id="@+id/btnEditSignature"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="تعديل / Edit"
+                        android:textColor="#1565C0" />
+
+                    <!-- Shown only in DRAWING mode: back to the official signature -->
                     <Button
                         android:id="@+id/btnClearSignature"
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="مسح / Clear"
-                        android:textColor="#E91E63" />
+                        android:textColor="#E91E63"
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/btnSaveSignature"
@@ -127,7 +156,8 @@
                         android:layout_height="wrap_content"
                         android:text="حفظ / Save"
                         android:backgroundTint="#1565C0"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="8dp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -211,22 +241,25 @@
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:background="#E0E0E0" android:layout_marginBottom="10dp" />
 
-                <!-- LinkedIn — TODO: verify profile URL for Tarek Nahas (tareknahas85).
-                     A public LinkedIn profile matching github.com/tareknahas85-star was not found
-                     during automated search. Replace the URL below once confirmed. -->
+                <!-- LinkedIn — confirmed profile, opens in browser on tap -->
                 <LinearLayout
                     android:id="@+id/rowLinkedIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="💼  " android:textSize="16sp" />
                     <TextView
                         android:id="@+id/tvLinkedIn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="linkedin.com/in/tareknahas85"
+                        android:text="linkedin.com/in/tarek-nahas-669322382"
                         android:textSize="14sp"
                         android:textColor="#0077B5" />
                 </LinearLayout>
@@ -270,3 +303,5 @@
 
     </LinearLayout>
 </ScrollView>
+
+</LinearLayout>

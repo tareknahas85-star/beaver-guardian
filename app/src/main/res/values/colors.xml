@@ -6,6 +6,11 @@
     <color name="black">#FF000000</color>
     <color name="danger">#D92D20</color>
 
-    <!-- Adaptive icon background — used by mipmap-anydpi-v26/ic_launcher.xml -->
-    <color name="ic_launcher_background">#1565C0</color>
+    <!-- Brand blue, matching the About screen toolbar and the app icon -->
+    <color name="brand_blue">#3B6FD4</color>
+    <color name="brand_blue_dark">#2A55A8</color>
+
+    <!-- Adaptive icon background — used by mipmap-anydpi-v26/ic_launcher.xml
+         White so it matches the artwork's own tile background seamlessly. -->
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
