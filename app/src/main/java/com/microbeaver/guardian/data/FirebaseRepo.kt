@@ -1,7 +1,6 @@
 package com.microbeaver.guardian.data
 
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -32,20 +31,30 @@ object FirebaseRepo {
     private val db get() = FirebaseDatabase.getInstance()
     private fun root(code: String) = db.getReference("devices").child(code)
 
-    private val uid: String? get() = FirebaseAuth.getInstance().currentUser?.uid
-
     // ---------- Membership / pairing ----------
 
-    /** Adds this device's UID to the code's member list. Safe to call repeatedly. */
+    /**
+     * Adds this device's UID to the code's member list. Safe to call repeatedly.
+     *
+     * Waits for anonymous sign-in via [Auth.withUid] first. Calling this before
+     * sign-in completed used to fail silently and leave the app with no database
+     * listeners at all, which looked exactly like "paired but nothing happens".
+     */
     fun claimDevice(code: String, onResult: ((Boolean) -> Unit)? = null) {
-        val u = uid
-        if (code.isBlank() || u == null) { onResult?.invoke(false); return }
-        root(code).child("members").child(u).setValue(true)
-            .addOnSuccessListener { onResult?.invoke(true) }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "claimDevice failed for $code: ${e.message}")
+        if (code.isBlank()) { onResult?.invoke(false); return }
+        Auth.withUid(
+            onFailed = { msg ->
+                Log.e(TAG, "claimDevice($code): no uid — $msg")
                 onResult?.invoke(false)
             }
+        ) { u ->
+            root(code).child("members").child(u).setValue(true)
+                .addOnSuccessListener { onResult?.invoke(true) }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "claimDevice failed for $code: ${e.message}")
+                    onResult?.invoke(false)
+                }
+        }
     }
 
     /** Parent-side: lets a second device join for the next [PAIRING_WINDOW_MS]. */
@@ -162,6 +171,34 @@ object FirebaseRepo {
     fun setChildInfo(code: String, model: String) {
         val m = mapOf("model" to model, "role" to "child", "lastSeen" to System.currentTimeMillis())
         root(code).child("info").updateChildren(m)
+    }
+
+    /**
+     * Live health of the child device: model, when it last checked in, and
+     * whether its internet is currently off. Lets the parent screen tell
+     * "nothing happened" apart from "nothing is connected".
+     */
+    fun listenChildInfo(
+        code: String,
+        onData: (model: String, lastSeen: Long, internetBlocked: Boolean) -> Unit
+    ): ValueEventListener {
+        val ref = root(code)
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                val info = s.child("info")
+                onData(
+                    info.child("model").getValue(String::class.java) ?: "",
+                    info.child("lastSeen").getValue(Long::class.java) ?: 0L,
+                    s.child("policy").child("internetBlocked").getValue(Boolean::class.java) ?: false
+                )
+            }
+            override fun onCancelled(e: DatabaseError) {
+                Log.e(TAG, "DB Error [info/$code]: ${e.message}")
+                onData("", 0L, false)
+            }
+        }
+        ref.addValueEventListener(l)
+        return l
     }
 
     /** Remembers which side of each safe zone the child was on, to detect crossings. */

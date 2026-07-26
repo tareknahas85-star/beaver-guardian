@@ -128,6 +128,14 @@
                 android:value="parental_control_monitoring" />
         </service>
 
+        <!-- Parent-side alert listener. Keeps a database listener alive so an SOS
+             or unknown caller still reaches the parent when the app is closed.
+             Device-to-device push is not possible on the free Firebase plan. -->
+        <service
+            android:name=".alerts.ParentAlertService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
         <!-- Local VPN content filter / internet control -->
         <service
             android:name=".vpn.FilterVpnService"

@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.microbeaver.guardian.Prefs
 import com.microbeaver.guardian.alerts.AlertNotifier
+import com.microbeaver.guardian.alerts.ParentAlertService
 import com.microbeaver.guardian.data.Alert
 import com.microbeaver.guardian.data.Command
 import com.microbeaver.guardian.data.FirebaseRepo
@@ -40,19 +41,23 @@ class ParentActivity : AppCompatActivity() {
             notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        // Become a member of this code before reading or writing anything, then
-        // start listening. Everything else depends on this succeeding.
+        // Join the code, then listen. Listening happens even if the claim fails,
+        // because losing database permissions must not also cost us the ability
+        // to see what the child device reports.
         FirebaseRepo.claimDevice(code) { ok ->
             runOnUiThread {
                 if (!ok) {
-                    b.tvAlerts.text =
-                        "تعذّر الاتصال بقاعدة البيانات / Could not join this pairing code.\n" +
-                            "تحقّق من الإنترنت وقواعد Firebase / Check connectivity and Firebase rules."
-                    return@runOnUiThread
+                    b.tvStatus.text = "Could not join this pairing code. " +
+                        "Check your connection, that Anonymous sign-in is on in Firebase, " +
+                        "and that the database rules were published."
+                    b.tvStatus.visibility = android.view.View.VISIBLE
                 }
                 startListening()
             }
         }
+
+        // Alerts must keep arriving with the app closed.
+        ParentAlertService.start(this)
 
         b.btnLockNow.setOnClickListener { send("LOCK_NOW") }
         b.btnUnlock.setOnClickListener { send("UNLOCK") }
@@ -80,6 +85,12 @@ class ParentActivity : AppCompatActivity() {
     private fun startListening() {
         attachedAt = System.currentTimeMillis()
 
+        // Is the child device actually alive and reporting? Without this the
+        // parent cannot tell "nothing happened" from "nothing is connected".
+        FirebaseRepo.listenChildInfo(code) { model, lastSeen, internetBlocked ->
+            runOnUiThread { renderStatus(model, lastSeen, internetBlocked) }
+        }
+
         val today = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
         FirebaseRepo.listenUsageToday(code, today) { usage ->
             val sb = StringBuilder("استخدام اليوم / Today's usage:\n\n")
@@ -101,6 +112,32 @@ class ParentActivity : AppCompatActivity() {
             recentAlerts.add(0, alert)
             if (recentAlerts.size > 12) recentAlerts.removeAt(recentAlerts.size - 1)
             runOnUiThread { renderAlerts() }
+        }
+    }
+
+    /**
+     * A plain answer to "is this working?". Silence from the child device looks
+     * identical to a quiet child, so show when it last checked in.
+     */
+    private fun renderStatus(model: String, lastSeen: Long, internetBlocked: Boolean) {
+        b.tvStatus.visibility = android.view.View.VISIBLE
+        if (lastSeen == 0L) {
+            b.tvStatus.text = "Child device: not connected yet.\n" +
+                "On the child phone, enter this code while the pairing window is open."
+            return
+        }
+        val ageMin = (System.currentTimeMillis() - lastSeen) / 60_000
+        val health = when {
+            ageMin <= 3L  -> "online"
+            ageMin <= 30L -> "last seen ${ageMin}m ago"
+            ageMin <= 1440L -> "last seen ${ageMin / 60}h ago — check battery settings"
+            else -> "offline for ${ageMin / 1440}d — service is not running"
+        }
+        b.tvStatus.text = buildString {
+            append(model.ifBlank { "Child device" })
+            append(" · ")
+            append(health)
+            if (internetBlocked) append("\nInternet is OFF for this device")
         }
     }
 

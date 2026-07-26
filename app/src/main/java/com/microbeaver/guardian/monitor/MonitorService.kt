@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
@@ -42,6 +43,7 @@ class MonitorService : Service() {
     private lateinit var policyMgr: PolicyManager
     private lateinit var geofences: GeofenceEvaluator
     private var code: String = ""
+    private var listenersAttached = false
 
     @Volatile
     private var policy: Policy = Policy()
@@ -59,18 +61,34 @@ class MonitorService : Service() {
         geofences = GeofenceEvaluator(this)
         startForeground(1, buildNotification())
         code = Prefs.getPairCode(this) ?: ""
-        if (code.isNotEmpty()) {
-            // Make sure this UID is a member before trying to read anything.
-            FirebaseRepo.claimDevice(code) {
-                FirebaseRepo.listenPolicy(code) { p -> policy = p; applyPolicy(p) }
-                FirebaseRepo.listenCommands(code) { c -> handleCommand(c) }
-            }
-        }
+        if (code.isNotEmpty()) attachListeners()
         handler.post(tick)
     }
 
+    /**
+     * Attaches the policy and command listeners.
+     *
+     * These must attach even if [FirebaseRepo.claimDevice] reports failure. With
+     * the old code a failed claim meant no listeners at all, so the child stopped
+     * responding to everything — including the command to turn the internet back
+     * on. Claiming is about database permissions; losing it must never cost us
+     * the ability to listen.
+     */
+    private fun attachListeners() {
+        if (listenersAttached) return
+        listenersAttached = true
+        FirebaseRepo.claimDevice(code) { ok ->
+            if (!ok) Log.w(TAG, "claimDevice failed for $code — listening anyway")
+            FirebaseRepo.listenPolicy(code) { p -> policy = p; applyPolicy(p) }
+            FirebaseRepo.listenCommands(code) { c -> handleCommand(c) }
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (code.isEmpty()) code = Prefs.getPairCode(this) ?: ""
+        if (code.isEmpty()) {
+            code = Prefs.getPairCode(this) ?: ""
+            if (code.isNotEmpty()) attachListeners()
+        }
         if (intent?.action == ACTION_SOS && code.isNotEmpty()) {
             SosReporter.trigger(this, code)
         }
@@ -121,9 +139,16 @@ class MonitorService : Service() {
 
         if (schedule.lockDevice) policyMgr.lockNow()
 
+        // Drive the VPN through explicit start/stop so the tunnel is actually
+        // torn down when the internet should come back, and refresh the
+        // watchdog so a still-intended block does not fail open.
         val internetOff = policy.internetBlocked || schedule.blockInternet
-        FilterVpnService.internetBlocked = internetOff
-        if (internetOff) startService(Intent(this, FilterVpnService::class.java))
+        if (internetOff) {
+            FilterVpnService.confirmStillBlocked()
+            FilterVpnService.block(this)
+        } else {
+            FilterVpnService.unblock(this)
+        }
     }
 
     /** One location fix, used both for the parent's map and the safe zones. */
@@ -154,9 +179,13 @@ class MonitorService : Service() {
         AppBlockService.blockedPackages = set
         p.blockedApps.forEach { policyMgr.setAppHidden(it, true) }
 
-        FilterVpnService.internetBlocked = p.internetBlocked
         FilterVpnService.blockedDomains = HashSet(p.blockedDomains)
-        if (p.internetBlocked) startService(Intent(this, FilterVpnService::class.java))
+        if (p.internetBlocked) {
+            FilterVpnService.confirmStillBlocked()
+            FilterVpnService.block(this)
+        } else {
+            FilterVpnService.unblock(this)
+        }
 
         // Mirror the call rules locally — the screening service is started cold
         // by the telecom stack and cannot wait on Firebase.
@@ -175,12 +204,13 @@ class MonitorService : Service() {
             "LOCK_NOW" -> { policyMgr.lockNow(); FirebaseRepo.updatePolicy(code, mapOf("locked" to true)) }
             "UNLOCK" -> FirebaseRepo.updatePolicy(code, mapOf("locked" to false))
             "BLOCK_INTERNET" -> {
-                FilterVpnService.internetBlocked = true
-                startService(Intent(this, FilterVpnService::class.java))
+                FilterVpnService.confirmStillBlocked()
+                FilterVpnService.block(this)
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to true))
             }
             "ALLOW_INTERNET" -> {
-                FilterVpnService.internetBlocked = false
+                // Tear the tunnel down for real, not just flip a flag.
+                FilterVpnService.unblock(this)
                 FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to false))
             }
             "BLOCK_APP" -> policyMgr.setAppHidden(c.payload, true)
@@ -214,6 +244,7 @@ class MonitorService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {
+        private const val TAG = "MonitorService"
         const val ACTION_SOS = "com.microbeaver.guardian.SOS"
 
         fun start(ctx: Context) {

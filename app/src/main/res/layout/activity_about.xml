@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F4FF">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#3B6FD4"
+        android:background="@color/primary"
         app:title="About / حول"
         app:titleTextColor="#FFFFFF"
         app:navigationIconTint="#FFFFFF" />
@@ -47,7 +47,7 @@
             android:text="ولي الأمر"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E" />
+            android:textColor="@color/on_surface" />
 
         <!-- ── Role subtitle ── -->
         <TextView
@@ -64,8 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <LinearLayout
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:text="التوقيع الإلكتروني / E-signature"
                     android:textSize="13sp"
-                    android:textColor="#888888"
+                    android:textColor="@color/on_surface_variant"
                     android:layout_gravity="end"
                     android:layout_marginBottom="4dp" />
 
@@ -93,8 +93,8 @@
                         android:id="@+id/signaturePad"
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:background="#FFFFFF"
-                        app:penColor="#1565C0"
+                        android:background="@color/surface_card"
+                        app:penColor="@color/primary"
                         app:penMinWidth="4dp"
                         app:penMaxWidth="8dp" />
 
@@ -105,7 +105,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="✍  وقّع هنا / Sign here"
-                        android:textColor="#BBBBBB"
+                        android:textColor="@color/outline"
                         android:textSize="15sp"
                         android:background="@drawable/border_signature_hint"
                         android:clickable="false"
@@ -116,7 +116,7 @@
                         android:id="@+id/ivSignaturePreview"
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:background="#FFFFFF"
+                        android:background="@color/surface_card"
                         android:scaleType="fitCenter"
                         android:visibility="gone"
                         android:contentDescription="Saved signature" />
@@ -138,7 +138,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="تعديل / Edit"
-                        android:textColor="#1565C0" />
+                        android:textColor="@color/primary" />
 
                     <!-- Shown only in DRAWING mode: back to the official signature -->
                     <Button
@@ -147,7 +147,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="مسح / Clear"
-                        android:textColor="#E91E63"
+                        android:textColor="@color/error"
                         android:visibility="gone" />
 
                     <Button
@@ -155,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="حفظ / Save"
-                        android:backgroundTint="#1565C0"
+                        android:backgroundTint="@color/primary"
                         android:layout_marginStart="8dp"
                         android:visibility="gone" />
 
@@ -168,8 +168,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <LinearLayout
@@ -184,7 +184,7 @@
                     android:text="معلومات التواصل / Contact"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="#1A1A2E"
+                    android:textColor="@color/on_surface"
                     android:layout_marginBottom="12dp" />
 
                 <!-- Email -->
@@ -199,11 +199,11 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="tareknahas85@gmail.com"
                         android:textSize="14sp"
-                        android:textColor="#1A1A2E" />
+                        android:textColor="@color/on_surface" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
+                    android:background="@color/outline_variant" android:layout_marginBottom="10dp" />
 
                 <!-- GitHub -->
                 <LinearLayout
@@ -217,11 +217,11 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="github.com/tareknahas85-star"
                         android:textSize="14sp"
-                        android:textColor="#1A1A2E" />
+                        android:textColor="@color/on_surface" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
+                    android:background="@color/outline_variant" android:layout_marginBottom="10dp" />
 
                 <!-- Phone -->
                 <LinearLayout
@@ -235,11 +235,11 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="+963 945 830 002"
                         android:textSize="14sp"
-                        android:textColor="#1A1A2E" />
+                        android:textColor="@color/on_surface" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#E0E0E0" android:layout_marginBottom="10dp" />
+                    android:background="@color/outline_variant" android:layout_marginBottom="10dp" />
 
                 <!-- LinkedIn — confirmed profile, opens in browser on tap -->
                 <LinearLayout
@@ -272,8 +272,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <LinearLayout
@@ -288,7 +288,7 @@
                     android:text="SafeGuard — Beaver Guardian"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="#1A1A2E" />
+                    android:textColor="@color/on_surface" />
 
                 <TextView
                     android:id="@+id/tvVersion"
@@ -296,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:text="v1.0"
                     android:textSize="13sp"
-                    android:textColor="#888888" />
+                    android:textColor="@color/on_surface_variant" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
