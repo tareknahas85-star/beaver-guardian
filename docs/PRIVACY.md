@@ -1,28 +1,70 @@
-# 🔐 الخصوصية والاستخدام المسؤول / Privacy & Responsible Use
+# Privacy and responsible use
 
-## المبدأ / Principle
-Beaver Guardian أداة **إشراف أبوي شفّاف** لطفل قاصر. صُمّمت لتكون معروفة للطفل، لا مخفية:
-- جهاز الطفل يعرض **إشعاراً دائماً**: "هذا الجهاز تحت إشراف وليّ الأمر".
-- شاشة إعداد الطفل تُعلمه بأنه الطرف المُدار.
+## The main idea
 
-## ماذا يُجمع / What is collected
-- أوقات استخدام التطبيقات (دقائق/يوم لكل تطبيق).
-- **بيانات** المكالمات: الرقم، الاتجاه، الوقت، المدة — **بدون** تسجيل صوتي (غير ممكن تقنياً).
-- آخر موقع للجهاز.
-- لا يُقرأ محتوى الرسائل، ولا كلمات المرور، ولا محتوى المكالمات.
+Beaver Guardian is **open supervision** of a child under 18. It is built to be
+known, not hidden:
 
-## أين تُخزَّن / Where it lives
-- في مشروع **Firebase الخاص بك أنت** فقط. لا يمرّ شيء عبر خوادم طرف ثالث آخر.
-- أنت المتحكم الكامل: يمكنك حذف البيانات في أي وقت من Firebase Console.
+- The child's phone shows a notification all the time: this phone is supervised.
+- The child setup screen says clearly that this phone is the managed one.
 
-## توصيات أمنية / Security recommendations
-1. **شدّد قواعد Firebase**: فعّل Authentication وقيّد `.read`/`.write` على حسابك.
-2. لا تشارك ملف `google-services.json` الحقيقي علناً (الموجود في الريبو مؤقت/وهمي).
-3. راجع البيانات دورياً واحذف القديم منها.
+If you want an app the child cannot see, this is the wrong app.
 
-## حدود قانونية / Legal boundaries
-- مسموح: مراقبة وليّ الأمر لطفله **القاصر** (تحت 18) مع علمه.
-- ممنوع وغير قانوني: تركيبه على جهاز **بالغ** دون علمه وموافقته (يُعدّ تجسّساً/stalkerware في معظم القوانين).
-- مع تقدّم عمر الطفل، الشفافية والحوار أفضل من المراقبة الصامتة.
+---
 
-> باستخدامك هذا المشروع أنت تتحمّل مسؤولية الالتزام بقوانين بلدك.
+## What is collected
+
+- How many minutes each app was used, per day.
+- Call **details**: the number, in or out, the time, how long it lasted.
+  **No sound is recorded** — Android does not allow it.
+- The last known location of the phone.
+- When call filtering is on: numbers that were blocked or that were unknown.
+- Safe zone events: entering or leaving a place you defined.
+
+## What is never collected
+
+- The content of messages, in any app.
+- Passwords.
+- The sound of calls.
+- Photos, files, or the camera.
+
+---
+
+## Where the data goes
+
+Into **your own Firebase project only**. No other company's server is involved.
+You own it and you can delete all of it at any time from the Firebase console.
+
+---
+
+## Security you must set up yourself
+
+1. **Set the database rules.** Copy [`database.rules.json`](../database.rules.json)
+   into the Realtime Database rules page. If you leave the rules open, anyone who
+   finds your database address can read your child's location. This is the single
+   most important step.
+2. **Turn on Anonymous sign-in** in Firebase Authentication. The rules need it.
+3. **Delete old data now and then.** Location history from six months ago serves
+   no purpose.
+4. `google-services.json` is not a secret — it ships inside every Android APK, so
+   anyone can read it out of the app. Your protection is the database rules, not
+   hiding that file.
+
+---
+
+## The law
+
+- **Allowed:** a parent supervising their own child under 18, with the child
+  knowing about it.
+- **Not allowed, and a crime in most countries:** installing this on an adult's
+  phone without their knowledge and agreement. That is stalkerware.
+
+Laws differ by country. Using this project is your responsibility.
+
+---
+
+## A thought beyond the law
+
+As a child grows, hidden monitoring costs more trust than it buys safety. Talking
+usually works better than watching. Tools like this one are most useful for a
+young child with a first phone, and least useful for a teenager.
