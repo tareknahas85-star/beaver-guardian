@@ -12,8 +12,12 @@ android {
         applicationId = "com.microbeaver.guardian"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        // Bump versionCode on every release, otherwise Android may refuse to
+        // install over an existing copy and you end up testing the old build.
+        // versionName is what the About screen prints — keep it in step so the
+        // installed version is verifiable at a glance.
+        versionCode = 7
+        versionName = "6.1"
     }
 
     buildTypes {

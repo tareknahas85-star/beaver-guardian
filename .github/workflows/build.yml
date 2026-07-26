@@ -7,6 +7,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write        # needed to replace the APK on the "latest" release
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,3 +40,62 @@ jobs:
           name: beaver-guardian-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      # The release page is where the APK actually gets downloaded from, so it has
+      # to track main. Without this step the asset stays frozen at whatever was
+      # uploaded by hand, and installing from the release silently gives an old
+      # build — which is exactly what happened before this step existed.
+      - name: Publish APK to the "latest" release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -n 1)
+          test -n "$APK"
+          cp "$APK" beaver-guardian.apk
+
+          VERSION_NAME=$(sed -n 's/.*versionName *= *"\(.*\)".*/\1/p' app/build.gradle.kts | head -n 1)
+          VERSION_CODE=$(sed -n 's/.*versionCode *= *\([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n 1)
+          SIZE=$(du -h beaver-guardian.apk | cut -f1)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BUILT=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          echo "publishing v$VERSION_NAME (code $VERSION_CODE), $SIZE"
+
+          {
+            printf '**v%s** (versionCode %s) — %s\n\n' "$VERSION_NAME" "$VERSION_CODE" "$SIZE"
+            printf 'Commit `%s` — built %s\n\n' "$SHORT_SHA" "$BUILT"
+            printf 'Debug build, replaced automatically on every push to `main`.\n\n'
+            printf 'After installing, open About / حول — it should read **v%s**.\n' "$VERSION_NAME"
+            printf 'If it shows anything else, an older APK is still installed.\n'
+          } > release-notes.md
+
+          if gh release view latest >/dev/null 2>&1; then
+            gh release edit latest \
+              --title "Beaver Guardian v$VERSION_NAME" \
+              --notes-file release-notes.md
+          else
+            gh release create latest \
+              --title "Beaver Guardian v$VERSION_NAME" \
+              --notes-file release-notes.md
+          fi
+
+          gh release upload latest beaver-guardian.apk --clobber
+
+      - name: Verify the published asset is the build we just made
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          rm -rf _verify
+          mkdir _verify
+          gh release download latest --pattern 'beaver-guardian.apk' --dir _verify
+          LOCAL=$(sha256sum beaver-guardian.apk | cut -d' ' -f1)
+          REMOTE=$(sha256sum _verify/beaver-guardian.apk | cut -d' ' -f1)
+          echo "local  $LOCAL"
+          echo "remote $REMOTE"
+          test "$LOCAL" = "$REMOTE"
+          echo "release asset matches the build ✓"
