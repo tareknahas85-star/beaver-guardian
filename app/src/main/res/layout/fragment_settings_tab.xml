@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="20dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Call filtering -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Call filtering" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swCallFilter" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Block unknown callers" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swAllowContacts" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Always allow saved contacts" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swOutgoing" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Limit outgoing calls too" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Emergency numbers are never blocked."
+                    android:textSize="12sp" android:textColor="@color/secondary_dark"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Internet and content -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Restrictions" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swInternet" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Internet paused" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swSos" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="SOS button on child device" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swWeekly" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Weekly report" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Notifications -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Alerts" />
+                <TextView android:id="@+id/tvNotifState" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:paddingTop="8dp" />
+                <Button android:id="@+id/btnNotifSettings" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Notification settings" android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <Button android:id="@+id/btnAdvanced" style="@style/Button.Outline"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Numbers, safe zones and schedule" android:layout_marginBottom="10dp" />
+
+        <Button android:id="@+id/btnAbout" style="@style/Button.Text"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="About" />
+    </LinearLayout>
+</ScrollView>

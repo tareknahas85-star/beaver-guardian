@@ -201,6 +201,28 @@ object FirebaseRepo {
         return l
     }
 
+    /** Live last-known position of the child device. */
+    fun listenLocation(
+        code: String,
+        onData: (lat: Double, lng: Double, ts: Long) -> Unit
+    ): ValueEventListener {
+        val ref = root(code).child("reports").child("location").child("latest")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                onData(
+                    s.child("lat").getValue(Double::class.java) ?: 0.0,
+                    s.child("lng").getValue(Double::class.java) ?: 0.0,
+                    s.child("ts").getValue(Long::class.java) ?: 0L
+                )
+            }
+            override fun onCancelled(e: DatabaseError) {
+                Log.e(TAG, "DB Error [location/$code]: ${e.message}")
+            }
+        }
+        ref.addValueEventListener(l)
+        return l
+    }
+
     /** Remembers which side of each safe zone the child was on, to detect crossings. */
     fun setZoneState(code: String, zoneId: String, inside: Boolean) {
         root(code).child("state").child("zones").child(zoneId).setValue(inside)

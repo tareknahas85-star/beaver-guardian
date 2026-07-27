@@ -11,8 +11,9 @@ class RoleSelectActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Role is chosen once. On the child device it can never be switched back.
+        // The parent lands on MainActivity, the tabbed shell.
         when (Prefs.getRole(this)) {
-            Prefs.ROLE_PARENT -> { open(ParentActivity::class.java); return }
+            Prefs.ROLE_PARENT -> { open(MainActivity::class.java); return }
             Prefs.ROLE_CHILD -> { open(ChildSetupActivity::class.java); return }
         }
 
@@ -21,7 +22,7 @@ class RoleSelectActivity : AppCompatActivity() {
 
         b.btnParent.setOnClickListener {
             Prefs.setRole(this, Prefs.ROLE_PARENT)
-            open(ParentActivity::class.java)
+            open(MainActivity::class.java)
         }
         b.btnChild.setOnClickListener {
             Prefs.setRole(this, Prefs.ROLE_CHILD)

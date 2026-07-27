@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Four tabs, matching the SafeGuard navigation spec. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_dashboard"
+        android:icon="@drawable/ic_nav_dashboard"
+        android:title="@string/tab_dashboard" />
+    <item
+        android:id="@+id/tab_kids"
+        android:icon="@drawable/ic_nav_kids"
+        android:title="@string/tab_kids" />
+    <item
+        android:id="@+id/tab_activity"
+        android:icon="@drawable/ic_nav_activity"
+        android:title="@string/tab_activity" />
+    <item
+        android:id="@+id/tab_settings"
+        android:icon="@drawable/ic_nav_settings"
+        android:title="@string/tab_settings" />
+</menu>

@@ -68,6 +68,11 @@
             </intent-filter>
         </activity>
 
+        <!-- The parent's tabbed shell: Dashboard, Kids, Activity, Settings. -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false" />
+
         <activity
             android:name=".ui.ParentActivity"
             android:exported="false" />
@@ -80,13 +85,13 @@
             android:name=".ui.AboutActivity"
             android:exported="false"
             android:label="About / حول"
-            android:parentActivityName=".ui.ParentActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:name=".ui.GuardSettingsActivity"
             android:exported="false"
             android:label="الإعدادات / Settings"
-            android:parentActivityName=".ui.ParentActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <!-- Device Admin / Device Owner -->
         <receiver

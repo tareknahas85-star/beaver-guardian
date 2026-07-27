@@ -9,4 +9,10 @@
     <string name="role_child">هذا جهاز الطفل (Child)</string>
     <string name="child_notice">هذا الجهاز تحت إشراف وليّ الأمر عبر Beaver Guardian.\nThis device is supervised by a parent using Beaver Guardian.</string>
     <string name="pair_code">رمز الربط (Pairing code)</string>
+
+    <!-- Bottom navigation. Arabic first, matching the SafeGuard design. -->
+    <string name="tab_dashboard">لوحة التحكم</string>
+    <string name="tab_kids">الأطفال</string>
+    <string name="tab_activity">النشاط</string>
+    <string name="tab_settings">الإعدادات</string>
 </resources>
