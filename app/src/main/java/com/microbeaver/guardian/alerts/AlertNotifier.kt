@@ -27,8 +27,15 @@ object AlertNotifier {
                 ctx, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
-    fun show(ctx: Context, alert: Alert) {
-        if (!canPost(ctx)) return
+    /**
+     * @return true when the notification was actually handed to Android. Callers
+     *         need to know: this silently returned when the permission was
+     *         missing, so a child's SOS was received, marked as seen, and then
+     *         thrown away with nothing shown on screen.
+     */
+    fun show(ctx: Context, alert: Alert): Boolean {
+        if (!canPost(ctx)) return false
+        if (!NotificationManagerCompat.from(ctx).areNotificationsEnabled()) return false
 
         val id = (alert.id.takeIf { it.isNotBlank() } ?: alert.ts.toString())
             .hashCode().absoluteValue
@@ -52,9 +59,11 @@ object AlertNotifier {
             Alert.UNKNOWN_CALL, Alert.BLOCKED_CALL -> addCallerActions(ctx, b, alert, id)
         }
 
-        try {
+        return try {
             NotificationManagerCompat.from(ctx).notify(id, b.build())
+            true
         } catch (_: SecurityException) {
+            false
         }
     }
 

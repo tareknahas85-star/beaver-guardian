@@ -1,109 +1,348 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Parent dashboard, following the Guardian Flow design: off-white background,
+  white cards at 16dp radius, indigo primary, emerald for "safe / on".
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
 
+    <!-- ══ Header ══ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:background="@color/background">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="App icon" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SafeGuard"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/tvVersionBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textColor="@color/on_surface_variant" />
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/tvBell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="لوحة تحكم وليّ الأمر / Parent Dashboard"
+            android:text="🔔"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvPairCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="رمز الربط: ..."
-            android:textSize="16sp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Health of the pairing: is the child device actually reporting? -->
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:background="@color/surface_container_low"
-            android:padding="12dp"
-            android:textSize="13sp"
-            android:textColor="@color/on_surface"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="أوامر فورية / Instant controls"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <Button android:id="@+id/btnLockNow" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🔒 قفل الجهاز فوراً" />
-        <Button android:id="@+id/btnUnlock" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🔓 فتح الجهاز" />
-        <Button android:id="@+id/btnBlockInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 قطع الإنترنت" />
-        <Button android:id="@+id/btnAllowInternet" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🌐 السماح بالإنترنت" />
-
-        <Button
-            android:id="@+id/btnSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="⚙️ المكالمات والمناطق والجدول / Calls, zones &amp; schedule" />
-
-        <Button
-            android:id="@+id/btnOpenPairing"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔗 فتح نافذة الربط 15 دقيقة / Open 15-min pairing window" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="آخر التنبيهات / Latest alerts"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvAlerts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="لا تنبيهات / No alerts yet"
-            android:textSize="13sp"
-            android:textColor="@color/error" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="تقارير / Reports"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvReport"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="بانتظار البيانات من جهاز الطفل..."
-            android:textSize="13sp" />
-
-        <!-- About button — opens AboutActivity (E-Signature, contact info, app version) -->
-        <Button
-            android:id="@+id/btnAbout"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="24dp"
-            android:text="ℹ️  حول التطبيق / About" />
-
+            android:padding="6dp" />
     </LinearLayout>
-</ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ══ Notifications-off warning. Hidden unless it applies. ══
+                 This existed as a silent failure before: alerts were received and
+                 thrown away because the permission was denied, with no feedback. -->
+            <LinearLayout
+                android:id="@+id/boxNotifWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_warning_card"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notifications are off"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/on_tertiary_container" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Alerts cannot reach you. SOS and unknown callers will be missed."
+                    android:textSize="13sp"
+                    android:textColor="@color/on_tertiary_container"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp" />
+
+                <Button
+                    android:id="@+id/btnFixNotif"
+                    style="@style/Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Turn notifications on" />
+            </LinearLayout>
+
+            <!-- ══ Child device status ══ -->
+            <androidx.cardview.widget.CardView
+                style="@style/Card.Guardian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        style="@style/Text.SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Child device" />
+
+                    <TextView
+                        android:id="@+id/tvChildName"
+                        style="@style/Text.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not connected"
+                        android:paddingTop="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        style="@style/Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/tvPairCode"
+                        style="@style/Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp" />
+
+                    <Button
+                        android:id="@+id/btnOpenPairing"
+                        style="@style/Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Open pairing window (15 min)"
+                        android:paddingStart="0dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ══ Today's usage ══ -->
+            <androidx.cardview.widget.CardView
+                style="@style/Card.Guardian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        style="@style/Text.SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Today's usage" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="bottom"
+                        android:paddingTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tvUsageTotal"
+                            style="@style/Text.Metric"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="—" />
+
+                        <TextView
+                            android:id="@+id/tvUsagePill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_emerald"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="6dp"
+                            android:paddingBottom="6dp"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_secondary_container"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvUsageList"
+                        style="@style/Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Waiting for the child device…"
+                        android:textSize="14sp"
+                        android:paddingTop="12dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ══ Instant controls ══ -->
+            <androidx.cardview.widget.CardView
+                style="@style/Card.Guardian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        style="@style/Text.SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Controls"
+                        android:paddingBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnLockNow"
+                            style="@style/Button.Primary"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Lock" />
+
+                        <Button
+                            android:id="@+id/btnUnlock"
+                            style="@style/Button.Safe"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Unlock"
+                            android:layout_marginStart="10dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp">
+
+                        <Button
+                            android:id="@+id/btnBlockInternet"
+                            style="@style/Button.Outline"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Net off" />
+
+                        <Button
+                            android:id="@+id/btnAllowInternet"
+                            style="@style/Button.Outline"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Net on"
+                            android:layout_marginStart="10dp" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnSettings"
+                        style="@style/Button.Outline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Calls, safe zones &amp; schedule"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ══ Activity timeline ══ -->
+            <androidx.cardview.widget.CardView
+                style="@style/Card.Guardian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        style="@style/Text.SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recent activity" />
+
+                    <TextView
+                        android:id="@+id/tvAlerts"
+                        style="@style/Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nothing yet"
+                        android:textSize="14sp"
+                        android:paddingTop="10dp" />
+
+                    <Button
+                        android:id="@+id/btnTestNotif"
+                        style="@style/Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send a test notification"
+                        android:paddingStart="0dp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnAbout"
+                style="@style/Button.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

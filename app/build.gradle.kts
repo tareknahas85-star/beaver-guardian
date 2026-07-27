@@ -16,8 +16,8 @@ android {
         // install over an existing copy and you end up testing the old build.
         // versionName is what the About screen prints — keep it in step so the
         // installed version is verifiable at a glance.
-        versionCode = 8
-        versionName = "6.2"
+        versionCode = 9
+        versionName = "6.3"
     }
 
     buildTypes {
