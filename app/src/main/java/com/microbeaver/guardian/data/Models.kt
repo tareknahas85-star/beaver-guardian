@@ -45,6 +45,16 @@ data class Policy(
     // ---- Time-based rules -------------------------------------------------
     var schedules: List<ScheduleRule> = emptyList(),
 
+    // ---- Screen time -------------------------------------------------------
+    /**
+     * Whole-device daily screen time budget in minutes. 0 means no limit.
+     * This is separate from [limits], which caps individual apps.
+     */
+    var dailyLimitMinutes: Int = 0,
+
+    /** What happens when [dailyLimitMinutes] is used up. */
+    var lockWhenLimitReached: Boolean = true,
+
     // ---- Misc --------------------------------------------------------------
     /** Show the SOS button on the child's screen. */
     var sosEnabled: Boolean = true,

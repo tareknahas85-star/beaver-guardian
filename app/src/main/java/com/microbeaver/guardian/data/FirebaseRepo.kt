@@ -168,9 +168,47 @@ object FirebaseRepo {
         root(code).child("reports").child("location").child("latest").setValue(m)
     }
 
-    fun setChildInfo(code: String, model: String) {
-        val m = mapOf("model" to model, "role" to "child", "lastSeen" to System.currentTimeMillis())
+    fun setChildInfo(code: String, model: String, batteryPct: Int = -1, charging: Boolean = false) {
+        val m = HashMap<String, Any>()
+        m["model"] = model
+        m["role"] = "child"
+        m["lastSeen"] = System.currentTimeMillis()
+        if (batteryPct in 0..100) {
+            m["battery"] = batteryPct
+            m["charging"] = charging
+        }
         root(code).child("info").updateChildren(m)
+    }
+
+    /**
+     * The child's launchable apps, so the parent can pick what to restrict
+     * without typing package names. Written once an hour; the list rarely moves.
+     */
+    fun reportInstalledApps(code: String, apps: Map<String, String>) {
+        if (code.isBlank() || apps.isEmpty()) return
+        // Firebase keys cannot contain a dot.
+        val safe = apps.entries.associate { (pkg, label) -> pkg.replace('.', '_') to label }
+        root(code).child("reports").child("apps").setValue(safe)
+    }
+
+    /** Parent side: package name -> app label. */
+    fun listenInstalledApps(code: String, onData: (Map<String, String>) -> Unit): ValueEventListener {
+        val ref = root(code).child("reports").child("apps")
+        val l = object : ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+                val out = HashMap<String, String>()
+                for (c in s.children) {
+                    val pkg = c.key?.replace('_', '.') ?: continue
+                    out[pkg] = c.getValue(String::class.java) ?: pkg
+                }
+                onData(out)
+            }
+            override fun onCancelled(e: DatabaseError) {
+                Log.e(TAG, "DB Error [apps/$code]: ${e.message}")
+            }
+        }
+        ref.addValueEventListener(l)
+        return l
     }
 
     /**
@@ -180,7 +218,8 @@ object FirebaseRepo {
      */
     fun listenChildInfo(
         code: String,
-        onData: (model: String, lastSeen: Long, internetBlocked: Boolean) -> Unit
+        onData: (model: String, lastSeen: Long, internetBlocked: Boolean,
+                 battery: Int, charging: Boolean) -> Unit
     ): ValueEventListener {
         val ref = root(code)
         val l = object : ValueEventListener {
@@ -189,12 +228,14 @@ object FirebaseRepo {
                 onData(
                     info.child("model").getValue(String::class.java) ?: "",
                     info.child("lastSeen").getValue(Long::class.java) ?: 0L,
-                    s.child("policy").child("internetBlocked").getValue(Boolean::class.java) ?: false
+                    s.child("policy").child("internetBlocked").getValue(Boolean::class.java) ?: false,
+                    info.child("battery").getValue(Int::class.java) ?: -1,
+                    info.child("charging").getValue(Boolean::class.java) ?: false
                 )
             }
             override fun onCancelled(e: DatabaseError) {
                 Log.e(TAG, "DB Error [info/$code]: ${e.message}")
-                onData("", 0L, false)
+                onData("", 0L, false, -1, false)
             }
         }
         ref.addValueEventListener(l)

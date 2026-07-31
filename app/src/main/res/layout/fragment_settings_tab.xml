@@ -54,6 +54,61 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Daily screen time budget -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView style="@style/Text.SectionLabel" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Daily screen time limit" />
+                    <TextView android:id="@+id/tvLimitValue" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="16sp"
+                        android:textStyle="bold" android:textColor="@color/primary" />
+                </LinearLayout>
+                <com.google.android.material.slider.Slider android:id="@+id/sliderLimit"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:valueFrom="0" android:valueTo="480" android:stepSize="15"
+                    android:layout_marginTop="4dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView style="@style/Text.Caption" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Off" />
+                    <TextView style="@style/Text.Caption" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="8h" />
+                </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swLockAtLimit" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Lock the phone when the limit is reached" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Installed apps manager -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Apps on the child phone" />
+                <EditText android:id="@+id/etAppSearch"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Search apps" android:inputType="text" android:maxLines="1"
+                    android:background="@color/surface_container_low" android:padding="12dp"
+                    android:textSize="14sp" android:textColor="@color/on_surface"
+                    android:layout_marginTop="10dp" android:importantForAutofill="no" />
+                <TextView android:id="@+id/tvAppsHint" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="8dp" />
+                <LinearLayout android:id="@+id/appsHost"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:paddingTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Notifications -->
         <androidx.cardview.widget.CardView style="@style/Card.Guardian"
             android:layout_width="match_parent" android:layout_height="wrap_content">

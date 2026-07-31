@@ -77,6 +77,11 @@ class DashboardFragment : TabBase() {
         b.tvZoneState.text = s.error
             ?: if (s.hasLocation) "Updated ${GuardianState.relativeTime(s.locationTs)}" else ""
         b.tvConnection.text = if (s.isOnline) "Online" else "Offline"
+        b.tvBattery.text = when {
+            s.battery < 0   -> "—"
+            s.charging      -> "${s.battery}% ⚡"
+            else            -> "${s.battery}%"
+        }
 
         // ── Screen time ring ──
         val total = s.usage.values.sum()
@@ -110,12 +115,13 @@ class DashboardFragment : TabBase() {
     }
 
     /**
-     * The policy stores limits as "package=minutes" entries. Until there is a UI
-     * for a whole-device limit, treat the largest single app limit as the daily
-     * target so the ring has something meaningful to show.
+     * The whole-device budget the parent set in Settings. Falls back to the
+     * largest per-app limit so the ring still means something on a policy that
+     * predates the budget field.
      */
     private fun dailyLimitMinutes(s: GuardianState.Snapshot): Int =
-        s.policy.limits.mapNotNull { it.split("=").getOrNull(1)?.toIntOrNull() }.maxOrNull() ?: 0
+        if (s.policy.dailyLimitMinutes > 0) s.policy.dailyLimitMinutes
+        else s.policy.limits.mapNotNull { it.split("=").getOrNull(1)?.toIntOrNull() }.maxOrNull() ?: 0
 
     override fun onDestroyView() {
         _b = null

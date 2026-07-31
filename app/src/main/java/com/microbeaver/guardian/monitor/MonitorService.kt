@@ -44,6 +44,7 @@ class MonitorService : Service() {
     private lateinit var geofences: GeofenceEvaluator
     private var code: String = ""
     private var listenersAttached = false
+    private var lastAppListReport = 0L
 
     @Volatile
     private var policy: Policy = Policy()
@@ -105,7 +106,19 @@ class MonitorService : Service() {
 
         CallLogReporter.reportRecent(this, code)
         reportLocationAndFences()
-        FirebaseRepo.setChildInfo(code, "${Build.MANUFACTURER} ${Build.MODEL}")
+
+        val batt = DeviceInfo.battery(this)
+        FirebaseRepo.setChildInfo(
+            code, "${Build.MANUFACTURER} ${Build.MODEL}", batt.percent, batt.charging
+        )
+
+        // The installed list barely changes; once an hour is plenty and keeps the
+        // write volume down on the free Firebase plan.
+        val now = System.currentTimeMillis()
+        if (now - lastAppListReport > APP_LIST_INTERVAL_MS) {
+            lastAppListReport = now
+            FirebaseRepo.reportInstalledApps(code, DeviceInfo.launchableApps(this))
+        }
     }
 
     /**
@@ -126,10 +139,16 @@ class MonitorService : Service() {
             }
         }
 
+        // Whole-device daily budget. "*" tells AppBlockService to bounce every app.
+        val dailyBudget = policy.dailyLimitMinutes
+        val totalToday = usage.filterKeys { it != packageName }.values.sum()
+        val overDailyBudget = dailyBudget > 0 && totalToday >= dailyBudget
+
         val blocked = HashSet<String>(policy.blockedApps)
         blocked.addAll(overLimit)
         blocked.addAll(schedule.blockedApps)
         if (policy.locked || schedule.lockDevice) blocked.add("*")
+        if (overDailyBudget && policy.lockWhenLimitReached) blocked.add("*")
 
         AppBlockService.blockedPackages = blocked
 
@@ -138,6 +157,7 @@ class MonitorService : Service() {
         schedule.blockedApps.forEach { policyMgr.setAppHidden(it, true) }
 
         if (schedule.lockDevice) policyMgr.lockNow()
+        if (overDailyBudget && policy.lockWhenLimitReached) policyMgr.lockNow()
 
         // Drive the VPN through explicit start/stop so the tunnel is actually
         // torn down when the internet should come back, and refresh the
@@ -245,6 +265,7 @@ class MonitorService : Service() {
 
     companion object {
         private const val TAG = "MonitorService"
+        private const val APP_LIST_INTERVAL_MS = 60 * 60 * 1000L
         const val ACTION_SOS = "com.microbeaver.guardian.SOS"
 
         fun start(ctx: Context) {

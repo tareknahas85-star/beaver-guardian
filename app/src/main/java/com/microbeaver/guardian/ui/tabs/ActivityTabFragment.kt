@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.microbeaver.guardian.R
 import com.microbeaver.guardian.databinding.FragmentActivityTabBinding
+import com.microbeaver.guardian.monitor.ScheduleEvaluator
 import com.microbeaver.guardian.ui.GuardianState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,6 +35,7 @@ class ActivityTabFragment : TabBase() {
             "${s.usage.size} apps used today"
         }
 
+        renderSchedules(s)
         renderBars(s)
 
         b.tvTimeline.text = if (s.alerts.isEmpty()) "Nothing yet" else {
@@ -41,6 +43,25 @@ class ActivityTabFragment : TabBase() {
             s.alerts.take(12).joinToString("\n\n") { a ->
                 "${f.format(Date(a.ts))}\n${a.title}\n${a.body}"
             }
+        }
+    }
+
+    /** Bedtime and study windows, with whichever one is running right now marked. */
+    private fun renderSchedules(s: GuardianState.Snapshot) {
+        if (s.policy.schedules.isEmpty()) {
+            b.tvSchedules.text = "No time rules set. Add bedtime or study time from Settings."
+            return
+        }
+        val active = ScheduleEvaluator.evaluate(s.policy.schedules)
+        b.tvSchedules.text = s.policy.schedules.joinToString("\n") { r ->
+            val running = r.name in active.activeRuleNames
+            val window = "${ScheduleEvaluator.formatMinute(r.startMinute)}" +
+                "–${ScheduleEvaluator.formatMinute(r.endMinute)}"
+            val effects = listOfNotNull(
+                if (r.lockDevice) "locks phone" else null,
+                if (r.blockInternet) "no internet" else null
+            ).joinToString(", ").ifBlank { "apps only" }
+            "${if (running) "● ACTIVE  " else "○ "}${r.name}  ·  $window  ·  $effects"
         }
     }
 

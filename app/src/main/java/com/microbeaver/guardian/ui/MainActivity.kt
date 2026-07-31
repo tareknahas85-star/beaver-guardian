@@ -115,8 +115,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            FirebaseRepo.listenChildInfo(code) { model, lastSeen, _ ->
-                GuardianState.update { it.copy(model = model, lastSeen = lastSeen, error = null) }
+            FirebaseRepo.listenChildInfo(code) { model, lastSeen, _, battery, charging ->
+                GuardianState.update {
+                    it.copy(
+                        model = model, lastSeen = lastSeen,
+                        battery = battery, charging = charging, error = null
+                    )
+                }
+            }
+
+            FirebaseRepo.listenInstalledApps(code) { apps ->
+                GuardianState.update { it.copy(installedApps = apps) }
             }
 
             FirebaseRepo.listenPolicy(code) { p ->

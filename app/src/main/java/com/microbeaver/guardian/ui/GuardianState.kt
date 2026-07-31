@@ -24,6 +24,11 @@ object GuardianState {
         val lat: Double = 0.0,
         val lng: Double = 0.0,
         val locationTs: Long = 0L,
+        /** -1 when the child has not reported it. */
+        val battery: Int = -1,
+        val charging: Boolean = false,
+        /** package name -> label, as reported by the child device. */
+        val installedApps: Map<String, String> = emptyMap(),
         /** Set when the database could not be reached, for display. */
         val error: String? = null
     ) {
