@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.microbeaver.guardian.App
 import com.microbeaver.guardian.Prefs
 import com.microbeaver.guardian.R
+import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Alert
 import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.ui.RoleSelectActivity
@@ -52,9 +53,24 @@ class ParentAlertService : Service() {
             FirebaseRepo.claimDevice(code) { ok ->
                 if (!ok) Log.w(TAG, "claimDevice failed — listening anyway")
                 FirebaseRepo.listenAlerts(code) { alert -> onAlert(alert) }
+
+                // Which event types buzz is the parent's choice, so keep the
+                // policy in view while listening to the feed.
+                FirebaseRepo.listenPolicy(code) { p -> notifyTypes = p.notifyOnEvents.toSet() }
+                FirebaseRepo.listenEvents(code) { e -> onEvent(e) }
             }
         }
         return START_STICKY
+    }
+
+    /** Types the parent asked to be notified about. Everything is still logged. */
+    @Volatile private var notifyTypes: Set<String> = emptySet()
+
+    private fun onEvent(e: ActivityEvent) {
+        // Skip the backlog that predates this service starting.
+        if (e.ts < startedAt - GRACE_MS) return
+        if (e.type !in notifyTypes) return
+        AlertNotifier.showEvent(this, e)
     }
 
     private fun onAlert(alert: Alert) {

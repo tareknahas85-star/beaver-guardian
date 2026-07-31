@@ -17,6 +17,7 @@ import com.microbeaver.guardian.databinding.ActivityMainBinding
 import com.microbeaver.guardian.ui.tabs.ActivityTabFragment
 import com.microbeaver.guardian.ui.tabs.DashboardFragment
 import com.microbeaver.guardian.ui.tabs.KidsFragment
+import com.microbeaver.guardian.ui.tabs.LiveFragment
 import com.microbeaver.guardian.ui.tabs.SettingsTabFragment
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private var attachedAt = 0L
     private val alerts = ArrayList<com.microbeaver.guardian.data.Alert>()
+    private val events = ArrayList<com.microbeaver.guardian.data.ActivityEvent>()
 
     private val notifPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                 when (item.itemId) {
                     com.microbeaver.guardian.R.id.tab_kids     -> KidsFragment()
                     com.microbeaver.guardian.R.id.tab_activity -> ActivityTabFragment()
+                    com.microbeaver.guardian.R.id.tab_live     -> LiveFragment()
                     com.microbeaver.guardian.R.id.tab_settings -> SettingsTabFragment()
                     else -> DashboardFragment()
                 }
@@ -139,6 +142,13 @@ class MainActivity : AppCompatActivity() {
 
             FirebaseRepo.listenLocation(code) { lat, lng, ts ->
                 GuardianState.update { it.copy(lat = lat, lng = lng, locationTs = ts) }
+            }
+
+            FirebaseRepo.listenEvents(code) { e ->
+                events.removeAll { it.id == e.id }
+                events.add(e)
+                val recent = events.sortedByDescending { it.ts }.take(120)
+                GuardianState.update { it.copy(events = recent) }
             }
 
             FirebaseRepo.listenAlerts(code) { alert ->

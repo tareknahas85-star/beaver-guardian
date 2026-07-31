@@ -21,6 +21,7 @@ import com.microbeaver.guardian.Prefs
 import com.microbeaver.guardian.R
 import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.calls.CallPolicyStore
+import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Command
 import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.data.Policy
@@ -45,6 +46,10 @@ class MonitorService : Service() {
     private var code: String = ""
     private var listenersAttached = false
     private var lastAppListReport = 0L
+    private var lastEventTrim = 0L
+    private var eventReceiver: DeviceEventReceiver? = null
+    private var lastInternetOff: Boolean? = null
+    private var lastOverBudget = false
 
     @Volatile
     private var policy: Policy = Policy()
@@ -61,6 +66,7 @@ class MonitorService : Service() {
         policyMgr = PolicyManager(this)
         geofences = GeofenceEvaluator(this)
         startForeground(1, buildNotification())
+        eventReceiver = DeviceEventReceiver.register(this)
         code = Prefs.getPairCode(this) ?: ""
         if (code.isNotEmpty()) attachListeners()
         handler.post(tick)
@@ -119,6 +125,11 @@ class MonitorService : Service() {
             lastAppListReport = now
             FirebaseRepo.reportInstalledApps(code, DeviceInfo.launchableApps(this))
         }
+
+        if (now - lastEventTrim > EVENT_TRIM_INTERVAL_MS) {
+            lastEventTrim = now
+            FirebaseRepo.trimEvents(code)
+        }
     }
 
     /**
@@ -169,6 +180,24 @@ class MonitorService : Service() {
         } else {
             FilterVpnService.unblock(this)
         }
+
+        // Only report the change, not the state, or the feed fills with one row a
+        // minute saying nothing happened.
+        if (lastInternetOff != internetOff) {
+            lastInternetOff = internetOff
+            EventReporter.record(
+                this, ActivityEvent.INTERNET,
+                if (internetOff) "Internet paused" else "Internet resumed"
+            )
+        }
+        if (overDailyBudget && !lastOverBudget) {
+            EventReporter.record(
+                this, ActivityEvent.LIMIT_REACHED,
+                "Daily screen time used up",
+                "Budget was ${dailyBudget} min"
+            )
+        }
+        lastOverBudget = overDailyBudget
     }
 
     /** One location fix, used both for the parent's map and the safe zones. */
@@ -210,6 +239,7 @@ class MonitorService : Service() {
         // Mirror the call rules locally — the screening service is started cold
         // by the telecom stack and cannot wait on Firebase.
         CallPolicyStore.save(this, p)
+        EventReporter.feedEnabled = p.activityFeedEnabled
 
         // Keep uninstall protection asserted; a Device Owner can lose it after
         // an OTA or a policy reset.
@@ -255,6 +285,8 @@ class MonitorService : Service() {
     }
 
     override fun onDestroy() {
+        DeviceEventReceiver.unregister(this, eventReceiver)
+        eventReceiver = null
         handler.removeCallbacks(tick)
         // START_STICKY + BootReceiver bring the service back; do not relaunch here
         // (starting an FGS from background is restricted on Android 12+).
@@ -266,6 +298,7 @@ class MonitorService : Service() {
     companion object {
         private const val TAG = "MonitorService"
         private const val APP_LIST_INTERVAL_MS = 60 * 60 * 1000L
+        private const val EVENT_TRIM_INTERVAL_MS = 6 * 60 * 60 * 1000L
         const val ACTION_SOS = "com.microbeaver.guardian.SOS"
 
         fun start(ctx: Context) {

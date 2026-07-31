@@ -50,6 +50,7 @@ class SettingsTabFragment : TabBase() {
         b.swOutgoing.onChange { on -> host?.savePolicy { it.restrictOutgoing = on } }
         b.swSos.onChange { on -> host?.savePolicy { it.sosEnabled = on } }
         b.swWeekly.onChange { on -> host?.savePolicy { it.weeklyReport = on } }
+        b.swFeed.onChange { on -> host?.savePolicy { it.activityFeedEnabled = on } }
         b.swLockAtLimit.onChange { on -> host?.savePolicy { it.lockWhenLimitReached = on } }
 
         // The internet switch goes through a command, not the policy, so the child
@@ -107,6 +108,7 @@ class SettingsTabFragment : TabBase() {
         b.swInternet.isChecked      = s.policy.internetBlocked
         b.swSos.isChecked           = s.policy.sosEnabled
         b.swWeekly.isChecked        = s.policy.weeklyReport
+        b.swFeed.isChecked          = s.policy.activityFeedEnabled
         b.swLockAtLimit.isChecked   = s.policy.lockWhenLimitReached
 
         val limit = s.policy.dailyLimitMinutes.coerceIn(0, 480)

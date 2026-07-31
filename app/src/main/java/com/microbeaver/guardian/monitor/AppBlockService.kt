@@ -3,6 +3,7 @@ package com.microbeaver.guardian.monitor
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
+import com.microbeaver.guardian.data.ActivityEvent
 
 /**
  * Enforces app blocking + time limits. When a blocked app comes to the
@@ -17,6 +18,7 @@ class AppBlockService : AccessibilityService() {
 
         val blocked = blockedPackages
         val isBlocked = blocked.contains("*") || blocked.contains(pkg)
+
         if (isBlocked && !isSystemUi(pkg)) {
             performGlobalAction(GLOBAL_ACTION_HOME)
             Toast.makeText(
@@ -24,6 +26,16 @@ class AppBlockService : AccessibilityService() {
                 "التطبيق محظور من وليّ الأمر / Blocked by parent",
                 Toast.LENGTH_SHORT
             ).show()
+            EventReporter.recordApp(
+                this, ActivityEvent.APP_BLOCKED, pkg, "Tried to open a blocked app"
+            )
+            return
+        }
+
+        // The launcher and system UI are not interesting to a parent, and the
+        // launcher reappears between every app switch, so it would dominate the feed.
+        if (!isSystemUi(pkg)) {
+            EventReporter.recordApp(this, ActivityEvent.APP_OPENED, pkg)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.microbeaver.guardian.ui
 
+import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Alert
 import com.microbeaver.guardian.data.Policy
 
@@ -21,6 +22,8 @@ object GuardianState {
         /** package name -> minutes used today */
         val usage: Map<String, Int> = emptyMap(),
         val alerts: List<Alert> = emptyList(),
+        /** Live feed, newest first. */
+        val events: List<ActivityEvent> = emptyList(),
         val lat: Double = 0.0,
         val lng: Double = 0.0,
         val locationTs: Long = 0L,

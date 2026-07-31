@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Which events buzz. Everything is logged either way. -->
+    <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+        android:layout_marginTop="4dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="wrap_content"
+                    android:text="Notify me about" />
+                <TextView android:id="@+id/tvToggleChooser" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Change"
+                    android:textSize="14sp" android:textStyle="bold"
+                    android:textColor="@color/primary" android:padding="4dp" />
+            </LinearLayout>
+            <TextView android:id="@+id/tvNotifySummary" style="@style/Text.Caption"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:paddingTop="6dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView android:id="@+id/tvLiveHint" style="@style/Text.Caption"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:paddingStart="24dp" android:paddingEnd="24dp" android:paddingBottom="6dp" />
+
+    <ScrollView android:id="@+id/scrollFeed"
+        android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:clipToPadding="false"
+        android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="20dp">
+        <LinearLayout android:id="@+id/feedHost"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+</LinearLayout>

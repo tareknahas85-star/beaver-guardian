@@ -152,6 +152,61 @@ object FirebaseRepo {
         if (alertId.isNotEmpty()) root(code).child("alerts").child(alertId).child("seen").setValue(true)
     }
 
+    // ---------- Live activity feed (child -> parent) ----------
+
+    /**
+     * Appends one event. Capped by [trimEvents] so the feed cannot grow forever
+     * on the free plan.
+     */
+    fun pushEvent(code: String, event: ActivityEvent) {
+        if (code.isBlank()) return
+        val ref = root(code).child("events").push()
+        event.id = ref.key ?: ""
+        if (event.ts == 0L) event.ts = System.currentTimeMillis()
+        ref.setValue(event)
+    }
+
+    /** Newest [limit] events, oldest first within the window. */
+    fun listenEvents(
+        code: String,
+        limit: Int = 100,
+        onEvent: (ActivityEvent) -> Unit
+    ): ChildEventListener {
+        val ref = root(code).child("events").limitToLast(limit)
+        val l = object : ChildEventListener {
+            override fun onChildAdded(s: DataSnapshot, prev: String?) {
+                s.getValue(ActivityEvent::class.java)?.let(onEvent)
+            }
+            override fun onChildChanged(s: DataSnapshot, prev: String?) {}
+            override fun onChildRemoved(s: DataSnapshot) {}
+            override fun onChildMoved(s: DataSnapshot, prev: String?) {}
+            override fun onCancelled(e: DatabaseError) {
+                Log.e(TAG, "DB Error [events/$code]: ${e.message}")
+            }
+        }
+        ref.addChildEventListener(l)
+        return l
+    }
+
+    /**
+     * Deletes all but the newest [keep] events. Called occasionally by the child;
+     * without it the feed would grow without bound on a free database.
+     */
+    fun trimEvents(code: String, keep: Int = 300) {
+        if (code.isBlank()) return
+        root(code).child("events").orderByChild("ts").limitToLast(keep).get()
+            .addOnSuccessListener { newest ->
+                val keepIds = newest.children.mapNotNull { it.key }.toSet()
+                root(code).child("events").get().addOnSuccessListener { all ->
+                    val doomed = all.children.mapNotNull { it.key }.filter { it !in keepIds }
+                    if (doomed.isEmpty()) return@addOnSuccessListener
+                    val updates = doomed.associate { "$it" to null as Any? }
+                    root(code).child("events").updateChildren(updates)
+                }
+            }
+            .addOnFailureListener { e -> Log.e(TAG, "trimEvents failed: ${e.message}") }
+    }
+
     // ---------- Reports (child -> parent) ----------
     fun reportUsage(code: String, date: String, pkg: String, minutes: Int) {
         // Firebase keys cannot contain '.', so store package with '_'.

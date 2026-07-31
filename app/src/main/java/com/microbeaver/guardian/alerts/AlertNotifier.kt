@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.microbeaver.guardian.App
 import com.microbeaver.guardian.R
 import com.microbeaver.guardian.calls.CallerIdLookup
+import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Alert
 import kotlin.math.absoluteValue
 
@@ -95,4 +96,34 @@ object AlertNotifier {
         )
         b.addAction(0, "اتصال / Call", dialPi)
     }
+
+    /**
+     * A live-feed event, on the quieter [App.CH_ACTIVITY] channel.
+     *
+     * Events share one notification id per type so a burst replaces itself rather
+     * than stacking twenty rows in the shade — the parent sees the latest app
+     * opened, not a scroll of every switch.
+     */
+    fun showEvent(ctx: Context, e: ActivityEvent): Boolean {
+        if (!canPost(ctx)) return false
+        if (!NotificationManagerCompat.from(ctx).areNotificationsEnabled()) return false
+
+        val b = NotificationCompat.Builder(ctx, App.CH_ACTIVITY)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(e.title.ifBlank { ActivityEvent.label(e.type) })
+            .setContentText(e.detail.ifBlank { ActivityEvent.label(e.type) })
+            .setWhen(e.ts)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setGroup(GROUP_ACTIVITY)
+
+        return try {
+            NotificationManagerCompat.from(ctx).notify(e.type.hashCode().absoluteValue, b.build())
+            true
+        } catch (_: SecurityException) {
+            false
+        }
+    }
+
+    private const val GROUP_ACTIVITY = "guardian_activity"
 }

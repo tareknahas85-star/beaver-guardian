@@ -51,6 +51,13 @@
                     android:id="@+id/swWeekly" style="@style/Switch.Guardian"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="Weekly report" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swFeed" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Record the live activity feed" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Choose which events notify you in the Live tab."
+                    android:textSize="12sp" android:textColor="@color/on_surface_variant" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

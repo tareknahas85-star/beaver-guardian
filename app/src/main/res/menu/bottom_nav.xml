@@ -14,6 +14,10 @@
         android:icon="@drawable/ic_nav_activity"
         android:title="@string/tab_activity" />
     <item
+        android:id="@+id/tab_live"
+        android:icon="@drawable/ic_nav_live"
+        android:title="@string/tab_live" />
+    <item
         android:id="@+id/tab_settings"
         android:icon="@drawable/ic_nav_settings"
         android:title="@string/tab_settings" />

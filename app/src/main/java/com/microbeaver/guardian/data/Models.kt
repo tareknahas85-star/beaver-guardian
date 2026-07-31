@@ -55,6 +55,24 @@ data class Policy(
     /** What happens when [dailyLimitMinutes] is used up. */
     var lockWhenLimitReached: Boolean = true,
 
+    // ---- Live activity feed --------------------------------------------------
+    /** Record events to the feed at all. */
+    var activityFeedEnabled: Boolean = true,
+    /**
+     * Which event types raise a notification on the parent's phone.
+     * Everything is always written to the feed; this only controls buzzing.
+     *
+     * App switches are deliberately not on by default: a child changes app
+     * hundreds of times a day and a notification each time is noise the parent
+     * will mute, which then hides the alerts that matter.
+     */
+    var notifyOnEvents: List<String> = listOf(
+        ActivityEvent.APP_INSTALLED,
+        ActivityEvent.APP_UNINSTALLED,
+        ActivityEvent.APP_BLOCKED,
+        ActivityEvent.UNLOCK
+    ),
+
     // ---- Misc --------------------------------------------------------------
     /** Show the SOS button on the child's screen. */
     var sosEnabled: Boolean = true,
@@ -160,5 +178,62 @@ data class Alert(
         const val ZONE_ENTER    = "ZONE_ENTER"
         const val SOS           = "SOS"
         const val WEEKLY_REPORT = "WEEKLY_REPORT"
+    }
+}
+
+
+/**
+ * One thing that happened on the child device, for the live feed.
+ *
+ * Kept separate from [Alert]: alerts are exceptional and always notify, events
+ * are the ordinary running commentary. Mixing them meant the important ones got
+ * lost in the stream.
+ */
+data class ActivityEvent(
+    var id: String = "",
+    var type: String = "",
+    /** Human-readable, already localised by the child device. */
+    var title: String = "",
+    var detail: String = "",
+    /** Package name for app events, else "". */
+    var pkg: String = "",
+    var ts: Long = 0L
+) {
+    companion object {
+        const val APP_OPENED      = "APP_OPENED"
+        const val APP_BLOCKED     = "APP_BLOCKED"
+        const val APP_INSTALLED   = "APP_INSTALLED"
+        const val APP_UNINSTALLED = "APP_UNINSTALLED"
+        const val SCREEN_ON       = "SCREEN_ON"
+        const val SCREEN_OFF      = "SCREEN_OFF"
+        const val UNLOCK          = "UNLOCK"
+        const val CALL            = "CALL"
+        const val POWER           = "POWER"
+        const val INTERNET        = "INTERNET"
+        const val LIMIT_REACHED   = "LIMIT_REACHED"
+        const val BOOT            = "BOOT"
+
+        /** Everything the parent can choose to be notified about. */
+        val ALL = listOf(
+            APP_OPENED, APP_BLOCKED, APP_INSTALLED, APP_UNINSTALLED,
+            UNLOCK, SCREEN_ON, SCREEN_OFF, CALL, POWER, INTERNET,
+            LIMIT_REACHED, BOOT
+        )
+
+        fun label(type: String): String = when (type) {
+            APP_OPENED      -> "App opened"
+            APP_BLOCKED     -> "Blocked app attempt"
+            APP_INSTALLED   -> "App installed"
+            APP_UNINSTALLED -> "App removed"
+            UNLOCK          -> "Phone unlocked"
+            SCREEN_ON       -> "Screen on"
+            SCREEN_OFF      -> "Screen off"
+            CALL            -> "Call"
+            POWER           -> "Charger"
+            INTERNET        -> "Internet changed"
+            LIMIT_REACHED   -> "Time limit reached"
+            BOOT            -> "Phone restarted"
+            else            -> type
+        }
     }
 }
