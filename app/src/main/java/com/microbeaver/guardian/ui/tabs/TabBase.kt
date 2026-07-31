@@ -1,6 +1,7 @@
 package com.microbeaver.guardian.ui.tabs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.microbeaver.guardian.ui.GuardianState
@@ -18,7 +19,16 @@ abstract class TabBase : Fragment() {
 
     private val observer: (GuardianState.Snapshot) -> Unit = { snap ->
         // Firebase callbacks can land off the main thread.
-        view?.post { if (isAdded) render(snap) }
+        view?.post {
+            if (!isAdded) return@post
+            // A parent must not lose the whole app because one tab could not draw
+            // a row. Log it loudly and leave the rest of the app usable.
+            try {
+                render(snap)
+            } catch (e: Exception) {
+                Log.e(TAG, "${this::class.java.simpleName} render failed", e)
+            }
+        }
     }
 
     /** Called whenever any part of the child's state changes. */
@@ -48,4 +58,8 @@ abstract class TabBase : Fragment() {
     }
 
     protected fun fmt(minutes: Int) = GuardianState.formatDuration(minutes)
+
+    companion object {
+        private const val TAG = "GuardianTab"
+    }
 }

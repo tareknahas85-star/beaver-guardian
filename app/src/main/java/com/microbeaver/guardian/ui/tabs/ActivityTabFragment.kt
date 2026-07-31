@@ -84,18 +84,21 @@ class ActivityTabFragment : TabBase() {
             row.findViewById<TextView>(R.id.tvValue).text = fmt(min)
 
             val bar = row.findViewById<View>(R.id.bar)
+            val track = bar.parent as? View
+
             // Width is a fraction of the track, applied once the track is measured.
-            val track = bar.parent as View
-            track.post {
+            //
+            // Do not cast to a specific LayoutParams subclass here. The bar sits
+            // inside a FrameLayout, so its params are FrameLayout.LayoutParams and
+            // casting them to LinearLayout.LayoutParams threw ClassCastException,
+            // which crashed the whole app whenever this tab opened. Width and
+            // height live on ViewGroup.LayoutParams, so no cast is needed at all.
+            track?.post {
                 val w = track.width
                 if (w > 0) {
-                    bar.layoutParams = (bar.layoutParams as LinearLayout.LayoutParams?
-                        ?: LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT))
-                        .also { lp ->
-                            lp.width = (w * min.toFloat() / max).toInt().coerceAtLeast(6)
-                            lp.height = LinearLayout.LayoutParams.MATCH_PARENT
-                        }
-                    bar.requestLayout()
+                    val lp = bar.layoutParams ?: return@post
+                    lp.width = (w * min.toFloat() / max).toInt().coerceAtLeast(6)
+                    bar.layoutParams = lp
                 }
             }
             host.addView(row)
