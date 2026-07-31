@@ -12,7 +12,7 @@ import com.microbeaver.guardian.App
 import com.microbeaver.guardian.Prefs
 import com.microbeaver.guardian.R
 import com.microbeaver.guardian.monitor.MonitorService
-import com.microbeaver.guardian.ui.ParentActivity
+import com.microbeaver.guardian.ui.MainActivity
 
 /**
  * FCM command channel.
@@ -73,11 +73,11 @@ class CommandMessagingService : FirebaseMessagingService() {
     private fun showAlertNotification(title: String, body: String) {
         val nm = getSystemService(NotificationManager::class.java) ?: return
 
-        // Tap notification → open ParentActivity (no-op if app is already open)
+        // Tap notification → open the parent shell (no-op if it is already open)
         val tapIntent = PendingIntent.getActivity(
             this,
             0,
-            Intent(this, ParentActivity::class.java).apply {
+            Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
