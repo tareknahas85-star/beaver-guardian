@@ -32,10 +32,9 @@ object SosReporter {
             code,
             Alert(
                 type = Alert.SOS,
-                title = "🆘 استغاثة / SOS",
+                title = "🆘 SOS",
                 body = buildString {
-                    append("ضغط زر الاستغاثة على $model")
-                    append(" / SOS pressed on $model")
+                    append("SOS pressed on $model")
                     if (note.isNotBlank()) append("\n$note")
                 },
                 ts = System.currentTimeMillis()
@@ -58,7 +57,7 @@ object SosReporter {
                         code,
                         Alert(
                             type = Alert.SOS,
-                            title = "🆘 موقع الاستغاثة / SOS location",
+                            title = "🆘 SOS location",
                             body = "https://maps.google.com/?q=${loc.latitude},${loc.longitude}",
                             lat = loc.latitude,
                             lng = loc.longitude,

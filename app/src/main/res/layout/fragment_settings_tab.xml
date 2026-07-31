@@ -241,17 +241,13 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="18dp">
                 <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Language / اللغة" />
+                    android:layout_height="wrap_content" android:text="Language" />
                 <RadioGroup android:id="@+id/rgLang" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal"
                     android:paddingTop="8dp">
                     <RadioButton android:id="@+id/rbLangSystem" android:layout_width="0dp"
                         android:layout_weight="1" android:layout_height="wrap_content"
                         android:minHeight="48dp" android:text="System" android:textSize="14sp"
-                        android:textColor="@color/on_surface" />
-                    <RadioButton android:id="@+id/rbLangAr" android:layout_width="0dp"
-                        android:layout_weight="1" android:layout_height="wrap_content"
-                        android:minHeight="48dp" android:text="عربي" android:textSize="14sp"
                         android:textColor="@color/on_surface" />
                     <RadioButton android:id="@+id/rbLangEn" android:layout_width="0dp"
                         android:layout_weight="1" android:layout_height="wrap_content"

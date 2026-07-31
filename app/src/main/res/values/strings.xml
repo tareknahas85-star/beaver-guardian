@@ -1,18 +1,18 @@
 <resources>
     <string name="app_name">Beaver Guardian</string>
-    <string name="admin_description">يسمح لوليّ الأمر بحماية الجهاز: منع الحذف، القفل، وتطبيق القيود. Allows the parent to protect this device: prevent uninstall, lock, and enforce limits.</string>
+    <string name="admin_description">Allows the parent to protect this device: prevent uninstall, lock, and enforce limits.</string>
     <string name="accessibility_label">Beaver Guardian — App Guard</string>
-    <string name="accessibility_description">يُستخدم لتطبيق حظر التطبيقات وحدود وقت الاستخدام على جهاز الطفل. Used to enforce app blocking and screen-time limits on the child device.</string>
+    <string name="accessibility_description">Used to enforce app blocking and screen-time limits on the child device.</string>
 
-    <string name="role_title">مين رح يستخدم هالجهاز؟\nWho uses this device?</string>
-    <string name="role_parent">أنا وليّ الأمر (Parent)</string>
-    <string name="role_child">هذا جهاز الطفل (Child)</string>
-    <string name="child_notice">هذا الجهاز تحت إشراف وليّ الأمر عبر Beaver Guardian.\nThis device is supervised by a parent using Beaver Guardian.</string>
-    <string name="pair_code">رمز الربط (Pairing code)</string>
+    <string name="role_title">Who uses this device?</string>
+    <string name="role_parent">I am the parent</string>
+    <string name="role_child">This is the child\'s device</string>
+    <string name="child_notice">This device is supervised by a parent using Beaver Guardian.</string>
+    <string name="pair_code">Pairing code</string>
 
-    <!-- Bottom navigation. Arabic first, matching the SafeGuard design. -->
-    <string name="tab_dashboard">لوحة التحكم</string>
-    <string name="tab_activity">النشاط</string>
-    <string name="tab_live">مباشر</string>
-    <string name="tab_settings">الإعدادات</string>
+    <!-- Bottom navigation. -->
+    <string name="tab_dashboard">Dashboard</string>
+    <string name="tab_activity">Activity</string>
+    <string name="tab_live">Live</string>
+    <string name="tab_settings">Settings</string>
 </resources>

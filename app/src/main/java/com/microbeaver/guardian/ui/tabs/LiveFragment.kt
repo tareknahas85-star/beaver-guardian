@@ -18,12 +18,13 @@ import java.util.Locale
  * The live feed: everything that happens on the child device, newest first, plus
  * control over which of those events also raise a notification.
  *
- * ## Why notifications are opt-in per type
- * A child changes app hundreds of times a day. Notifying on every one produces a
- * stream the parent mutes within an hour, and a muted channel then hides the
- * things that actually matter — an SOS, an unknown caller. So everything is
- * always written to this feed, and the parent picks what is worth a buzz.
- * Installs, removals, blocked-app attempts and unlocks are on by default.
+ * ## Notification defaults
+ * The parent asked for an instant notification on every action, so every event
+ * type notifies by default (see [ActivityEvent.ALL] and
+ * [com.microbeaver.guardian.alerts.AlertNotifier.showEvent], which replaces the
+ * same type's last notification rather than stacking, so a burst of app
+ * switches updates one line instead of flooding the shade). This dialog is
+ * still here for a parent who wants to trim it back down later.
  */
 class LiveFragment : TabBase() {
 

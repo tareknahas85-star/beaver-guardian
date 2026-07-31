@@ -15,6 +15,7 @@ import com.microbeaver.guardian.R
 import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Alert
 import com.microbeaver.guardian.data.FirebaseRepo
+import com.microbeaver.guardian.data.Policy
 import com.microbeaver.guardian.ui.RoleSelectActivity
 
 /**
@@ -56,7 +57,10 @@ class ParentAlertService : Service() {
 
                 // Which event types buzz is the parent's choice, so keep the
                 // policy in view while listening to the feed.
-                FirebaseRepo.listenPolicy(code) { p -> notifyTypes = p.notifyOnEvents.toSet() }
+                FirebaseRepo.listenPolicy(code) { p ->
+                    notifyTypes = p.notifyOnEvents.toSet()
+                    migrateToNotifyAllOnce(p)
+                }
                 FirebaseRepo.listenEvents(code) { e -> onEvent(e) }
             }
         }
@@ -71,6 +75,23 @@ class ParentAlertService : Service() {
         if (e.ts < startedAt - GRACE_MS) return
         if (e.type !in notifyTypes) return
         AlertNotifier.showEvent(this, e)
+    }
+
+    /**
+     * The parent asked, more than once, for an instant notification on every
+     * single action — not just unlocks. That option already existed (the Live
+     * tab's "Notify me about" dialog has an "Everything" button), but it is
+     * opt-in and nothing ever prompted the parent to tap it, so this device's
+     * policy was still sitting on the old narrow default (installs, removals,
+     * blocked-app attempts, unlock only). Runs once per phone, so a deliberate
+     * narrower choice made afterwards is never overwritten.
+     */
+    private fun migrateToNotifyAllOnce(p: Policy) {
+        if (Prefs.isNotifyAllMigrated(this)) return
+        Prefs.setNotifyAllMigrated(this)
+        if (p.notifyOnEvents.toSet() != ActivityEvent.ALL.toSet()) {
+            FirebaseRepo.updatePolicy(code, mapOf("notifyOnEvents" to ActivityEvent.ALL))
+        }
     }
 
     private fun onAlert(alert: Alert) {

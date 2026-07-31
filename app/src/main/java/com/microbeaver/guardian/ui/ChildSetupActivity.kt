@@ -45,25 +45,24 @@ class ChildSetupActivity : AppCompatActivity() {
         b.btnPair.setOnClickListener {
             val code = b.etPairCode.text.toString().trim().uppercase()
             if (code.length < 4) {
-                b.tvStatus.text = "رمز غير صالح / invalid code"
+                b.tvStatus.text = "Invalid code"
                 return@setOnClickListener
             }
-            b.tvStatus.text = "جاري الربط… / pairing…"
+            b.tvStatus.text = "Pairing…"
             // Join the code first; without membership every later write is rejected
             // by the database rules. The parent must have opened a pairing window.
             FirebaseRepo.claimDevice(code) { ok ->
                 runOnUiThread {
                     if (!ok) {
                         b.tvStatus.text =
-                            "فشل الربط ✖ / Pairing failed.\n" +
-                                "اطلب من وليّ الأمر الضغط على \"فتح نافذة الربط\" ثم أعد المحاولة.\n" +
+                            "Pairing failed.\n" +
                                 "Ask the parent to tap \"Open pairing window\", then retry."
                         return@runOnUiThread
                     }
                     Prefs.setPairCode(this, code)
                     FirebaseRepo.setChildInfo(code, "${Build.MANUFACTURER} ${Build.MODEL}")
                     MonitorService.start(this)
-                    b.tvStatus.text = "تم الربط ✔ / Paired — code: $code"
+                    b.tvStatus.text = "Paired — code: $code"
                 }
             }
         }
@@ -103,7 +102,7 @@ class ChildSetupActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        b.tvCallScreeningStatus.text = "فلترة المكالمات: ${CallScreeningRole.statusText(this)}"
+        b.tvCallScreeningStatus.text = "Call filtering: ${CallScreeningRole.statusText(this)}"
         b.tvProtectionStatus.text = protectionSummary()
         // Re-assert the owner policies whenever this screen is opened; an OTA or a
         // policy reset can silently clear them.
@@ -116,29 +115,28 @@ class ChildSetupActivity : AppCompatActivity() {
      */
     private fun protectionSummary(): String = when {
         policyMgr.isDeviceOwner ->
-            "الحماية: مالك الجهاز ✔ لا يمكن إلغاء التثبيت / Device Owner — uninstall blocked"
+            "Device Owner — uninstall blocked"
         policyMgr.isAdminActive ->
-            "الحماية: مشرف جهاز فقط — يمكن إلغاء التثبيت بعد تعطيل المشرف\n" +
-                "Device Admin only — can still be removed after disabling admin. " +
+            "Device Admin only — can still be removed after disabling admin. " +
                 "For full protection provision as Device Owner (see docs/SETUP.md)."
         else ->
-            "الحماية: غير مفعّلة / No protection active — enable Device Admin (step 5)"
+            "No protection active — enable Device Admin (step 5)"
     }
 
     private fun confirmSos() {
         val code = Prefs.getPairCode(this)
         if (code.isNullOrBlank()) {
-            Toast.makeText(this, "اربط الجهاز أولاً / Pair the device first", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Pair the device first", Toast.LENGTH_LONG).show()
             return
         }
         AlertDialog.Builder(this)
-            .setTitle("إرسال استغاثة؟ / Send SOS?")
-            .setMessage("سيتم إرسال تنبيه وموقعك فوراً لوليّ أمرك.\nAn alert and your location will be sent to your parent immediately.")
-            .setPositiveButton("إرسال / Send") { _, _ ->
+            .setTitle("Send SOS?")
+            .setMessage("An alert and your location will be sent to your parent immediately.")
+            .setPositiveButton("Send") { _, _ ->
                 MonitorService.sendSos(this)
-                Toast.makeText(this, "تم إرسال الاستغاثة ✔ / SOS sent", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "SOS sent", Toast.LENGTH_LONG).show()
             }
-            .setNegativeButton("إلغاء / Cancel", null)
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
@@ -181,7 +179,7 @@ class ChildSetupActivity : AppCompatActivity() {
             .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin)
             .putExtra(
                 DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "تفعيل الإشراف الأبوي / Enable parental supervision"
+                "Enable parental supervision"
             )
         startActivity(i)
     }

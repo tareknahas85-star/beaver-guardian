@@ -48,5 +48,5 @@ object NumberUtils {
 
     /** Pretty form for notifications: keeps the original if it already looks formatted. */
     fun display(raw: String?): String =
-        if (raw.isNullOrBlank()) "رقم محجوب / Withheld" else raw
+        if (raw.isNullOrBlank()) "Withheld" else raw
 }

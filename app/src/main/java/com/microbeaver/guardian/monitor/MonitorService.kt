@@ -277,7 +277,7 @@ class MonitorService : Service() {
         )
         return NotificationCompat.Builder(this, App.CH_MONITOR)
             .setContentTitle("Beaver Guardian")
-            .setContentText("هذا الجهاز تحت إشراف وليّ الأمر / Supervised device")
+            .setContentText("Supervised device")
             .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .setContentIntent(pi)

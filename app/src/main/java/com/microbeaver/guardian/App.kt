@@ -36,15 +36,15 @@ class App : Application() {
             // child does not produce a stream of heads-up popovers; the parent can
             // still raise it per-channel in system settings.
             nm.createNotificationChannel(
-                NotificationChannel(CH_ACTIVITY, "Activity / النشاط", NotificationManager.IMPORTANCE_DEFAULT).apply {
-                    description = "ما يحدث على جهاز الطفل / What happens on the child device"
+                NotificationChannel(CH_ACTIVITY, "Activity", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                    description = "What happens on the child device"
                     setShowBadge(true)
                 }
             )
             // Parent alerts — high priority, heads-up style
             nm.createNotificationChannel(
-                NotificationChannel(CH_ALERTS, "Alerts / تنبيهات", NotificationManager.IMPORTANCE_HIGH).apply {
-                    description = "تنبيهات فورية لوليّ الأمر / Instant alerts for the parent"
+                NotificationChannel(CH_ALERTS, "Alerts", NotificationManager.IMPORTANCE_HIGH).apply {
+                    description = "Instant alerts for the parent"
                 }
             )
         }

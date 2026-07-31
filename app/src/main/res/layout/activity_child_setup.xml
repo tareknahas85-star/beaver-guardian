@@ -29,29 +29,29 @@
             android:id="@+id/btnPair"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ربط الجهاز / Pair device"
+            android:text="Pair device"
             android:layout_marginBottom="24dp" />
 
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="خطوات الأذونات / Permission steps"
+            android:text="Permission steps"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <Button android:id="@+id/btnPermUsage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1) الوصول لإحصاءات الاستخدام" />
-        <Button android:id="@+id/btnPermAccessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2) خدمة الوصول (حظر التطبيقات)" />
-        <Button android:id="@+id/btnPermOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3) الظهور فوق التطبيقات" />
-        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) الموقع + المكالمات + جهات الاتصال + الإشعارات" />
-        <Button android:id="@+id/btnPermAdmin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5) تفعيل مشرف الجهاز" />
-        <Button android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) تشغيل فلتر الإنترنت" />
+        <Button android:id="@+id/btnPermUsage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1) Usage access" />
+        <Button android:id="@+id/btnPermAccessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2) Accessibility service (app blocking)" />
+        <Button android:id="@+id/btnPermOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3) Display over other apps" />
+        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) Location + calls + contacts + notifications" />
+        <Button android:id="@+id/btnPermAdmin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5) Enable device admin" />
+        <Button android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) Start the internet filter" />
 
         <Button
             android:id="@+id/btnPermCallScreening"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="7) صلاحية فلترة المكالمات" />
+            android:text="7) Call filtering permission" />
 
         <TextView
             android:id="@+id/tvCallScreeningStatus"
@@ -77,7 +77,7 @@
             android:id="@+id/btnSos"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:text="🆘  استغاثة / SOS"
+            android:text="🆘  SOS"
             android:textSize="20sp"
             android:textStyle="bold"
             android:backgroundTint="@color/error"
@@ -86,7 +86,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="يرسل موقعك وتنبيهاً فورياً لوليّ أمرك / Sends your location and an instant alert to your parent"
+            android:text="Sends your location and an instant alert to your parent"
             android:textSize="11sp"
             android:textColor="@color/on_surface_variant"
             android:paddingTop="4dp" />

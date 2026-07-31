@@ -82,7 +82,7 @@ class GuardianCallScreeningService : CallScreeningService() {
         if (!shouldAlert) return
 
         val shown = NumberUtils.display(number)
-        val direction = if (outgoing) "صادرة / outgoing" else "واردة / incoming"
+        val direction = if (outgoing) "outgoing" else "incoming"
 
         FirebaseRepo.reportCall(
             code,
@@ -100,8 +100,8 @@ class GuardianCallScreeningService : CallScreeningService() {
             code,
             Alert(
                 type = if (blocked) Alert.BLOCKED_CALL else Alert.UNKNOWN_CALL,
-                title = if (blocked) "مكالمة محجوبة / Call blocked"
-                        else "رقم غير معروف / Unknown caller",
+                title = if (blocked) "Call blocked"
+                        else "Unknown caller",
                 body = "$shown — $direction",
                 number = number ?: "",
                 ts = System.currentTimeMillis()

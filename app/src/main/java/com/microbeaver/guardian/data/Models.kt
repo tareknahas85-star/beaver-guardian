@@ -85,16 +85,13 @@ data class Policy(
      * Which event types raise a notification on the parent's phone.
      * Everything is always written to the feed; this only controls buzzing.
      *
-     * App switches are deliberately not on by default: a child changes app
-     * hundreds of times a day and a notification each time is noise the parent
-     * will mute, which then hides the alerts that matter.
+     * Defaults to every type the parent explicitly asked for instant alerts on
+     * every action the device takes. [com.microbeaver.guardian.alerts.AlertNotifier.showEvent]
+     * keeps this from becoming a flood of separate notifications: each event
+     * type shares one notification slot and the newest occurrence replaces the
+     * last, so a burst of app switches updates one line instead of stacking.
      */
-    var notifyOnEvents: List<String> = listOf(
-        ActivityEvent.APP_INSTALLED,
-        ActivityEvent.APP_UNINSTALLED,
-        ActivityEvent.APP_BLOCKED,
-        ActivityEvent.UNLOCK
-    ),
+    var notifyOnEvents: List<String> = ActivityEvent.ALL,
 
     // ---- Misc --------------------------------------------------------------
     /** Show the SOS button on the child's screen. */

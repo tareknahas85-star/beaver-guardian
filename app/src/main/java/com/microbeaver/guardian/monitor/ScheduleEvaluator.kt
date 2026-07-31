@@ -53,7 +53,7 @@ object ScheduleEvaluator {
     /** Handy presets for the parent UI. */
     fun bedtime(): ScheduleRule = ScheduleRule(
         id = "bedtime",
-        name = "وقت النوم / Bedtime",
+        name = "Bedtime",
         daysMask = ScheduleRule.EVERY_DAY,
         startMinute = 22 * 60,      // 22:00
         endMinute = 7 * 60,         // 07:00 next morning
@@ -63,7 +63,7 @@ object ScheduleEvaluator {
 
     fun studyTime(): ScheduleRule = ScheduleRule(
         id = "study",
-        name = "وقت الدراسة / Study time",
+        name = "Study time",
         daysMask = ScheduleRule.maskOf(
             Calendar.SUNDAY, Calendar.MONDAY, Calendar.TUESDAY,
             Calendar.WEDNESDAY, Calendar.THURSDAY

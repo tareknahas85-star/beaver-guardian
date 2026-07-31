@@ -23,7 +23,7 @@ class AppBlockService : AccessibilityService() {
             performGlobalAction(GLOBAL_ACTION_HOME)
             Toast.makeText(
                 this,
-                "التطبيق محظور من وليّ الأمر / Blocked by parent",
+                "Blocked by parent",
                 Toast.LENGTH_SHORT
             ).show()
             EventReporter.recordApp(

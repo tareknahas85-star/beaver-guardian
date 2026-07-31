@@ -80,7 +80,7 @@
         <activity
             android:name=".ui.AboutActivity"
             android:exported="false"
-            android:label="About / حول"
+            android:label="About"
             android:parentActivityName=".ui.MainActivity" />
 
         <!-- Device Admin / Device Owner -->

@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 
 /**
- * Arabic / English / follow-the-system.
+ * English, always — the parent asked for the app to stop mixing languages, so
+ * there is no Arabic string resource set to switch to. [SYSTEM] and [EN] end up
+ * looking identical today, but the setting is kept so a future translation can
+ * slot back in without another settings-screen change.
  *
  * Uses AppCompat's per-app locale API rather than swapping `Configuration`
  * by hand. On Android 13+ AppCompat hands the choice to the platform, so it
@@ -17,7 +20,6 @@ import androidx.core.os.LocaleListCompat
 object LocaleManager {
 
     const val SYSTEM = ""
-    const val AR = "ar"
     const val EN = "en"
 
     private const val PREFS = "locale_prefs"
@@ -43,7 +45,6 @@ object LocaleManager {
         val list = AppCompatDelegate.getApplicationLocales()
         if (list.isEmpty) return SYSTEM
         return when (list[0]?.language) {
-            "ar" -> AR
             "en" -> EN
             else -> SYSTEM
         }

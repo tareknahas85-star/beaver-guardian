@@ -53,10 +53,9 @@ class WeeklyReportWorker(
         val top = totals.entries.sortedByDescending { it.value }.take(5)
 
         val body = buildString {
-            append("إجمالي الاستخدام: ${formatDuration(grandTotal)}")
-            append(" / Total screen time: ${formatDuration(grandTotal)}\n")
-            append("متوسط يومي / Daily average: ${formatDuration(grandTotal / 7)}\n\n")
-            append("الأكثر استخداماً / Most used:\n")
+            append("Total screen time: ${formatDuration(grandTotal)}\n")
+            append("Daily average: ${formatDuration(grandTotal / 7)}\n\n")
+            append("Most used:\n")
             top.forEachIndexed { i, (pkg, minutes) ->
                 append("${i + 1}. ${shortName(pkg)} — ${formatDuration(minutes)}\n")
             }
@@ -67,7 +66,7 @@ class WeeklyReportWorker(
             code,
             Alert(
                 type = Alert.WEEKLY_REPORT,
-                title = "التقرير الأسبوعي / Weekly report — $end",
+                title = "Weekly report — $end",
                 body = body.trim(),
                 ts = System.currentTimeMillis()
             )
@@ -89,7 +88,7 @@ class WeeklyReportWorker(
     private fun formatDuration(minutes: Int): String {
         val h = minutes / 60
         val m = minutes % 60
-        return if (h > 0) "${h}س ${m}د / ${h}h ${m}m" else "${m}د / ${m}m"
+        return if (h > 0) "${h}h ${m}m" else "${m}m"
     }
 
     companion object {

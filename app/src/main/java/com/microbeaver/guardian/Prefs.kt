@@ -15,4 +15,12 @@ object Prefs {
 
     fun setPairCode(c: Context, code: String) = sp(c).edit().putString("pair", code).apply()
     fun getPairCode(c: Context): String? = sp(c).getString("pair", null)
+
+    /**
+     * One-shot upgrade flag: turns "notify me about" up to every event type on
+     * this parent's phone the first time the policy loads after this feature
+     * shipped, without overriding a deliberate narrower choice made afterwards.
+     */
+    fun isNotifyAllMigrated(c: Context): Boolean = sp(c).getBoolean("notify_all_migrated", false)
+    fun setNotifyAllMigrated(c: Context) = sp(c).edit().putBoolean("notify_all_migrated", true).apply()
 }

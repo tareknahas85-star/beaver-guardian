@@ -123,5 +123,5 @@ object CallerIdLookup {
      * contact name, else a plain "unknown" marker.
      */
     fun bestEffortLabel(ctx: Context, number: String?): String =
-        localName(ctx, number) ?: "غير معروف / Unknown"
+        localName(ctx, number) ?: "Unknown"
 }

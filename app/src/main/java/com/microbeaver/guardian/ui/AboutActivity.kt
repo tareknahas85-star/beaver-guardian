@@ -20,15 +20,15 @@ import com.microbeaver.guardian.databinding.ActivityAboutBinding
 import java.io.ByteArrayOutputStream
 
 /**
- * About / حول
+ * About
  *
  * Displays:
- *  • Firebase Auth display name (or "ولي الأمر" for anonymous users)
+ *  • Firebase Auth display name (or "Parent" for anonymous users)
  *  • E-signature — Tarek's official signature is bundled as
  *    res/drawable-nodpi/signature_tarek.png and shown by default.
- *    "تعديل / Edit" reveals a SignaturePad so a different signature can be drawn;
+ *    "Edit" reveals a SignaturePad so a different signature can be drawn;
  *    a drawn signature is stored as Base64 in SharedPreferences and takes priority.
- *    "مسح / Clear" discards the drawn one and restores the bundled default.
+ *    "Clear" discards the drawn one and restores the bundled default.
  *  • Contact info (email, GitHub, LinkedIn, phone)
  *  • App name + version
  *
@@ -46,14 +46,14 @@ class AboutActivity : AppCompatActivity() {
         // The app theme is *.NoActionBar, so the layout supplies its own toolbar.
         setSupportActionBar(b.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "About / حول"
+        supportActionBar?.title = "About"
         b.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // ── User info from Firebase Auth ──────────────────────────────────────
         val user = FirebaseAuth.getInstance().currentUser
-        b.tvDisplayName.text = user?.displayName?.takeIf { it.isNotBlank() } ?: "ولي الأمر"
+        b.tvDisplayName.text = user?.displayName?.takeIf { it.isNotBlank() } ?: "Parent"
         val email = user?.email?.takeIf { it.isNotBlank() }
-        b.tvRole.text = if (email != null) "$email — ولي الأمر" else "Tarek Nahas — ولي الأمر"
+        b.tvRole.text = if (email != null) "$email — Parent" else "Tarek Nahas — Parent"
 
         // ── App version ───────────────────────────────────────────────────────
         b.tvVersion.text = "v${BuildConfig.VERSION_NAME}"
@@ -80,13 +80,13 @@ class AboutActivity : AppCompatActivity() {
         // ── Save the drawn signature ──────────────────────────────────────────
         b.btnSaveSignature.setOnClickListener {
             if (b.signaturePad.isEmpty) {
-                toast("ارسم توقيعك أولاً / Please draw your signature first")
+                toast("Please draw your signature first")
                 return@setOnClickListener
             }
             val bmp = b.signaturePad.transparentSignatureBitmap
             saveSignature(this, bitmapToBase64(bmp))
             showPreview(bmp)
-            toast("تم حفظ التوقيع ✓")
+            toast("Signature saved ✓")
         }
 
         // ── Clear: drop the custom signature, restore the bundled default ─────
@@ -94,7 +94,7 @@ class AboutActivity : AppCompatActivity() {
             clearSignature(this)
             b.signaturePad.clear()
             showDefaultSignature()
-            toast("تمت استعادة التوقيع الأصلي / Default signature restored")
+            toast("Default signature restored")
         }
 
         // ── Contact rows ──────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ class AboutActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: ActivityNotFoundException) {
-            toast("لا يوجد تطبيق لفتح الرابط / No app can open this link")
+            toast("No app can open this link")
         }
     }
 

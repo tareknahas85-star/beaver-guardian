@@ -51,12 +51,12 @@ class GeofenceEvaluator(private val ctx: Context) {
 
             if (!inside && zone.notifyOnExit) {
                 push(code, zone, location, Alert.ZONE_EXIT,
-                    "خروج من ${zone.name} / Left ${zone.name}",
-                    "غادر المنطقة الآمنة / Left the safe zone")
+                    "Left ${zone.name}",
+                    "Left the safe zone")
             } else if (inside && zone.notifyOnEnter) {
                 push(code, zone, location, Alert.ZONE_ENTER,
-                    "وصل إلى ${zone.name} / Arrived at ${zone.name}",
-                    "دخل المنطقة الآمنة / Entered the safe zone")
+                    "Arrived at ${zone.name}",
+                    "Entered the safe zone")
             }
         }
     }

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
-        app:title="About / حول"
+        app:title="About"
         app:titleTextColor="#FFFFFF"
         app:navigationIconTint="#FFFFFF" />
 
@@ -44,7 +44,7 @@
             android:id="@+id/tvDisplayName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ولي الأمر"
+            android:text="Parent"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/on_surface" />
@@ -54,7 +54,7 @@
             android:id="@+id/tvRole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ولي الأمر — Parent"
+            android:text="Parent"
             android:textSize="14sp"
             android:textColor="#555577"
             android:layout_marginBottom="20dp" />
@@ -77,7 +77,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="التوقيع الإلكتروني / E-signature"
+                    android:text="E-signature"
                     android:textSize="13sp"
                     android:textColor="@color/on_surface_variant"
                     android:layout_gravity="end"
@@ -104,7 +104,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="✍  وقّع هنا / Sign here"
+                        android:text="✍  Sign here"
                         android:textColor="@color/outline"
                         android:textSize="15sp"
                         android:background="@drawable/border_signature_hint"
@@ -137,7 +137,7 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="تعديل / Edit"
+                        android:text="Edit"
                         android:textColor="@color/primary" />
 
                     <!-- Shown only in DRAWING mode: back to the official signature -->
@@ -146,7 +146,7 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="مسح / Clear"
+                        android:text="Clear"
                         android:textColor="@color/error"
                         android:visibility="gone" />
 
@@ -154,7 +154,7 @@
                         android:id="@+id/btnSaveSignature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="حفظ / Save"
+                        android:text="Save"
                         android:backgroundTint="@color/primary"
                         android:layout_marginStart="8dp"
                         android:visibility="gone" />
@@ -181,7 +181,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="معلومات التواصل / Contact"
+                    android:text="Contact"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@color/on_surface"

@@ -64,9 +64,9 @@ object CallScreeningRole {
 
     /** Human-readable state for the setup screen. */
     fun statusText(ctx: Context): String = when {
-        !isSupported()      -> "غير مدعوم (يتطلب Android 10+) / Not supported (needs Android 10+)"
-        !isAvailable(ctx)   -> "غير متاح على هذا الجهاز / Not available on this device"
-        isHeld(ctx)         -> "مفعّل ✔ / Active"
-        else                -> "غير مفعّل / Not active — tap to enable"
+        !isSupported()      -> "Not supported (needs Android 10+)"
+        !isAvailable(ctx)   -> "Not available on this device"
+        isHeld(ctx)         -> "Active"
+        else                -> "Not active — tap to enable"
     }
 }
