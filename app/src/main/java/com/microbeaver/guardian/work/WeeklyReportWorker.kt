@@ -117,11 +117,11 @@ class WeeklyReportWorker(
             WorkManager.getInstance(ctx).cancelUniqueWork(WORK_NAME)
         }
 
-        /** Aim for the next Sunday around 20:00, when a parent is likely to read it. */
+        /** Next Sunday at 12:00 noon, as the parent asked. */
         private fun initialDelayHours(): Long {
             val now = Calendar.getInstance()
             val target = (now.clone() as Calendar).apply {
-                set(Calendar.HOUR_OF_DAY, 20)
+                set(Calendar.HOUR_OF_DAY, 12)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 while (get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY || before(now)) {

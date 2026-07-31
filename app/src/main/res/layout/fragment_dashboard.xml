@@ -24,6 +24,10 @@
             <Button android:id="@+id/btnFixNotif" style="@style/Button.Primary"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:text="Turn notifications on" />
+            <Button android:id="@+id/btnFixDoze" style="@style/Button.Primary"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Stop Android freezing alerts"
+                android:layout_marginTop="8dp" android:visibility="gone" />
         </LinearLayout>
 
         <!-- Status: location + connection -->
@@ -90,6 +94,40 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Device, position and protection — folded in from the removed Kids tab -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Child device" />
+                <TextView android:id="@+id/tvDevice" style="@style/Text.Title"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Not connected" android:paddingTop="4dp" />
+                <TextView android:id="@+id/tvSeen" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <TextView android:id="@+id/tvProtection" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="8dp" />
+                <TextView android:id="@+id/tvZonesSummary" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="6dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="12dp">
+                    <Button android:id="@+id/btnMap" style="@style/Button.Primary"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Open map" />
+                    <Button android:id="@+id/btnLocate" style="@style/Button.Outline"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Locate now"
+                        android:layout_marginStart="10dp" />
+                </LinearLayout>
+                <Button android:id="@+id/btnPair" style="@style/Button.Text"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Open pairing window (15 min)" android:paddingStart="0dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Quick actions -->
         <androidx.cardview.widget.CardView style="@style/Card.Guardian"
             android:layout_width="match_parent" android:layout_height="wrap_content">
@@ -126,11 +164,21 @@
             android:layout_width="match_parent" android:layout_height="wrap_content">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="18dp">
-                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Recent activity" />
-                <TextView android:id="@+id/tvFeed" style="@style/Text.Body"
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView style="@style/Text.SectionLabel" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Today's activity" />
+                    <TextView android:id="@+id/tvFeedCount" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="12sp"
+                        android:textStyle="bold" android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/feedHost"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="14sp" android:paddingTop="10dp" android:text="Nothing yet" />
+                    android:orientation="vertical" android:paddingTop="6dp" />
+                <TextView android:id="@+id/tvFeedEmpty" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:text="Nothing yet today" />
                 <Button android:id="@+id/btnTestNotif" style="@style/Button.Text"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Send a test notification" android:paddingStart="0dp" />

@@ -16,7 +16,6 @@ import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.databinding.ActivityMainBinding
 import com.microbeaver.guardian.ui.tabs.ActivityTabFragment
 import com.microbeaver.guardian.ui.tabs.DashboardFragment
-import com.microbeaver.guardian.ui.tabs.KidsFragment
 import com.microbeaver.guardian.ui.tabs.LiveFragment
 import com.microbeaver.guardian.ui.tabs.SettingsTabFragment
 import java.text.SimpleDateFormat
@@ -28,7 +27,8 @@ import java.util.Locale
  *
  * The app used to be one long scrolling screen, which is why it "only showed one
  * page". Everything now lives in four tabs, following the SafeGuard navigation
- * spec: Dashboard, Kids, Activity, Settings.
+ * spec: Dashboard, Activity, Live, Settings. The Kids tab was folded into the
+ * dashboard — it duplicated what was already there.
  *
  * This activity owns all the Firebase listeners and publishes into
  * [GuardianState]; the tabs are pure renderers. Attaching listeners per tab meant
@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
         b.bottomNav.setOnItemSelectedListener { item ->
             show(
                 when (item.itemId) {
-                    com.microbeaver.guardian.R.id.tab_kids     -> KidsFragment()
                     com.microbeaver.guardian.R.id.tab_activity -> ActivityTabFragment()
                     com.microbeaver.guardian.R.id.tab_live     -> LiveFragment()
                     com.microbeaver.guardian.R.id.tab_settings -> SettingsTabFragment()
@@ -206,7 +205,46 @@ class MainActivity : AppCompatActivity() {
 
     fun openAbout() = startActivity(Intent(this, AboutActivity::class.java))
 
-    fun openFullSettings() = startActivity(Intent(this, GuardSettingsActivity::class.java))
+    /**
+     * Asks Android to stop dozing this app.
+     *
+     * The alert listener is a foreground service, but on Doze-aggressive OEMs
+     * (Huawei among the worst) it still gets frozen, which is why notifications
+     * arrived in batches instead of at once. Being on the unrestricted list is the
+     * only supported fix; the dialog is Android's, so the parent has to accept it.
+     */
+    fun requestNoDoze() {
+        try {
+            val pm = getSystemService(android.os.PowerManager::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                pm?.isIgnoringBatteryOptimizations(packageName) == false
+            ) {
+                startActivity(
+                    Intent(
+                        android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                        android.net.Uri.parse("package:$packageName")
+                    )
+                )
+            } else {
+                Toast.makeText(this, "Battery is already unrestricted", Toast.LENGTH_SHORT).show()
+            }
+        } catch (_: Exception) {
+            try {
+                startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            } catch (_: Exception) {
+                Toast.makeText(this, "Open Settings > Battery > Unrestricted", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    /** True when Android will not freeze our listener. */
+    fun isBatteryUnrestricted(): Boolean = try {
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+            getSystemService(android.os.PowerManager::class.java)
+                ?.isIgnoringBatteryOptimizations(packageName) == true
+    } catch (_: Exception) { true }
+
+    private fun ignoreBatteryOptimisations() = Unit
 
     private fun genCode(): String {
         val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

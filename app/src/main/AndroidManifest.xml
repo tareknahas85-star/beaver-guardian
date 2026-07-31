@@ -83,12 +83,6 @@
             android:label="About / حول"
             android:parentActivityName=".ui.MainActivity" />
 
-        <activity
-            android:name=".ui.GuardSettingsActivity"
-            android:exported="false"
-            android:label="الإعدادات / Settings"
-            android:parentActivityName=".ui.MainActivity" />
-
         <!-- Device Admin / Device Owner -->
         <receiver
             android:name=".admin.GuardianDeviceAdminReceiver"

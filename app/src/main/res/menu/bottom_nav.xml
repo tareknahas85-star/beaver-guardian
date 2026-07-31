@@ -6,10 +6,6 @@
         android:icon="@drawable/ic_nav_dashboard"
         android:title="@string/tab_dashboard" />
     <item
-        android:id="@+id/tab_kids"
-        android:icon="@drawable/ic_nav_kids"
-        android:title="@string/tab_kids" />
-    <item
         android:id="@+id/tab_activity"
         android:icon="@drawable/ic_nav_activity"
         android:title="@string/tab_activity" />

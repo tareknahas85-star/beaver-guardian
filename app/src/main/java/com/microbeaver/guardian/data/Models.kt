@@ -26,18 +26,41 @@ data class Policy(
     var blockedDomains: List<String> = emptyList(),
 
     // ---- Call filtering -------------------------------------------------
-    /** Master switch for call screening. */
-    var callFilterEnabled: Boolean = false,
-    /** Reject calls from numbers that are neither in Contacts nor in [allowedNumbers]. */
-    var blockUnknownCalls: Boolean = true,
-    /** Also restrict *outgoing* calls to the same allow-list. */
+    /**
+     * One of [CallMode]. A single field on purpose.
+     *
+     * This used to be two booleans, `blockUnknownCalls` and `allowContacts`, and
+     * the combination was genuinely confusing: with both false the filter let
+     * everything through, and with allowContacts false it blocked the parent's
+     * own saved contacts. Worse, two different screens wrote them, so one screen
+     * saving a blank form silently inverted the other's settings. One mode value
+     * cannot contradict itself.
+     */
+    var callMode: String = CallMode.OFF,
+
+    /** Also apply the mode to *outgoing* calls. */
     var restrictOutgoing: Boolean = false,
-    /** Treat every saved contact on the device as allowed. */
-    var allowContacts: Boolean = true,
-    /** Extra numbers the parent allows explicitly (E.164 or local form). */
+
+    /** Extra numbers allowed on top of contacts (E.164 or local form). */
     var allowedNumbers: List<String> = emptyList(),
-    /** Numbers the parent always rejects, even if saved in Contacts. */
+
+    /** Numbers always rejected, even if saved in Contacts. */
     var blockedNumbers: List<String> = emptyList(),
+
+    /**
+     * Numbers that must always get through, whatever the mode and whatever else
+     * is configured. The parent's own line belongs here. Treated as the highest
+     * priority rule in [callMode] evaluation — even above [blockedNumbers].
+     */
+    var priorityNumbers: List<String> = emptyList(),
+
+    // --- Legacy fields, still read so old policies keep working. Do not write. ---
+    @Deprecated("Superseded by callMode")
+    var callFilterEnabled: Boolean = false,
+    @Deprecated("Superseded by callMode")
+    var blockUnknownCalls: Boolean = true,
+    @Deprecated("Superseded by callMode")
+    var allowContacts: Boolean = true,
 
     // ---- Safe zones / geofencing ----------------------------------------
     var zones: List<GeoZone> = emptyList(),
@@ -79,6 +102,40 @@ data class Policy(
     /** Send the parent a weekly usage digest. */
     var weeklyReport: Boolean = true
 )
+
+/** How incoming (and optionally outgoing) calls are filtered. */
+object CallMode {
+    /** No filtering at all. */
+    const val OFF = "OFF"
+
+    /** Saved contacts and the allow-list get through; everything else is rejected. */
+    const val BLOCK_UNKNOWN = "BLOCK_UNKNOWN"
+
+    /**
+     * Only [Policy.priorityNumbers] and [Policy.allowedNumbers] get through.
+     * Saved contacts are *not* automatically trusted. The strictest setting.
+     */
+    const val WHITELIST_ONLY = "WHITELIST_ONLY"
+
+    fun label(mode: String): String = when (mode) {
+        BLOCK_UNKNOWN  -> "Block numbers not in contacts"
+        WHITELIST_ONLY -> "Only my allowed numbers"
+        else           -> "Off"
+    }
+
+    /**
+     * Reads a mode out of a policy, falling back to the old boolean pair so a
+     * device that has not been reconfigured keeps behaving sensibly.
+     */
+    @Suppress("DEPRECATION")
+    fun of(p: Policy): String {
+        if (p.callMode.isNotBlank() && p.callMode != OFF) return p.callMode
+        if (p.callMode == OFF && !p.callFilterEnabled) return OFF
+        // Legacy shape.
+        if (!p.callFilterEnabled) return OFF
+        return if (p.allowContacts) BLOCK_UNKNOWN else WHITELIST_ONLY
+    }
+}
 
 /**
  * A circular safe zone (home, school, ...).

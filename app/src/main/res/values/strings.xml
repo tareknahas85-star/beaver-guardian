@@ -12,7 +12,6 @@
 
     <!-- Bottom navigation. Arabic first, matching the SafeGuard design. -->
     <string name="tab_dashboard">لوحة التحكم</string>
-    <string name="tab_kids">الأطفال</string>
     <string name="tab_activity">النشاط</string>
     <string name="tab_live">مباشر</string>
     <string name="tab_settings">الإعدادات</string>

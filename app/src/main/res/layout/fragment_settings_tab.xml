@@ -13,22 +13,75 @@
                 android:orientation="vertical" android:padding="18dp">
                 <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="Call filtering" />
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/swCallFilter" style="@style/Switch.Guardian"
+
+                <RadioGroup android:id="@+id/rgCallMode"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Block unknown callers" />
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/swAllowContacts" style="@style/Switch.Guardian"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Always allow saved contacts" />
+                    android:orientation="vertical" android:paddingTop="6dp">
+                    <RadioButton android:id="@+id/rbCallOff"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:textSize="15sp"
+                        android:textColor="@color/on_surface" android:text="Off — all calls ring" />
+                    <RadioButton android:id="@+id/rbCallUnknown"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:textSize="15sp"
+                        android:textColor="@color/on_surface"
+                        android:text="Block numbers not saved in contacts" />
+                    <RadioButton android:id="@+id/rbCallWhitelist"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:textSize="15sp"
+                        android:textColor="@color/on_surface"
+                        android:text="Only my allowed numbers — block everything else" />
+                </RadioGroup>
+
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/swOutgoing" style="@style/Switch.Guardian"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Limit outgoing calls too" />
+                    android:text="Apply to outgoing calls too" />
+
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Emergency numbers are never blocked."
-                    android:textSize="12sp" android:textColor="@color/secondary_dark"
-                    android:paddingTop="6dp" />
+                    android:text="Always ring — never blocked, whatever the mode"
+                    android:textSize="12sp" android:textColor="@color/on_surface_variant"
+                    android:paddingTop="12dp" android:paddingBottom="4dp" />
+                <EditText android:id="@+id/etPriorityNumbers"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minLines="2" android:gravity="top|start"
+                    android:inputType="textMultiLine|phone"
+                    android:background="@color/surface_container_low" android:padding="10dp"
+                    android:textSize="14sp" android:textColor="@color/on_surface"
+                    android:hint="One number per line"
+                    android:importantForAutofill="no" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Also allowed" android:textSize="12sp"
+                    android:textColor="@color/on_surface_variant"
+                    android:paddingTop="10dp" android:paddingBottom="4dp" />
+                <EditText android:id="@+id/etAllowedNumbers"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minLines="2" android:gravity="top|start"
+                    android:inputType="textMultiLine|phone"
+                    android:background="@color/surface_container_low" android:padding="10dp"
+                    android:textSize="14sp" android:textColor="@color/on_surface"
+                    android:importantForAutofill="no" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Always blocked" android:textSize="12sp"
+                    android:textColor="@color/on_surface_variant"
+                    android:paddingTop="10dp" android:paddingBottom="4dp" />
+                <EditText android:id="@+id/etBlockedNumbers"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minLines="2" android:gravity="top|start"
+                    android:inputType="textMultiLine|phone"
+                    android:background="@color/surface_container_low" android:padding="10dp"
+                    android:textSize="14sp" android:textColor="@color/on_surface"
+                    android:importantForAutofill="no" />
+
+                <Button android:id="@+id/btnSaveNumbers" style="@style/Button.Primary"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Save numbers" android:layout_marginTop="12dp" />
+
+                <TextView android:id="@+id/tvCallHint" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="12sp"
+                    android:textColor="@color/secondary_dark" android:paddingTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -132,9 +185,81 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <Button android:id="@+id/btnAdvanced" style="@style/Button.Outline"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Numbers, safe zones and schedule" android:layout_marginBottom="10dp" />
+        <!-- Safe zones and time rules, moved here from the old separate screen -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Safe zones" />
+                <TextView android:id="@+id/tvZonesList" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:paddingTop="8dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="8dp">
+                    <EditText android:id="@+id/etZoneName" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:hint="Name" android:inputType="text" android:maxLines="1"
+                        android:background="@color/surface_container_low" android:padding="10dp"
+                        android:textSize="14sp" android:textColor="@color/on_surface"
+                        android:importantForAutofill="no" />
+                    <EditText android:id="@+id/etZoneRadius" android:layout_width="90dp"
+                        android:layout_height="wrap_content" android:hint="m"
+                        android:inputType="number" android:text="200" android:maxLines="1"
+                        android:background="@color/surface_container_low" android:padding="10dp"
+                        android:layout_marginStart="8dp" android:textSize="14sp"
+                        android:textColor="@color/on_surface" android:importantForAutofill="no" />
+                </LinearLayout>
+                <Button android:id="@+id/btnAddZone" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Add zone at my location" android:layout_marginTop="8dp" />
+                <Button android:id="@+id/btnClearZones" style="@style/Button.Danger"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Remove all zones" android:layout_marginTop="6dp" />
+
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Time rules"
+                    android:paddingTop="18dp" />
+                <TextView android:id="@+id/tvRulesList" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:paddingTop="8dp" />
+                <Button android:id="@+id/btnAddBedtime" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Add bedtime 22:00–07:00" android:layout_marginTop="8dp" />
+                <Button android:id="@+id/btnAddStudy" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Add study time 16:00–18:00" android:layout_marginTop="6dp" />
+                <Button android:id="@+id/btnClearRules" style="@style/Button.Danger"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Remove all rules" android:layout_marginTop="6dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Language -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Language / اللغة" />
+                <RadioGroup android:id="@+id/rgLang" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="horizontal"
+                    android:paddingTop="8dp">
+                    <RadioButton android:id="@+id/rbLangSystem" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:text="System" android:textSize="14sp"
+                        android:textColor="@color/on_surface" />
+                    <RadioButton android:id="@+id/rbLangAr" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:text="عربي" android:textSize="14sp"
+                        android:textColor="@color/on_surface" />
+                    <RadioButton android:id="@+id/rbLangEn" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:text="English" android:textSize="14sp"
+                        android:textColor="@color/on_surface" />
+                </RadioGroup>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <Button android:id="@+id/btnAbout" style="@style/Button.Text"
             android:layout_width="match_parent" android:layout_height="wrap_content"
