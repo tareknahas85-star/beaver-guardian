@@ -176,6 +176,28 @@ class MainActivity : AppCompatActivity() {
         FirebaseRepo.setPolicy(code, p)
     }
 
+    /**
+     * Opens internet for exactly [minutes], then it re-blocks itself.
+     *
+     * Written straight to the policy rather than through [sendCommand]: the
+     * child's [com.microbeaver.guardian.monitor.MonitorService] already reacts
+     * to a policy change immediately (it un-tunnels the VPN in `applyPolicy`),
+     * so a command round-trip isn't needed — and using one here would race
+     * against `internetTimerUntil`, since BLOCK_INTERNET/ALLOW_INTERNET clear
+     * that field to keep a manual toggle from fighting a stale timer.
+     */
+    fun openInternetTimer(minutes: Int) {
+        savePolicy {
+            it.internetBlocked = false
+            it.internetTimerUntil = System.currentTimeMillis() + minutes * 60_000L
+        }
+        Toast.makeText(
+            this,
+            "Internet open for ${GuardianState.formatDuration(minutes)} — it re-blocks itself after that",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
     fun openPairingWindow() {
         FirebaseRepo.openPairing(code)
         Toast.makeText(

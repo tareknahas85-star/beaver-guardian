@@ -25,6 +25,18 @@ data class Policy(
     var limits: List<String> = emptyList(),        // "com.package=30"  -> 30 min/day
     var blockedDomains: List<String> = emptyList(),
 
+    /**
+     * Epoch millis until which internet stays open no matter [internetBlocked].
+     * Set by the "open internet temporarily" dashboard control. 0 = no active
+     * timer. [com.microbeaver.guardian.monitor.MonitorService.enforce] clears
+     * this and flips [internetBlocked] back to true itself once it passes, so
+     * the parent does not have to remember to re-block it.
+     */
+    var internetTimerUntil: Long = 0L,
+
+    /** Disables the camera entirely via Device Admin. */
+    var cameraDisabled: Boolean = false,
+
     // ---- Call filtering -------------------------------------------------
     /**
      * One of [CallMode]. A single field on purpose.

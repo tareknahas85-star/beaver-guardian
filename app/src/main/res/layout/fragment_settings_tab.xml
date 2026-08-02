@@ -97,6 +97,10 @@
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="Internet paused" />
                 <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swCamera" style="@style/Switch.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Disable camera" />
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/swSos" style="@style/Switch.Guardian"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="SOS button on child device" />

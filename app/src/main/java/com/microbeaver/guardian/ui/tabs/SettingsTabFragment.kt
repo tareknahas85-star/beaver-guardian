@@ -7,9 +7,12 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.text.InputType
 import android.widget.CompoundButton
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
@@ -91,6 +94,7 @@ class SettingsTabFragment : TabBase() {
                 if (on) "Internet paused" else "Internet resumed"
             )
         }
+        b.swCamera.onChange { on -> host?.savePolicy { it.cameraDisabled = on } }
 
         b.sliderLimit.addOnChangeListener { _, value, _ ->
             b.tvLimitValue.text = limitLabel(value.toInt())
@@ -158,6 +162,7 @@ class SettingsTabFragment : TabBase() {
         b.swWeekly.isChecked      = s.policy.weeklyReport
         b.swFeed.isChecked        = s.policy.activityFeedEnabled
         b.swLockAtLimit.isChecked = s.policy.lockWhenLimitReached
+        b.swCamera.isChecked      = s.policy.cameraDisabled
 
         val limit = s.policy.dailyLimitMinutes.coerceIn(0, 480)
         b.sliderLimit.value = limit.toFloat()
@@ -301,8 +306,16 @@ class SettingsTabFragment : TabBase() {
             val row = inflater.inflate(R.layout.item_app_toggle, hostView, false)
             row.findViewById<TextView>(R.id.tvAppName).text = label
             val isBlocked = pkg in blocked
-            row.findViewById<TextView>(R.id.tvAppState).text =
-                if (isBlocked) "Restricted" else "Allowed"
+            val limitMinutes = appLimitMinutes(pkg)
+            row.findViewById<TextView>(R.id.tvAppState).text = when {
+                isBlocked         -> "Restricted"
+                limitMinutes > 0  -> "Limit: ${fmt(limitMinutes)}/day"
+                else              -> "Allowed"
+            }
+            row.findViewById<TextView>(R.id.btnAppLimit).apply {
+                text = if (limitMinutes > 0) "Limit: ${fmt(limitMinutes)}" else "Set limit"
+                setOnClickListener { showAppLimitDialog(pkg, label) }
+            }
             val sw = row.findViewById<MaterialSwitch>(R.id.swApp)
             sw.setOnCheckedChangeListener(null)
             sw.isChecked = isBlocked
@@ -322,6 +335,61 @@ class SettingsTabFragment : TabBase() {
                 setPadding(0, 12, 0, 0)
             })
         }
+    }
+
+    // ── Per-app time limits ──────────────────────────────────────────────────
+    // Stored in Policy.limits as "pkg=minutes" strings — MonitorService.enforce()
+    // already reads this list and bounces the app once today's usage passes it.
+
+    private fun appLimitMinutes(pkg: String): Int =
+        GuardianState.snapshot.policy.limits
+            .firstOrNull { it.substringBefore("=", "") == pkg }
+            ?.substringAfter("=", "")
+            ?.toIntOrNull() ?: 0
+
+    private fun setAppLimit(pkg: String, minutes: Int) {
+        host?.savePolicy { p ->
+            val current = p.limits.mapNotNull { entry ->
+                val parts = entry.split("=")
+                if (parts.size == 2) parts[0] to (parts[1].toIntOrNull() ?: 0) else null
+            }.toMap().toMutableMap()
+            if (minutes <= 0) current.remove(pkg) else current[pkg] = minutes
+            p.limits = current.map { (k, v) -> "$k=$v" }
+        }
+    }
+
+    private fun showAppLimitDialog(pkg: String, label: String) {
+        val ctx = context ?: return
+        val presets = listOf(0, 10, 15, 30, 60, 120, 240)
+        val labels = presets.map { if (it == 0) "No limit" else fmt(it) } + "Custom…"
+        AlertDialog.Builder(ctx)
+            .setTitle("Daily limit — $label")
+            .setItems(labels.toTypedArray()) { _, which ->
+                if (which < presets.size) {
+                    setAppLimit(pkg, presets[which])
+                } else {
+                    showCustomMinutesDialog(pkg, label)
+                }
+            }
+            .show()
+    }
+
+    private fun showCustomMinutesDialog(pkg: String, label: String) {
+        val ctx = context ?: return
+        val current = appLimitMinutes(pkg)
+        val input = EditText(ctx).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            hint = "Minutes per day"
+            if (current > 0) setText(current.toString())
+        }
+        AlertDialog.Builder(ctx)
+            .setTitle("Daily limit — $label")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                setAppLimit(pkg, input.text.toString().toIntOrNull() ?: 0)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun CompoundButton.onChange(action: (Boolean) -> Unit) {

@@ -159,6 +159,44 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Temporary internet window -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Temporary internet" />
+                <TextView android:id="@+id/tvNetTimerStatus" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="4dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:layout_marginTop="10dp">
+                    <TextView android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Duration"
+                        android:textSize="14sp" android:textColor="@color/on_surface" />
+                    <TextView android:id="@+id/tvNetTimerValue" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="16sp"
+                        android:textStyle="bold" android:textColor="@color/primary" />
+                </LinearLayout>
+                <com.google.android.material.slider.Slider android:id="@+id/sliderNetTimer"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:valueFrom="10" android:valueTo="360" android:stepSize="10"
+                    android:value="30" android:layout_marginTop="4dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView style="@style/Text.Caption" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="10 min" />
+                    <TextView style="@style/Text.Caption" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="6 h" />
+                </LinearLayout>
+                <Button android:id="@+id/btnOpenNetTimer" style="@style/Button.Primary"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Open internet temporarily" android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Recent activity -->
         <androidx.cardview.widget.CardView style="@style/Card.Guardian"
             android:layout_width="match_parent" android:layout_height="wrap_content">

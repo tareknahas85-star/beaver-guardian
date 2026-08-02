@@ -170,10 +170,32 @@ class MonitorService : Service() {
         if (schedule.lockDevice) policyMgr.lockNow()
         if (overDailyBudget && policy.lockWhenLimitReached) policyMgr.lockNow()
 
+        // A temporary-open window overrides the standing block while it's
+        // active. Once it passes, re-block and clear the timer ourselves —
+        // write it back to Firebase so the parent's dashboard reflects it
+        // too, and don't rely on the parent remembering to re-block by hand.
+        var effectiveBlocked = policy.internetBlocked
+        val timerUntil = policy.internetTimerUntil
+        if (timerUntil > 0) {
+            if (System.currentTimeMillis() >= timerUntil) {
+                effectiveBlocked = true
+                policy = policy.copy(internetBlocked = true, internetTimerUntil = 0L)
+                FirebaseRepo.updatePolicy(
+                    code, mapOf("internetBlocked" to true, "internetTimerUntil" to 0L)
+                )
+                EventReporter.record(
+                    this, ActivityEvent.INTERNET,
+                    "Internet timer ended", "Auto re-blocked"
+                )
+            } else {
+                effectiveBlocked = false
+            }
+        }
+
         // Drive the VPN through explicit start/stop so the tunnel is actually
         // torn down when the internet should come back, and refresh the
         // watchdog so a still-intended block does not fail open.
-        val internetOff = policy.internetBlocked || schedule.blockInternet
+        val internetOff = effectiveBlocked || schedule.blockInternet
         if (internetOff) {
             FilterVpnService.confirmStillBlocked()
             FilterVpnService.block(this)
@@ -241,6 +263,10 @@ class MonitorService : Service() {
         CallPolicyStore.save(this, p)
         EventReporter.feedEnabled = p.activityFeedEnabled
 
+        // Camera disable is a plain Device Admin capability (no Device Owner
+        // needed), same tier as lockNow.
+        policyMgr.setCameraDisabled(p.cameraDisabled)
+
         // Keep uninstall protection asserted; a Device Owner can lose it after
         // an OTA or a policy reset.
         policyMgr.applyBaselineOwnerPolicies()
@@ -256,12 +282,18 @@ class MonitorService : Service() {
             "BLOCK_INTERNET" -> {
                 FilterVpnService.confirmStillBlocked()
                 FilterVpnService.block(this)
-                FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to true))
+                // Clear any pending temporary-open window — a manual block
+                // means now, not "until the timer says otherwise".
+                FirebaseRepo.updatePolicy(
+                    code, mapOf("internetBlocked" to true, "internetTimerUntil" to 0L)
+                )
             }
             "ALLOW_INTERNET" -> {
                 // Tear the tunnel down for real, not just flip a flag.
                 FilterVpnService.unblock(this)
-                FirebaseRepo.updatePolicy(code, mapOf("internetBlocked" to false))
+                FirebaseRepo.updatePolicy(
+                    code, mapOf("internetBlocked" to false, "internetTimerUntil" to 0L)
+                )
             }
             "BLOCK_APP" -> policyMgr.setAppHidden(c.payload, true)
             "UNBLOCK_APP" -> policyMgr.setAppHidden(c.payload, false)

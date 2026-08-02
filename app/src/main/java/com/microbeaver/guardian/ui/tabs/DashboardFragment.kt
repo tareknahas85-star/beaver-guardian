@@ -51,6 +51,14 @@ class DashboardFragment : TabBase() {
         b.btnPair.setOnClickListener { host?.openPairingWindow() }
         b.btnMap.setOnClickListener { openMap() }
 
+        b.sliderNetTimer.addOnChangeListener { _, value, _ ->
+            b.tvNetTimerValue.text = fmt(value.toInt())
+        }
+        b.tvNetTimerValue.text = fmt(b.sliderNetTimer.value.toInt())
+        b.btnOpenNetTimer.setOnClickListener {
+            host?.openInternetTimer(b.sliderNetTimer.value.toInt())
+        }
+
         b.btnTestNotif.setOnClickListener {
             val ctx = context ?: return@setOnClickListener
             val ok = AlertNotifier.show(
@@ -97,7 +105,23 @@ class DashboardFragment : TabBase() {
         renderLocation(s)
         renderScreenTime(s)
         renderDevice(s)
+        renderNetTimer(s)
         renderTodayFeed(s)
+    }
+
+    /**
+     * Shows the countdown while a temporary-open window is running, so the
+     * parent isn't left guessing whether it's still active.
+     */
+    private fun renderNetTimer(s: GuardianState.Snapshot) {
+        val until = s.policy.internetTimerUntil
+        val now = System.currentTimeMillis()
+        b.tvNetTimerStatus.text = if (until > now) {
+            val remaining = ((until - now) / 60_000L).toInt().coerceAtLeast(1)
+            "Internet is open — ${fmt(remaining)} left, then it re-blocks itself"
+        } else {
+            "Grant a bounded internet window; it turns off by itself when time is up."
+        }
     }
 
     private fun renderLocation(s: GuardianState.Snapshot) {
