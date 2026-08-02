@@ -166,12 +166,19 @@
             </intent-filter>
         </service>
 
+        <!-- Restarts supervision after a reboot AND after this app updates itself.
+             MY_PACKAGE_REPLACED matters as much as BOOT_COMPLETED: installing a
+             new version kills the running foreground services (MonitorService on
+             the child, ParentAlertService on the parent) and nothing brought them
+             back until someone manually reopened the app — which meant every
+             release silently went dark on both phones until then. -->
         <receiver
             android:name=".monitor.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 
