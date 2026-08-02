@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.microbeaver.guardian.R
-import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.alerts.AlertNotifier
 import com.microbeaver.guardian.data.ActivityEvent
 import com.microbeaver.guardian.data.Alert
@@ -177,14 +176,13 @@ class DashboardFragment : TabBase() {
             else                      -> "Offline for ${s.minutesSinceSeen / 1440} days"
         }
 
-        val ctx = context
-        b.tvProtection.text = if (ctx == null) "" else {
-            val pm = PolicyManager(ctx)
-            when {
-                pm.isDeviceOwner -> "Uninstall is blocked (Device Owner)."
-                pm.isAdminActive -> "Device Admin only — the child can still remove the app."
-                else             -> "No protection active."
-            }
+        // Reported by the child device itself (see MonitorService.cycle()) —
+        // this used to check PolicyManager on the *parent's own* phone, which
+        // is a different device and told the parent nothing true about the
+        // child's actual protection state.
+        b.tvProtection.text = buildString {
+            append(if (s.adminActive) "Device Admin: active. " else "Device Admin: NOT active — tap Setup on the child's phone. ")
+            append(if (s.vpnReady) "Internet blocking: ready." else "Internet blocking: needs setup — tap \"Start VPN\" on the child's phone.")
         }
 
         b.tvZonesSummary.text = if (s.policy.zones.isEmpty()) "No safe zones set."

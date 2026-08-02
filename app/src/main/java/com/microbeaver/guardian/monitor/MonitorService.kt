@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.VpnService
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -22,6 +23,7 @@ import com.microbeaver.guardian.R
 import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.calls.CallPolicyStore
 import com.microbeaver.guardian.data.ActivityEvent
+import com.microbeaver.guardian.data.Alert
 import com.microbeaver.guardian.data.Command
 import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.data.Policy
@@ -114,8 +116,13 @@ class MonitorService : Service() {
         reportLocationAndFences()
 
         val batt = DeviceInfo.battery(this)
+        // LOCK_NOW and BLOCK_INTERNET are no-ops without these two one-time OS
+        // grants — report the real state every cycle so the parent can see it
+        // instead of a command silently doing nothing (see handleCommand()).
         FirebaseRepo.setChildInfo(
-            code, "${Build.MANUFACTURER} ${Build.MODEL}", batt.percent, batt.charging
+            code, "${Build.MANUFACTURER} ${Build.MODEL}", batt.percent, batt.charging,
+            adminActive = policyMgr.isAdminActive,
+            vpnReady = VpnService.prepare(this) == null
         )
 
         // The installed list barely changes; once an hour is plenty and keeps the
@@ -277,16 +284,35 @@ class MonitorService : Service() {
 
     private fun handleCommand(c: Command) {
         when (c.type) {
-            "LOCK_NOW" -> { policyMgr.lockNow(); FirebaseRepo.updatePolicy(code, mapOf("locked" to true)) }
+            "LOCK_NOW" -> {
+                if (!policyMgr.isAdminActive) {
+                    reportSetupNeeded(
+                        "Couldn't lock the phone",
+                        "Device Admin isn't active on the child's phone. Open Beaver " +
+                            "Guardian there → Setup → \"Enable Device Admin\"."
+                    )
+                } else {
+                    policyMgr.lockNow()
+                    FirebaseRepo.updatePolicy(code, mapOf("locked" to true))
+                }
+            }
             "UNLOCK" -> FirebaseRepo.updatePolicy(code, mapOf("locked" to false))
             "BLOCK_INTERNET" -> {
-                FilterVpnService.confirmStillBlocked()
-                FilterVpnService.block(this)
-                // Clear any pending temporary-open window — a manual block
-                // means now, not "until the timer says otherwise".
-                FirebaseRepo.updatePolicy(
-                    code, mapOf("internetBlocked" to true, "internetTimerUntil" to 0L)
-                )
+                if (VpnService.prepare(this) != null) {
+                    reportSetupNeeded(
+                        "Couldn't turn off internet",
+                        "VPN permission isn't granted on the child's phone. Open Beaver " +
+                            "Guardian there → Setup → \"Start VPN\" and accept the prompt."
+                    )
+                } else {
+                    FilterVpnService.confirmStillBlocked()
+                    FilterVpnService.block(this)
+                    // Clear any pending temporary-open window — a manual block
+                    // means now, not "until the timer says otherwise".
+                    FirebaseRepo.updatePolicy(
+                        code, mapOf("internetBlocked" to true, "internetTimerUntil" to 0L)
+                    )
+                }
             }
             "ALLOW_INTERNET" -> {
                 // Tear the tunnel down for real, not just flip a flag.
@@ -300,6 +326,20 @@ class MonitorService : Service() {
             "LOCATE" -> LocationReporter.reportOnce(this, code)
         }
         FirebaseRepo.markDone(code, c.id)
+    }
+
+    /**
+     * Surfaces a command that was accepted but couldn't actually run because a
+     * one-time OS grant is missing on this device. Before this, LOCK_NOW and
+     * BLOCK_INTERNET failed exactly like this with zero trace — the parent saw
+     * "Lock sent" / "Internet paused" toast on their own phone and nothing ever
+     * happened on the child's, with no way to tell why.
+     */
+    private fun reportSetupNeeded(title: String, body: String) {
+        FirebaseRepo.pushAlert(
+            code,
+            Alert(type = Alert.SETUP_NEEDED, title = title, body = body, ts = System.currentTimeMillis())
+        )
     }
 
     private fun buildNotification(): Notification {

@@ -30,6 +30,14 @@ object GuardianState {
         /** -1 when the child has not reported it. */
         val battery: Int = -1,
         val charging: Boolean = false,
+        /**
+         * Real, child-reported state of the two one-time OS grants that
+         * BLOCK_INTERNET and LOCK_NOW depend on. Without these, both commands
+         * are silently accepted by [com.microbeaver.guardian.monitor.MonitorService]
+         * and do nothing — there used to be no way for the parent to see why.
+         */
+        val adminActive: Boolean = false,
+        val vpnReady: Boolean = false,
         /** package name -> label, as reported by the child device. */
         val installedApps: Map<String, String> = emptyMap(),
         /** Set when the database could not be reached, for display. */

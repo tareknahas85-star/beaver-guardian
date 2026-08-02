@@ -244,6 +244,8 @@ data class Alert(
         const val ZONE_ENTER    = "ZONE_ENTER"
         const val SOS           = "SOS"
         const val WEEKLY_REPORT = "WEEKLY_REPORT"
+        /** A command couldn't run because a one-time OS grant is missing on the child device. */
+        const val SETUP_NEEDED  = "SETUP_NEEDED"
     }
 }
 
