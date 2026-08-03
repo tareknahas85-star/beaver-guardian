@@ -116,6 +116,14 @@
                 <Button android:id="@+id/btnPermCallScreening" style="@style/Button.Outline"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="7) Call filtering permission" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnAutostart" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="8) Allow background activity (important on Huawei/Xiaomi/Oppo/Vivo)"
+                    android:layout_marginTop="10dp" />
+                <TextView style="@style/Text.Caption" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Some phone brands freeze this app's connection in the background even when everything above is set up correctly — remote lock and internet blocking then silently stop working. This step fixes that."
+                    android:paddingTop="6dp" />
                 <TextView android:id="@+id/tvCallScreeningStatus" style="@style/Text.Caption"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:paddingTop="8dp" />

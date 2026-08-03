@@ -90,6 +90,7 @@ class ChildSetupActivity : AppCompatActivity() {
         b.btnPermLocation.setOnClickListener { requestRuntimePerms() }
         b.btnPermAdmin.setOnClickListener { requestAdmin() }
         b.btnStartVpn.setOnClickListener { prepareVpn() }
+        b.btnAutostart.setOnClickListener { openAutostartSettings() }
 
         b.btnPermCallScreening.setOnClickListener {
             if (!CallScreeningRole.request(this)) {
@@ -216,5 +217,77 @@ class ChildSetupActivity : AppCompatActivity() {
         val prep = VpnService.prepare(this)
         if (prep != null) vpnLauncher.launch(prep)
         else startService(Intent(this, FilterVpnService::class.java))
+    }
+
+    /**
+     * The one Android permission dialog does NOT cover.
+     *
+     * `requestNoDoze()`-style battery exemption (standard AOSP Doze) only
+     * protects against stock Android. Huawei, Xiaomi, Oppo, Vivo and a few
+     * others ship a second, manufacturer-specific process killer on top of
+     * stock Android that a normal battery-optimisation exemption does not
+     * touch. It silently freezes background network connections — including
+     * the always-open Firebase listener LOCK_NOW/BLOCK_INTERNET/camera-disable
+     * depend on — even while this app's foreground notification stays visible
+     * and its own periodic writes (location, usage, "last seen") keep
+     * succeeding, because those are short bursts the OS lets through. That
+     * combination — outbound reports keep working, nothing sent in ever
+     * arrives — is the exact symptom this button exists to fix.
+     *
+     * There is no public API for any of this, so every manufacturer's screen
+     * is reached the same unreliable way everyone else does it: try each
+     * known component in turn, first match wins, fall back to the app's own
+     * battery-optimisation dialog if none of them resolve on this device.
+     */
+    private fun openAutostartSettings() {
+        val candidates = listOf(
+            // Huawei / Honor — "Protected apps" and "App launch"
+            ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"),
+            ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.appcontrol.activity.StartupAppControlActivity"),
+            ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity"),
+            // Xiaomi (MIUI) — autostart manager
+            ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"),
+            // Oppo / Realme (ColorOS)
+            ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"),
+            ComponentName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity"),
+            // Vivo (FuntouchOS)
+            ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"),
+            // Samsung — sleeping/deep-sleeping apps list
+            ComponentName("com.samsung.android.lool", "com.samsung.android.sm.ui.battery.BatteryActivity"),
+            // Asus
+            ComponentName("com.asus.mobilemanager", "com.asus.mobilemanager.autostart.AutoStartActivity")
+        )
+
+        for (c in candidates) {
+            try {
+                startActivity(Intent().apply {
+                    component = c
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                })
+                return
+            } catch (_: Exception) {
+                // Not this manufacturer, or this EMUI/MIUI/ColorOS version moved the
+                // screen — try the next one.
+            }
+        }
+
+        // Nothing manufacturer-specific resolved: fall back to the one exemption
+        // Android itself guarantees a path to.
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                startActivity(
+                    Intent(
+                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                        Uri.parse("package:$packageName")
+                    )
+                )
+            }
+        } catch (_: Exception) {
+            Toast.makeText(
+                this,
+                "Open Settings → Battery → find SafeGuard → allow background activity / autostart",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }
