@@ -80,7 +80,21 @@ object FirebaseRepo {
         val ref = root(code).child("policy")
         val l = object : ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {
-                onChange(s.getValue(Policy::class.java) ?: Policy())
+                // getValue() throws (doesn't return null) when a single field can't
+                // be deserialized — a stale value left over from before a schema
+                // change, for instance. This callback used to be unguarded, so that
+                // exception crashed the whole long-running MonitorService process,
+                // taking every other listener (commands included) down with it —
+                // right on the pattern of "it broke exactly when the Policy schema
+                // grew new fields." A bad update here must never be allowed to
+                // propagate; skip it and keep whatever policy is already applied.
+                val p = try {
+                    s.getValue(Policy::class.java)
+                } catch (e: Exception) {
+                    Log.e(TAG, "policy/$code failed to parse — ignoring this update: ${e.message}")
+                    null
+                }
+                if (p != null) onChange(p)
             }
             override fun onCancelled(e: DatabaseError) {
                 Log.e(TAG, "DB Error [policy/$code]: ${e.message}")
@@ -102,7 +116,15 @@ object FirebaseRepo {
         val ref = root(code).child("commands")
         val l = object : ChildEventListener {
             override fun onChildAdded(s: DataSnapshot, prev: String?) {
-                val c = s.getValue(Command::class.java) ?: return
+                // Same reasoning as listenPolicy: one malformed command must never
+                // be allowed to throw out of this callback and take the rest of
+                // the service's listeners down with it.
+                val c = try {
+                    s.getValue(Command::class.java)
+                } catch (e: Exception) {
+                    Log.e(TAG, "commands/$code: one command failed to parse, skipping: ${e.message}")
+                    null
+                } ?: return
                 if (!c.done) onCmd(c)
             }
             override fun onChildChanged(s: DataSnapshot, prev: String?) {}

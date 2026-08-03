@@ -19,7 +19,17 @@ class PolicyManager(private val ctx: Context) {
     val isDeviceOwner: Boolean get() = dpm.isDeviceOwnerApp(ctx.packageName)
 
     fun lockNow() {
-        if (isAdminActive) dpm.lockNow()
+        // Every other DevicePolicyManager call in this class is guarded — these
+        // two (added later, for LOCK_NOW and the camera toggle) were not. On some
+        // OEM builds dpm calls that are perfectly legal on stock Android can throw,
+        // and this method runs straight out of MonitorService's Firebase policy/
+        // command listeners with nothing else catching it: an unguarded throw here
+        // used to be able to crash that whole long-running listener, taking every
+        // other command down with it, not just this one.
+        try {
+            if (isAdminActive) dpm.lockNow()
+        } catch (_: Exception) {
+        }
     }
 
     fun setUninstallBlocked(blocked: Boolean) {
@@ -27,7 +37,10 @@ class PolicyManager(private val ctx: Context) {
     }
 
     fun setCameraDisabled(disabled: Boolean) {
-        if (isAdminActive) dpm.setCameraDisabled(admin, disabled)
+        try {
+            if (isAdminActive) dpm.setCameraDisabled(admin, disabled)
+        } catch (_: Exception) {
+        }
     }
 
     /** Applied automatically once the app becomes Device Owner. */

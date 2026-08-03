@@ -88,8 +88,32 @@ class MonitorService : Service() {
         listenersAttached = true
         FirebaseRepo.claimDevice(code) { ok ->
             if (!ok) Log.w(TAG, "claimDevice failed for $code — listening anyway")
-            FirebaseRepo.listenPolicy(code) { p -> policy = p; applyPolicy(p) }
-            FirebaseRepo.listenCommands(code) { c -> handleCommand(c) }
+            // Both callbacks are wrapped here as a last line of defence: this is
+            // the one place every incoming policy update and every incoming
+            // command passes through. Anything unexpected either one does — an
+            // OEM API throwing, a future field that doesn't parse the way it's
+            // used — must never be allowed to escape this closure, because an
+            // uncaught exception here kills the listener for good, silently, and
+            // that takes LOCK_NOW/BLOCK_INTERNET/camera-disable/app-limits down
+            // with it, not just whichever update triggered it. This is exactly
+            // the failure mode that made everything look "connected" (the child's
+            // own outbound reporting in cycle() is separately try/caught and kept
+            // working) while nothing sent from the parent ever took effect.
+            FirebaseRepo.listenPolicy(code) { p ->
+                try {
+                    policy = p
+                    applyPolicy(p)
+                } catch (e: Exception) {
+                    Log.e(TAG, "applyPolicy crashed, ignoring so the listener survives: ${e.message}")
+                }
+            }
+            FirebaseRepo.listenCommands(code) { c ->
+                try {
+                    handleCommand(c)
+                } catch (e: Exception) {
+                    Log.e(TAG, "handleCommand crashed for ${c.type}, ignoring so the listener survives: ${e.message}")
+                }
+            }
         }
     }
 
