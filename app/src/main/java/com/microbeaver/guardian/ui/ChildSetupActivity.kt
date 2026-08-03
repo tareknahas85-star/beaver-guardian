@@ -15,7 +15,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.microbeaver.guardian.BuildConfig
 import com.microbeaver.guardian.Prefs
+import com.microbeaver.guardian.R
 import com.microbeaver.guardian.admin.GuardianDeviceAdminReceiver
 import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.calls.CallScreeningRole
@@ -39,6 +41,8 @@ class ChildSetupActivity : AppCompatActivity() {
         b = ActivityChildSetupBinding.inflate(layoutInflater)
         setContentView(b.root)
         policyMgr = PolicyManager(this)
+
+        b.tvVersion.text = "v${BuildConfig.VERSION_NAME} — Child device"
 
         Prefs.getPairCode(this)?.let { b.etPairCode.setText(it) }
 
@@ -104,9 +108,33 @@ class ChildSetupActivity : AppCompatActivity() {
         super.onResume()
         b.tvCallScreeningStatus.text = "Call filtering: ${CallScreeningRole.statusText(this)}"
         b.tvProtectionStatus.text = protectionSummary()
+        renderGrantStatus()
         // Re-assert the owner policies whenever this screen is opened; an OTA or a
         // policy reset can silently clear them.
         policyMgr.applyBaselineOwnerPolicies()
+
+        // So the current pairing code can be compared, character for character,
+        // against what the parent's app shows — the fastest way to catch a
+        // mismatch between the two devices.
+        val code = Prefs.getPairCode(this)
+        if (!code.isNullOrBlank()) b.tvStatus.text = "Currently paired to code: $code"
+    }
+
+    /**
+     * Colour-coded, always-visible status for the two one-time grants that
+     * LOCK_NOW and BLOCK_INTERNET silently depend on (see
+     * MonitorService.handleCommand). Checked fresh every time this screen is
+     * shown, since either can be revoked outside the app (a device-admin
+     * policy reset, the user turning the VPN off from Android Settings).
+     */
+    private fun renderGrantStatus() {
+        val adminOk = policyMgr.isAdminActive
+        b.tvAdminStatus.text = if (adminOk) "✓ Device Admin: active" else "✗ Device Admin: NOT active — tap step 5 below"
+        b.tvAdminStatus.setTextColor(getColor(if (adminOk) R.color.secondary_dark else R.color.error))
+
+        val vpnOk = VpnService.prepare(this) == null
+        b.tvVpnStatus.text = if (vpnOk) "✓ Internet filter: ready" else "✗ Internet filter: NOT set up — tap step 6 below"
+        b.tvVpnStatus.setTextColor(getColor(if (vpnOk) R.color.secondary_dark else R.color.error))
     }
 
     /**

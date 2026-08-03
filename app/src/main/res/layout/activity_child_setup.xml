@@ -1,94 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Child-side setup screen, restyled to match the parent shell (same header,
+  same Card.Guardian cards, same button styles) instead of the old plain
+  LinearLayout-of-buttons look.
+
+  Also now shows the running version in the header — there used to be no way
+  to tell which build was installed here without going through About — and
+  two always-visible, colour-coded status lines for Device Admin and the
+  internet filter (VPN), the two one-time grants that LOCK_NOW and
+  BLOCK_INTERNET silently depend on. Before this there was no way to see,
+  from this screen, whether either one had actually stuck.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:clipToPadding="false"
+    android:paddingStart="20dp" android:paddingEnd="20dp"
+    android:paddingTop="14dp" android:paddingBottom="24dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/child_notice"
-            android:textSize="16sp"
-            android:layout_marginBottom="24dp" />
+        <!-- ══ Header, same look as the parent app ══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+            <ImageView android:layout_width="34dp" android:layout_height="34dp"
+                android:src="@mipmap/ic_launcher_round" android:contentDescription="@string/app_name" />
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content" android:orientation="vertical"
+                android:layout_marginStart="10dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="SafeGuard" android:textSize="19sp" android:textStyle="bold"
+                    android:textColor="@color/primary" />
+                <TextView android:id="@+id/tvVersion" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:textSize="11sp"
+                    android:textColor="@color/on_surface_variant" android:text="Child device" />
+            </LinearLayout>
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/etPairCode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/pair_code"
-            android:inputType="textCapCharacters"
-            android:autofillHints="off"
-            android:layout_marginBottom="16dp" />
+        <!-- ══ Pairing ══ -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Pairing" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/child_notice" style="@style/Text.Body"
+                    android:paddingTop="6dp" android:paddingBottom="12dp" />
+                <com.google.android.material.textfield.TextInputLayout style="@style/Input.Guardian"
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPairCode"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="@string/pair_code" android:inputType="textCapCharacters"
+                        android:autofillHints="off" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <Button android:id="@+id/btnPair" style="@style/Button.Primary"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Pair device" android:layout_marginTop="12dp" />
+                <TextView android:id="@+id/tvStatus" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="10dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        <Button
-            android:id="@+id/btnPair"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pair device"
-            android:layout_marginBottom="24dp" />
+        <!-- ══ Protection status — the two grants LOCK_NOW / BLOCK_INTERNET depend on ══ -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Remote control status" />
+                <TextView android:id="@+id/tvAdminStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="15sp"
+                    android:textStyle="bold" android:paddingTop="10dp" />
+                <TextView android:id="@+id/tvVpnStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="15sp"
+                    android:textStyle="bold" android:paddingTop="4dp" />
+                <TextView android:id="@+id/tvProtectionStatus" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Permission steps"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+        <!-- ══ Permission steps ══ -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Permission steps" />
 
-        <Button android:id="@+id/btnPermUsage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1) Usage access" />
-        <Button android:id="@+id/btnPermAccessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2) Accessibility service (app blocking)" />
-        <Button android:id="@+id/btnPermOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3) Display over other apps" />
-        <Button android:id="@+id/btnPermLocation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4) Location + calls + contacts + notifications" />
-        <Button android:id="@+id/btnPermAdmin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5) Enable device admin" />
-        <Button android:id="@+id/btnStartVpn" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6) Start the internet filter" />
+                <Button android:id="@+id/btnPermUsage" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="1) Usage access" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnPermAccessibility" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="2) Accessibility service (app blocking)" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnPermOverlay" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="3) Display over other apps" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnPermLocation" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="4) Location + calls + contacts + notifications" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnPermAdmin" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="5) Enable device admin" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnStartVpn" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="6) Start the internet filter" android:layout_marginTop="10dp" />
+                <Button android:id="@+id/btnPermCallScreening" style="@style/Button.Outline"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="7) Call filtering permission" android:layout_marginTop="10dp" />
+                <TextView android:id="@+id/tvCallScreeningStatus" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        <Button
-            android:id="@+id/btnPermCallScreening"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="7) Call filtering permission" />
-
-        <TextView
-            android:id="@+id/tvCallScreeningStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/on_tertiary_container"
-            android:paddingStart="4dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvProtectionStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/secondary_dark"
-            android:paddingStart="4dp"
-            android:paddingBottom="16dp" />
-
-        <!-- ═══ SOS ═══ Always reachable, deliberately large and unmissable. -->
-        <Button
-            android:id="@+id/btnSos"
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:text="🆘  SOS"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:backgroundTint="@color/error"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sends your location and an instant alert to your parent"
-            android:textSize="11sp"
-            android:textColor="@color/on_surface_variant"
-            android:paddingTop="4dp" />
+        <!-- ══ SOS — always reachable, deliberately large and unmissable ══ -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <Button android:id="@+id/btnSos" style="@style/Button.Sos"
+                    android:layout_width="match_parent" android:layout_height="72dp"
+                    android:text="🆘  SOS" />
+                <TextView style="@style/Text.Caption" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sends your location and an instant alert to your parent"
+                    android:paddingTop="8dp" android:gravity="center" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

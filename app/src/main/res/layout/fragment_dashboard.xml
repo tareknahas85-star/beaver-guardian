@@ -106,9 +106,15 @@
                     android:text="Not connected" android:paddingTop="4dp" />
                 <TextView android:id="@+id/tvSeen" style="@style/Text.Caption"
                     android:layout_width="match_parent" android:layout_height="wrap_content" />
-                <TextView android:id="@+id/tvProtection" style="@style/Text.Caption"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:paddingTop="8dp" />
+                <!-- Bold and colour-coded on purpose: a small grey caption here
+                     went unnoticed and looked like nothing had changed even when
+                     it correctly said a permission was missing. -->
+                <TextView android:id="@+id/tvAdminStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="10dp" />
+                <TextView android:id="@+id/tvVpnStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="2dp" />
                 <TextView android:id="@+id/tvZonesSummary" style="@style/Text.Caption"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:paddingTop="6dp" />

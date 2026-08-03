@@ -180,9 +180,12 @@ class DashboardFragment : TabBase() {
         // this used to check PolicyManager on the *parent's own* phone, which
         // is a different device and told the parent nothing true about the
         // child's actual protection state.
-        b.tvProtection.text = buildString {
-            append(if (s.adminActive) "Device Admin: active. " else "Device Admin: NOT active — tap Setup on the child's phone. ")
-            append(if (s.vpnReady) "Internet blocking: ready." else "Internet blocking: needs setup — tap \"Start VPN\" on the child's phone.")
+        val ctx2 = context
+        b.tvAdminStatus.text = if (s.adminActive) "✓ Device Admin: active" else "✗ Device Admin: NOT active — check Setup on the child's phone"
+        b.tvVpnStatus.text = if (s.vpnReady) "✓ Internet blocking: ready" else "✗ Internet blocking: needs setup — check Setup on the child's phone"
+        if (ctx2 != null) {
+            b.tvAdminStatus.setTextColor(ctx2.getColor(if (s.adminActive) R.color.secondary_dark else R.color.error))
+            b.tvVpnStatus.setTextColor(ctx2.getColor(if (s.vpnReady) R.color.secondary_dark else R.color.error))
         }
 
         b.tvZonesSummary.text = if (s.policy.zones.isEmpty()) "No safe zones set."

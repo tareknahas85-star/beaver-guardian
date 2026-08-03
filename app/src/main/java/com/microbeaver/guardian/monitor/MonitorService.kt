@@ -94,9 +94,17 @@ class MonitorService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (code.isEmpty()) {
-            code = Prefs.getPairCode(this) ?: ""
-            if (code.isNotEmpty()) attachListeners()
+        // Re-read the pair code every time we're (re)started, not just when it
+        // was empty. This service is a long-running singleton: `code` used to
+        // be cached once in onCreate() and never refreshed, so re-pairing to a
+        // new code while the service was already alive looked exactly like the
+        // app "disconnecting" from the child — the service kept listening on
+        // the old code forever and never noticed Prefs had a new one.
+        val current = Prefs.getPairCode(this) ?: ""
+        if (current.isNotEmpty() && current != code) {
+            code = current
+            listenersAttached = false
+            attachListeners()
         }
         if (intent?.action == ACTION_SOS && code.isNotEmpty()) {
             SosReporter.trigger(this, code)
