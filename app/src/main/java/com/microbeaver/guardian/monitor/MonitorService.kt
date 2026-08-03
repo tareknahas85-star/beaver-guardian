@@ -199,9 +199,6 @@ class MonitorService : Service() {
         blocked.addAll(schedule.blockedApps)
         if (policy.locked || schedule.lockDevice) blocked.add("*")
         if (overDailyBudget && policy.lockWhenLimitReached) blocked.add("*")
-        // Belt-and-suspenders on top of PolicyManager.setCameraDisabled — see
-        // DeviceInfo.cameraPackages for why this second layer exists.
-        if (policy.cameraDisabled) blocked.addAll(DeviceInfo.cameraPackages(this))
 
         AppBlockService.blockedPackages = blocked
 
@@ -289,9 +286,6 @@ class MonitorService : Service() {
     private fun applyPolicy(p: Policy) {
         val set = HashSet<String>(p.blockedApps)
         if (p.locked) { set.add("*"); policyMgr.lockNow() }
-        // Belt-and-suspenders on top of setCameraDisabled below — see
-        // DeviceInfo.cameraPackages for why this second layer exists.
-        if (p.cameraDisabled) set.addAll(DeviceInfo.cameraPackages(this))
         AppBlockService.blockedPackages = set
         p.blockedApps.forEach { policyMgr.setAppHidden(it, true) }
 
