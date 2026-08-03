@@ -64,4 +64,34 @@ object DeviceInfo {
         }
         return out
     }
+
+    /**
+     * Every package that can actually open the phone's camera — the default
+     * camera app, and any OEM alternative that also registers for it.
+     *
+     * Exists because DevicePolicyManager.setCameraDisabled() (see
+     * PolicyManager.setCameraDisabled) is standard Android and is called
+     * correctly, but some manufacturers' own camera app is known not to honour
+     * it for a plain Device Admin on every build. This gives
+     * [com.microbeaver.guardian.monitor.MonitorService] a second, independent
+     * way to enforce "camera off" — through the same accessibility-based
+     * app-blocking already used for ordinary restrictions — rather than
+     * relying solely on a manufacturer respecting the DPM flag.
+     */
+    fun cameraPackages(ctx: Context): Set<String> {
+        val pm = ctx.packageManager
+        val out = HashSet<String>()
+        try {
+            @Suppress("DEPRECATION")
+            pm.queryIntentActivities(
+                Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE), PackageManager.MATCH_ALL
+            ).forEach { ri -> ri.activityInfo?.packageName?.let { out.add(it) } }
+            @Suppress("DEPRECATION")
+            pm.queryIntentActivities(
+                Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE), PackageManager.MATCH_ALL
+            ).forEach { ri -> ri.activityInfo?.packageName?.let { out.add(it) } }
+        } catch (_: Exception) {
+        }
+        return out
+    }
 }
