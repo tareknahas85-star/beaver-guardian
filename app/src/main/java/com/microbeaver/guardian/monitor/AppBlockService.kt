@@ -8,6 +8,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
+import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.data.ActivityEvent
 
 /**
@@ -27,14 +28,20 @@ import com.microbeaver.guardian.data.ActivityEvent
  * window directly every [POLL_MS] via [getRootInActiveWindow], regardless of
  * whether or which accessibility event fired. Whatever got the blocked app to
  * the front — a normal launch, a task switch, a recents "lock" — it is caught
- * again within one poll interval. This does not touch MonitorService, the
- * Firebase listeners, or PolicyManager at all; it is fully contained to this
- * accessibility service.
+ * again within one poll interval. This does not touch MonitorService or the
+ * Firebase listeners; it does now also call into [PolicyManager] (see below).
+ *
+ * ## Whole-device lock ("*") also forces a real screen lock
+ * Bouncing to Home is a request, not a guarantee — some device/launcher
+ * combinations can silently ignore [performGlobalAction]. When the whole
+ * device is meant to be locked, that is not good enough, so this also calls
+ * [PolicyManager.lockNow] every time it fires, on the same ~700ms cadence.
  */
 class AppBlockService : AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var lastSeenPkg: String? = null
+    private val policyMgr by lazy { PolicyManager(this) }
 
     private val poll = object : Runnable {
         override fun run() {
@@ -89,6 +96,17 @@ class AppBlockService : AccessibilityService() {
 
         if (isBlocked && !isSystemUi(pkg)) {
             performGlobalAction(GLOBAL_ACTION_HOME)
+            // Whole-device lock ("*", from the parent's "Lock" button or a
+            // schedule) used to rely on the Home bounce above landing, same as
+            // any single blocked app. That is a best-effort action — nothing
+            // guarantees Android actually honours it — whereas Device Admin's
+            // lockNow() is the one enforcement already proven reliable end to
+            // end (confirmed working since v8.7). Firing it here too, every
+            // ~700ms for as long as the phone is unlocked with something in the
+            // foreground, means the screen re-locks almost immediately even on
+            // a device/launcher combination where the Home action alone quietly
+            // does nothing.
+            if (blocked.contains("*")) policyMgr.lockNow()
             if (changed) {
                 Toast.makeText(this, "Blocked by parent", Toast.LENGTH_SHORT).show()
                 EventReporter.recordApp(
@@ -96,6 +114,7 @@ class AppBlockService : AccessibilityService() {
                 )
             }
             lastSeenPkg = pkg
+            lastForegroundPkg = pkg
             return
         }
 
