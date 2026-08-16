@@ -154,7 +154,8 @@ class MonitorService : Service() {
         FirebaseRepo.setChildInfo(
             code, "${Build.MANUFACTURER} ${Build.MODEL}", batt.percent, batt.charging,
             adminActive = policyMgr.isAdminActive,
-            vpnReady = VpnService.prepare(this) == null
+            vpnReady = VpnService.prepare(this) == null,
+            accessibilityActive = AppBlockService.isEnabled(this)
         )
 
         // The installed list barely changes; once an hour is plenty and keeps the

@@ -115,6 +115,9 @@
                 <TextView android:id="@+id/tvVpnStatus" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:textSize="14sp"
                     android:textStyle="bold" android:paddingTop="2dp" />
+                <TextView android:id="@+id/tvAccessibilityStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="2dp" />
                 <TextView android:id="@+id/tvZonesSummary" style="@style/Text.Caption"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:paddingTop="6dp" />

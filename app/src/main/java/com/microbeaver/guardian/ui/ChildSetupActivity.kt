@@ -23,6 +23,7 @@ import com.microbeaver.guardian.admin.PolicyManager
 import com.microbeaver.guardian.calls.CallScreeningRole
 import com.microbeaver.guardian.data.FirebaseRepo
 import com.microbeaver.guardian.databinding.ActivityChildSetupBinding
+import com.microbeaver.guardian.monitor.AppBlockService
 import com.microbeaver.guardian.monitor.MonitorService
 import com.microbeaver.guardian.vpn.FilterVpnService
 
@@ -136,6 +137,13 @@ class ChildSetupActivity : AppCompatActivity() {
         val vpnOk = VpnService.prepare(this) == null
         b.tvVpnStatus.text = if (vpnOk) "✓ Internet filter: ready" else "✗ Internet filter: NOT set up — tap step 6 below"
         b.tvVpnStatus.setTextColor(getColor(if (vpnOk) R.color.secondary_dark else R.color.error))
+
+        // Checked directly against Settings.Secure (see AppBlockService.isEnabled),
+        // not an in-memory flag — the only reliable way to know app blocking,
+        // whole-device lock, time limits and schedules can actually run.
+        val accOk = AppBlockService.isEnabled(this)
+        b.tvAccessibilityStatus.text = if (accOk) "✓ App blocking: active" else "✗ App blocking: NOT active — tap step 2 below"
+        b.tvAccessibilityStatus.setTextColor(getColor(if (accOk) R.color.secondary_dark else R.color.error))
     }
 
     /**

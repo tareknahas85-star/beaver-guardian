@@ -1,8 +1,11 @@
 package com.microbeaver.guardian.monitor
 
 import android.accessibilityservice.AccessibilityService
+import android.content.ComponentName
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import com.microbeaver.guardian.data.ActivityEvent
@@ -121,5 +124,30 @@ class AppBlockService : AccessibilityService() {
 
         /** Frequent enough to close the recents-switch gap without being wasteful. */
         private const val POLL_MS = 700L
+
+        /**
+         * Whether the user has actually turned this specific accessibility
+         * service on in system Settings — the one thing app blocking, the
+         * whole-device lock ("*"), daily/per-app time limits and schedule
+         * blocking all depend on, independently of Device Admin or the VPN.
+         *
+         * Checked directly against Settings.Secure rather than trusting an
+         * in-memory "connected" flag, so it stays correct even if it was
+         * switched off from outside this app entirely — some OEM security
+         * centres (Huawei's included) are known to silently re-disable
+         * third-party accessibility services on their own, with nothing in
+         * this process ever getting a callback to notice.
+         */
+        fun isEnabled(ctx: Context): Boolean {
+            val expected = ComponentName(ctx, AppBlockService::class.java).flattenToString()
+            val enabled = try {
+                Settings.Secure.getString(
+                    ctx.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+                )
+            } catch (_: Exception) {
+                null
+            } ?: return false
+            return enabled.splitToSequence(':').any { it.equals(expected, ignoreCase = true) }
+        }
     }
 }

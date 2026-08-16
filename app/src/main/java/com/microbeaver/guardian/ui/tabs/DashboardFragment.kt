@@ -183,9 +183,15 @@ class DashboardFragment : TabBase() {
         val ctx2 = context
         b.tvAdminStatus.text = if (s.adminActive) "✓ Device Admin: active" else "✗ Device Admin: NOT active — check Setup on the child's phone"
         b.tvVpnStatus.text = if (s.vpnReady) "✓ Internet blocking: ready" else "✗ Internet blocking: needs setup — check Setup on the child's phone"
+        // App blocking, whole-device lock, time limits and schedules all run
+        // through the Accessibility Service — a separate OS grant from Device
+        // Admin/VPN above. Some phones (Huawei especially) silently turn this
+        // off on their own; this line is the only way to see that happened.
+        b.tvAccessibilityStatus.text = if (s.accessibilityActive) "✓ App blocking: active" else "✗ App blocking: NOT active — check Setup on the child's phone (step 2)"
         if (ctx2 != null) {
             b.tvAdminStatus.setTextColor(ctx2.getColor(if (s.adminActive) R.color.secondary_dark else R.color.error))
             b.tvVpnStatus.setTextColor(ctx2.getColor(if (s.vpnReady) R.color.secondary_dark else R.color.error))
+            b.tvAccessibilityStatus.setTextColor(ctx2.getColor(if (s.accessibilityActive) R.color.secondary_dark else R.color.error))
         }
 
         b.tvZonesSummary.text = if (s.policy.zones.isEmpty()) "No safe zones set."

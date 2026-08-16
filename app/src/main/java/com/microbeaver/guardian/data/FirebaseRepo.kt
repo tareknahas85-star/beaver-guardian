@@ -247,7 +247,7 @@ object FirebaseRepo {
 
     fun setChildInfo(
         code: String, model: String, batteryPct: Int = -1, charging: Boolean = false,
-        adminActive: Boolean? = null, vpnReady: Boolean? = null
+        adminActive: Boolean? = null, vpnReady: Boolean? = null, accessibilityActive: Boolean? = null
     ) {
         val m = HashMap<String, Any>()
         m["model"] = model
@@ -257,10 +257,12 @@ object FirebaseRepo {
             m["battery"] = batteryPct
             m["charging"] = charging
         }
-        // Whether LOCK_NOW / BLOCK_INTERNET can actually do anything on this
-        // device right now — see the comment on GuardianState.Snapshot.
+        // Whether LOCK_NOW / BLOCK_INTERNET / app-blocking can actually do
+        // anything on this device right now — see the comment on
+        // GuardianState.Snapshot.
         adminActive?.let { m["adminActive"] = it }
         vpnReady?.let { m["vpnReady"] = it }
+        accessibilityActive?.let { m["accessibilityActive"] = it }
         root(code).child("info").updateChildren(m)
     }
 
@@ -303,7 +305,8 @@ object FirebaseRepo {
     fun listenChildInfo(
         code: String,
         onData: (model: String, lastSeen: Long, internetBlocked: Boolean,
-                 battery: Int, charging: Boolean, adminActive: Boolean, vpnReady: Boolean) -> Unit
+                 battery: Int, charging: Boolean, adminActive: Boolean, vpnReady: Boolean,
+                 accessibilityActive: Boolean) -> Unit
     ): ValueEventListener {
         val ref = root(code)
         val l = object : ValueEventListener {
@@ -316,12 +319,13 @@ object FirebaseRepo {
                     info.child("battery").getValue(Int::class.java) ?: -1,
                     info.child("charging").getValue(Boolean::class.java) ?: false,
                     info.child("adminActive").getValue(Boolean::class.java) ?: false,
-                    info.child("vpnReady").getValue(Boolean::class.java) ?: false
+                    info.child("vpnReady").getValue(Boolean::class.java) ?: false,
+                    info.child("accessibilityActive").getValue(Boolean::class.java) ?: false
                 )
             }
             override fun onCancelled(e: DatabaseError) {
                 Log.e(TAG, "DB Error [info/$code]: ${e.message}")
-                onData("", 0L, false, -1, false, false, false)
+                onData("", 0L, false, -1, false, false, false, false)
             }
         }
         ref.addValueEventListener(l)

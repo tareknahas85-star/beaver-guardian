@@ -38,6 +38,15 @@ object GuardianState {
          */
         val adminActive: Boolean = false,
         val vpnReady: Boolean = false,
+        /**
+         * Real, child-reported state of the Accessibility Service permission —
+         * a completely separate OS grant from Device Admin/VPN, and the ONLY
+         * thing app blocking, the whole-device lock ("*"), per-app/daily time
+         * limits and schedule blocking depend on. Some OEM security centres
+         * (Huawei's included) silently disable it without this app ever
+         * getting a callback, so it needs its own visible status too.
+         */
+        val accessibilityActive: Boolean = false,
         /** package name -> label, as reported by the child device. */
         val installedApps: Map<String, String> = emptyMap(),
         /** Set when the database could not be reached, for display. */
