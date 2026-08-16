@@ -105,6 +105,7 @@ class AppBlockService : AccessibilityService() {
             EventReporter.recordApp(this, ActivityEvent.APP_OPENED, pkg)
         }
         lastSeenPkg = pkg
+        lastForegroundPkg = pkg
     }
 
     private fun isSystemUi(pkg: String): Boolean =
@@ -121,6 +122,14 @@ class AppBlockService : AccessibilityService() {
         /** Updated live by MonitorService from the current Policy. */
         @Volatile
         var blockedPackages: HashSet<String> = HashSet()
+
+        /**
+         * Whatever was foreground last, event-driven or polled. Read by
+         * MonitorService.checkScreenPinning() so a pin-attempt alert can name
+         * the app, instead of just saying "something" got pinned.
+         */
+        @Volatile
+        var lastForegroundPkg: String? = null
 
         /** Frequent enough to close the recents-switch gap without being wasteful. */
         private const val POLL_MS = 700L

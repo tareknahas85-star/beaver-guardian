@@ -246,6 +246,8 @@ data class Alert(
         const val WEEKLY_REPORT = "WEEKLY_REPORT"
         /** A command couldn't run because a one-time OS grant is missing on the child device. */
         const val SETUP_NEEDED  = "SETUP_NEEDED"
+        /** The child tried to use Android's screen-pinning to trap a blocked app open. */
+        const val PIN_ATTEMPT   = "PIN_ATTEMPT"
     }
 }
 
@@ -280,12 +282,14 @@ data class ActivityEvent(
         const val INTERNET        = "INTERNET"
         const val LIMIT_REACHED   = "LIMIT_REACHED"
         const val BOOT            = "BOOT"
+        /** Screen-pinning was detected active — see MonitorService.checkScreenPinning. */
+        const val PIN_ATTEMPT     = "PIN_ATTEMPT"
 
         /** Everything the parent can choose to be notified about. */
         val ALL = listOf(
             APP_OPENED, APP_BLOCKED, APP_INSTALLED, APP_UNINSTALLED,
             UNLOCK, SCREEN_ON, SCREEN_OFF, CALL, POWER, INTERNET,
-            LIMIT_REACHED, BOOT
+            LIMIT_REACHED, BOOT, PIN_ATTEMPT
         )
 
         fun label(type: String): String = when (type) {
@@ -301,6 +305,7 @@ data class ActivityEvent(
             INTERNET        -> "Internet changed"
             LIMIT_REACHED   -> "Time limit reached"
             BOOT            -> "Phone restarted"
+            PIN_ATTEMPT     -> "Tried to pin an app"
             else            -> type
         }
     }

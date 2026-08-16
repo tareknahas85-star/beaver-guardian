@@ -1,5 +1,6 @@
 package com.microbeaver.guardian.monitor
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -52,6 +53,7 @@ class MonitorService : Service() {
     private var eventReceiver: DeviceEventReceiver? = null
     private var lastInternetOff: Boolean? = null
     private var lastOverBudget = false
+    private var wasPinned = false
 
     @Volatile
     private var policy: Policy = Policy()
@@ -143,6 +145,7 @@ class MonitorService : Service() {
         usage.forEach { (pkg, min) -> FirebaseRepo.reportUsage(code, date, pkg, min) }
 
         enforce(usage)
+        checkScreenPinning()
 
         CallLogReporter.reportRecent(this, code)
         reportLocationAndFences()
@@ -260,6 +263,41 @@ class MonitorService : Service() {
             )
         }
         lastOverBudget = overDailyBudget
+    }
+
+    /**
+     * Safety net for the screen-pinning bypass: [PolicyManager.applyBaselineOwnerPolicies]
+     * already removes every package from the lock-task allow-list, which should stop the
+     * child from being able to turn pinning on at all on a Device Owner phone. This check
+     * covers the gap if that ever doesn't hold — an OEM-specific "lock this app" feature
+     * outside the standard API, or a device that's Device Admin only — by detecting the
+     * state directly rather than trusting prevention alone. If it's ever active, force the
+     * screen to lock (so the pinned app stops being usable without a fresh unlock) and tell
+     * the parent immediately, once per episode rather than spamming every cycle.
+     */
+    private fun checkScreenPinning() {
+        val am = getSystemService(ActivityManager::class.java) ?: return
+        val pinned = try {
+            am.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE
+        } catch (_: Exception) {
+            false
+        }
+
+        if (pinned && !wasPinned) {
+            policyMgr.lockNow()
+            val pkg = AppBlockService.lastForegroundPkg
+            val body = if (!pkg.isNullOrBlank()) {
+                "Tried to pin \"${EventReporter.appLabel(this, pkg)}\" open. The screen was locked automatically."
+            } else {
+                "Screen pinning was detected. The screen was locked automatically."
+            }
+            FirebaseRepo.pushAlert(
+                code,
+                Alert(type = Alert.PIN_ATTEMPT, title = "Tried to pin an app", body = body, ts = System.currentTimeMillis())
+            )
+            EventReporter.record(this, ActivityEvent.PIN_ATTEMPT, "Tried to pin an app", body, pkg ?: "")
+        }
+        wasPinned = pinned
     }
 
     /** One location fix, used both for the parent's map and the safe zones. */

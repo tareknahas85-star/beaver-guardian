@@ -51,6 +51,14 @@ class PolicyManager(private val ctx: Context) {
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_ADD_USER)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_SAFE_BOOT)
+            // Screen pinning (the Recents "pin"/"lock this app" feature, whatever
+            // an OEM's launcher calls it) lets a blocked app be trapped in the
+            // foreground: pinning disables Home/Recents system-wide while active,
+            // so AppBlockService's Home-bounce never lands. With a Device Owner
+            // present, an empty allow-list here removes the feature entirely —
+            // no package, including the launcher, may enter lock-task/pinning
+            // mode, so there is nothing left for the child to turn on.
+            dpm.setLockTaskPackages(admin, emptyArray())
         } catch (_: Exception) {
         }
     }
