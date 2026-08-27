@@ -9,5 +9,8 @@
 .cxx
 local.properties
 app/build/
-# Keep the placeholder google-services.json in the repo so CI can build.
-# Replace it with your real file locally; do NOT commit real secrets.
+
+# The real google-services.json is stored as the GOOGLE_SERVICES_JSON_B64 repo secret
+# (restored by CI before every build) and never committed. Copy app/google-services.json.example
+# to app/google-services.json locally and fill in your own Firebase project's values.
+app/google-services.json

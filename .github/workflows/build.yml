@@ -17,6 +17,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The real google-services.json lives only as an encrypted repo secret (never in git).
+      # This restores it into app/ before the build, and fails loudly if the secret is missing
+      # instead of silently building against the placeholder.
+      - name: Restore google-services.json from secret
+        env:
+          GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GOOGLE_SERVICES_JSON_B64:-}" ]; then
+            echo "::error::GOOGLE_SERVICES_JSON_B64 secret is not set - refusing to build with the placeholder."
+            exit 1
+          fi
+          echo "$GOOGLE_SERVICES_JSON_B64" | base64 -d > app/google-services.json
+          test -s app/google-services.json
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
