@@ -129,6 +129,7 @@ class SettingsTabFragment : TabBase() {
             if (binding) return@setOnCheckedChangeListener
             val tag = when (id) {
                 R.id.rbLangEn -> LocaleManager.EN
+                R.id.rbLangAr -> LocaleManager.AR
                 else          -> LocaleManager.SYSTEM
             }
             LocaleManager.apply(tag)
@@ -177,6 +178,7 @@ class SettingsTabFragment : TabBase() {
 
         when (LocaleManager.current(context)) {
             LocaleManager.EN -> b.rbLangEn.isChecked = true
+            LocaleManager.AR -> b.rbLangAr.isChecked = true
             else             -> b.rbLangSystem.isChecked = true
         }
 

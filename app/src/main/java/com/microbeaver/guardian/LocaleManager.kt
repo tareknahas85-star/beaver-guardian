@@ -21,6 +21,7 @@ object LocaleManager {
 
     const val SYSTEM = ""
     const val EN = "en"
+    const val AR = "ar"
 
     private const val PREFS = "locale_prefs"
     private const val KEY = "tag"
@@ -46,6 +47,7 @@ object LocaleManager {
         if (list.isEmpty) return SYSTEM
         return when (list[0]?.language) {
             "en" -> EN
+            "ar" -> AR
             else -> SYSTEM
         }
     }

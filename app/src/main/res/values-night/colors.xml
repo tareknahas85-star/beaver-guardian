@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme — Deep teal/slate with gold accents -->
+    <color name="primary">#4DB6AC</color>
+    <color name="primary_dark">#00897B</color>
+    <color name="primary_container">#004D40</color>
+    <color name="on_primary">#00332C</color>
+    <color name="on_primary_container">#A7F3EC</color>
+
+    <color name="secondary">#FFD54F</color>
+    <color name="secondary_dark">#F9A825</color>
+    <color name="secondary_container">#5D4300</color>
+    <color name="on_secondary">#3E2D00</color>
+    <color name="on_secondary_container">#FFE082</color>
+
+    <color name="tertiary">#FFB74D</color>
+    <color name="tertiary_container">#7C4D00</color>
+    <color name="on_tertiary">#3E2D00</color>
+    <color name="on_tertiary_container">#FFE0B2</color>
+
+    <color name="error">#FF8A80</color>
+    <color name="error_container">#93000A</color>
+    <color name="on_error">#690005</color>
+    <color name="on_error_container">#FFDAD6</color>
+
+    <color name="background">#0D1F1C</color>
+    <color name="surface">#0D1F1C</color>
+    <color name="surface_card">#1A2F2C</color>
+    <color name="surface_container_low">#1F3430</color>
+    <color name="surface_container">#243836</color>
+    <color name="surface_container_high">#2E403C</color>
+    <color name="surface_variant">#3E5852</color>
+
+    <color name="on_surface">#A7F3EC</color>
+    <color name="on_surface_variant">#B0C4BE</color>
+    <color name="outline">#6F7975</color>
+    <color name="outline_variant">#3E5852</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <color name="ic_launcher_background">#0D1F1C</color>
+</resources>

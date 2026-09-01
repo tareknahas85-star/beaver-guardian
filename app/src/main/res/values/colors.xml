@@ -1,29 +1,29 @@
 <resources>
     <!--
-      Guardian Flow palette.
-      Indigo carries trust and structure, emerald means "safe / active",
-      amber is a warning that needs attention but not alarm, red is danger only.
+      Guardian Flow palette — Teal & Gold.
+      Teal carries trust and safety, Gold means premium/active,
+      amber is a warning, red is danger only.
     -->
 
-    <!-- Primary — Indigo -->
-    <color name="primary">#4F46E5</color>
-    <color name="primary_dark">#3525CD</color>
-    <color name="primary_container">#E2DFFF</color>
+    <!-- Primary — Teal -->
+    <color name="primary">#00897B</color>
+    <color name="primary_dark">#00695C</color>
+    <color name="primary_container">#B2DFDB</color>
     <color name="on_primary">#FFFFFF</color>
-    <color name="on_primary_container">#0F0069</color>
+    <color name="on_primary_container">#002019</color>
 
-    <!-- Secondary — Emerald. Used for anything that means "protected / on". -->
-    <color name="secondary">#10B981</color>
-    <color name="secondary_dark">#006C49</color>
-    <color name="secondary_container">#6CF8BB</color>
-    <color name="on_secondary">#FFFFFF</color>
-    <color name="on_secondary_container">#00714D</color>
+    <!-- Secondary — Gold/Amber. Used for anything that means "protected / on / premium". -->
+    <color name="secondary">#F9A825</color>
+    <color name="secondary_dark">#F57F17</color>
+    <color name="secondary_container">#FFE082</color>
+    <color name="on_secondary">#3E2D00</color>
+    <color name="on_secondary_container">#3E2D00</color>
 
-    <!-- Tertiary — Amber. Warnings and time limits. -->
-    <color name="tertiary">#F59E0B</color>
-    <color name="tertiary_container">#FFDDB8</color>
+    <!-- Tertiary — Light Amber. Warnings and time limits. -->
+    <color name="tertiary">#FB8C00</color>
+    <color name="tertiary_container">#FFE0B2</color>
     <color name="on_tertiary">#FFFFFF</color>
-    <color name="on_tertiary_container">#653E00</color>
+    <color name="on_tertiary_container">#4E2600</color>
 
     <!-- Error -->
     <color name="error">#BA1A1A</color>
@@ -31,20 +31,20 @@
     <color name="on_error">#FFFFFF</color>
     <color name="on_error_container">#93000A</color>
 
-    <!-- Surfaces -->
-    <color name="background">#F8F9FF</color>
-    <color name="surface">#F8F9FF</color>
+    <!-- Surfaces — Soft cream/white -->
+    <color name="background">#F5F9F8</color>
+    <color name="surface">#F5F9F8</color>
     <color name="surface_card">#FFFFFF</color>
-    <color name="surface_container_low">#EFF4FF</color>
-    <color name="surface_container">#E5EEFF</color>
-    <color name="surface_container_high">#DCE9FF</color>
-    <color name="surface_variant">#D3E4FE</color>
+    <color name="surface_container_low">#E8F5E9</color>
+    <color name="surface_container">#E0F2F1</color>
+    <color name="surface_container_high">#B2DFDB</color>
+    <color name="surface_variant">#B2DFDB</color>
 
-    <!-- Text -->
-    <color name="on_surface">#0B1C30</color>
-    <color name="on_surface_variant">#464555</color>
-    <color name="outline">#777587</color>
-    <color name="outline_variant">#C7C4D8</color>
+    <!-- Text — Dark slate -->
+    <color name="on_surface">#0D2B26</color>
+    <color name="on_surface_variant">#3E5852</color>
+    <color name="outline">#6F7975</color>
+    <color name="outline_variant">#B0C4BE</color>
 
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>

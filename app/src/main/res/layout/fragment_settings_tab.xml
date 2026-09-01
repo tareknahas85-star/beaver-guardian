@@ -257,6 +257,10 @@
                         android:layout_weight="1" android:layout_height="wrap_content"
                         android:minHeight="48dp" android:text="English" android:textSize="14sp"
                         android:textColor="@color/on_surface" />
+                    <RadioButton android:id="@+id/rbLangAr" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:text="العربية" android:textSize="14sp"
+                        android:textColor="@color/on_surface" />
                 </RadioGroup>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

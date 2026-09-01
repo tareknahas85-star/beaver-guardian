@@ -47,10 +47,17 @@ class CommandMessagingService : FirebaseMessagingService() {
 
         val role = Prefs.getRole(this)
 
-        // Child device: wake MonitorService so the pending command is applied
-        // even when the phone is in deep-doze mode.
+        <!-- Child device: wake MonitorService on FCM command so pending commands are applied. -->
         if (role == Prefs.ROLE_CHILD) {
             MonitorService.start(this)
+        }
+
+        // Screenshot command (parent requests capture from child's screen)
+        if (message.data["type"] == "screenshot") {
+            val intent = Intent(this, com.microbeaver.guardian.screenshot.ScreenshotCaptureService::class.java).apply {
+                action = com.microbeaver.guardian.screenshot.ScreenshotCaptureService.ACTION_REQUEST_SCREENSHOT
+            }
+            startService(intent)
         }
 
         // Show a visible heads-up notification on any device (parent or child).
