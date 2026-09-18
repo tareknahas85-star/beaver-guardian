@@ -38,15 +38,11 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # cmdline-tools-version must match the version already on the runner (12.0).
-      # Without it the action decides the preinstalled tools are the "wrong version",
-      # downloads newer ones, and then asks to accept 6 SDK licences one by one.
-      # Nobody is there to answer, so the build stops and waits until it fails.
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: "12.0"
-          accept-android-sdk-licenses: true
+      # There is no "Set up Android SDK" step on purpose.
+      # The GitHub runner already comes with the Android SDK installed and its
+      # licences accepted. The android-actions/setup-android action used to be
+      # here, but it re-runs the licence step, which stops and waits for someone
+      # to type "y". Nobody is there, so the build failed every time.
 
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
