@@ -33,13 +33,20 @@ jobs:
           test -s app/google-services.json
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
+      # cmdline-tools-version must match the version already on the runner (12.0).
+      # Without it the action decides the preinstalled tools are the "wrong version",
+      # downloads newer ones, and then asks to accept 6 SDK licences one by one.
+      # Nobody is there to answer, so the build stops and waits until it fails.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: "12.0"
+          accept-android-sdk-licenses: true
 
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
