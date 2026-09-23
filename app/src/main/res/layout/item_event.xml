@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One row in the live feed: a coloured dot for the kind of event, then what and when. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal" android:paddingTop="10dp" android:paddingBottom="10dp">
+
+    <TextView android:id="@+id/tvIcon" android:layout_width="34dp" android:layout_height="34dp"
+        android:gravity="center" android:textSize="15sp"
+        android:background="@drawable/bg_pill_emerald" />
+
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+        android:layout_height="wrap_content" android:orientation="vertical"
+        android:layout_marginStart="12dp">
+        <TextView android:id="@+id/tvEventTitle" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textSize="15sp"
+            android:textColor="@color/on_surface" android:maxLines="2" android:ellipsize="end" />
+        <TextView android:id="@+id/tvEventMeta" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textSize="12sp"
+            android:textColor="@color/on_surface_variant" />
+    </LinearLayout>
+</LinearLayout>

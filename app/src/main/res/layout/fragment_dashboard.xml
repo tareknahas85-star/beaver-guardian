@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="20dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Alerts blocked warning -->
+        <LinearLayout android:id="@+id/boxNotifWarning"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="@drawable/bg_warning_card"
+            android:padding="14dp" android:layout_marginBottom="14dp" android:visibility="gone">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Notifications are off" android:textStyle="bold"
+                android:textSize="15sp" android:textColor="@color/on_tertiary_container" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="SOS and unknown callers will not reach you."
+                android:textSize="13sp" android:textColor="@color/on_tertiary_container"
+                android:paddingTop="4dp" android:paddingBottom="8dp" />
+            <Button android:id="@+id/btnFixNotif" style="@style/Button.Primary"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Turn notifications on" />
+            <Button android:id="@+id/btnFixDoze" style="@style/Button.Primary"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Stop Android freezing alerts"
+                android:layout_marginTop="8dp" android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Status: location + connection -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:padding="18dp" android:gravity="center_vertical">
+                <TextView android:layout_width="44dp" android:layout_height="44dp"
+                    android:background="@drawable/bg_pill_emerald" android:gravity="center"
+                    android:text="📍" android:textSize="20sp" />
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+                    <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="Current location" />
+                    <TextView android:id="@+id/tvLocation" style="@style/Text.Title"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Unknown" />
+                    <TextView android:id="@+id/tvZoneState" style="@style/Text.Caption"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:gravity="end">
+                    <TextView android:id="@+id/tvBattery" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="14sp"
+                        android:textStyle="bold" android:textColor="@color/on_surface"
+                        android:text="—" />
+                    <TextView android:id="@+id/tvConnection" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="13sp"
+                        android:textStyle="bold" android:textColor="@color/secondary_dark"
+                        android:text="—" android:paddingTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Daily screen time ring -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Daily screen time" />
+                <TextView android:id="@+id/tvLimit" style="@style/Text.Caption"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:paddingBottom="10dp" />
+                <FrameLayout android:layout_width="180dp" android:layout_height="180dp"
+                    android:layout_gravity="center">
+                    <com.microbeaver.guardian.widget.ProgressRingView android:id="@+id/ring"
+                        android:layout_width="match_parent" android:layout_height="match_parent" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_gravity="center"
+                        android:gravity="center">
+                        <TextView android:id="@+id/tvUsedTotal" style="@style/Text.Metric"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="0m" android:textSize="26sp" />
+                        <TextView android:id="@+id/tvRemaining" style="@style/Text.Caption"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </FrameLayout>
+                <TextView android:id="@+id/tvTopApps" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:paddingTop="14dp"
+                    android:text="Waiting for the child device…" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Device, position and protection — folded in from the removed Kids tab -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Child device" />
+                <TextView android:id="@+id/tvDevice" style="@style/Text.Title"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Not connected" android:paddingTop="4dp" />
+                <TextView android:id="@+id/tvSeen" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <!-- Bold and colour-coded on purpose: a small grey caption here
+                     went unnoticed and looked like nothing had changed even when
+                     it correctly said a permission was missing. -->
+                <TextView android:id="@+id/tvAdminStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="10dp" />
+                <TextView android:id="@+id/tvVpnStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="2dp" />
+                <TextView android:id="@+id/tvAccessibilityStatus" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textSize="14sp"
+                    android:textStyle="bold" android:paddingTop="2dp" />
+                <TextView android:id="@+id/tvZonesSummary" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="6dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="12dp">
+                    <Button android:id="@+id/btnMap" style="@style/Button.Primary"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Open map" />
+                    <Button android:id="@+id/btnLocate" style="@style/Button.Outline"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Locate now"
+                        android:layout_marginStart="10dp" />
+                </LinearLayout>
+                <Button android:id="@+id/btnPair" style="@style/Button.Text"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Open pairing window (15 min)" android:paddingStart="0dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Quick actions -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Quick actions"
+                    android:paddingBottom="10dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button android:id="@+id/btnLock" style="@style/Button.Primary"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Lock" />
+                    <Button android:id="@+id/btnUnlock" style="@style/Button.Safe"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Unlock"
+                        android:layout_marginStart="10dp" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="10dp">
+                    <Button android:id="@+id/btnNetOff" style="@style/Button.Outline"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Pause internet" />
+                    <Button android:id="@+id/btnNetOn" style="@style/Button.Outline"
+                        android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Resume"
+                        android:layout_marginStart="10dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Temporary internet window -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <TextView style="@style/Text.SectionLabel" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Temporary internet" />
+                <TextView android:id="@+id/tvNetTimerStatus" style="@style/Text.Caption"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingTop="4dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:layout_marginTop="10dp">
+                    <TextView android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="Duration"
+                        android:textSize="14sp" android:textColor="@color/on_surface" />
+                    <TextView android:id="@+id/tvNetTimerValue" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="16sp"
+                        android:textStyle="bold" android:textColor="@color/primary" />
+                </LinearLayout>
+                <com.google.android.material.slider.Slider android:id="@+id/sliderNetTimer"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:valueFrom="10" android:valueTo="360" android:stepSize="10"
+                    android:value="30" android:layout_marginTop="4dp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView style="@style/Text.Caption" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="10 min" />
+                    <TextView style="@style/Text.Caption" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="6 h" />
+                </LinearLayout>
+                <Button android:id="@+id/btnOpenNetTimer" style="@style/Button.Primary"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Open internet temporarily" android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Recent activity -->
+        <androidx.cardview.widget.CardView style="@style/Card.Guardian"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="18dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView style="@style/Text.SectionLabel" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Today's activity" />
+                    <TextView android:id="@+id/tvFeedCount" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:textSize="12sp"
+                        android:textStyle="bold" android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/feedHost"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:paddingTop="6dp" />
+                <TextView android:id="@+id/tvFeedEmpty" style="@style/Text.Body"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="14sp" android:text="Nothing yet today" />
+                <Button android:id="@+id/btnTestNotif" style="@style/Button.Text"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Send a test notification" android:paddingStart="0dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</ScrollView>

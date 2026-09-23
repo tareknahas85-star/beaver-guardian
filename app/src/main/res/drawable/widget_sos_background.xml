@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Background for the home-screen SOS widget — a rounded, high-contrast red
+     card so the emergency button reads clearly even at small widget sizes. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FFEBEE" />
+    <corners android:radius="16dp" />
+    <stroke android:width="2dp" android:color="#BA1A1A" />
+</shape>

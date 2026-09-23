@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "devices": {
+      "$code": {
+        ".read":  "auth != null && data.child('members').child(auth.uid).exists()",
+        ".write": "auth != null && data.child('members').child(auth.uid).exists()",
+
+        "members": {
+          "$uid": {
+            ".write":    "auth != null && $uid === auth.uid && (!data.parent().exists() || root.child('devices').child($code).child('pairingOpenUntil').val() > now)",
+            ".validate": "newData.isBoolean()"
+          }
+        },
+
+        "pairingOpenUntil": {
+          ".write":    "auth != null && (!data.parent().child('members').exists() || data.parent().child('members').child(auth.uid).exists())",
+          ".validate": "newData.isNumber() && newData.val() <= now + 3600000"
+        }
+      }
+    }
+  }
+}

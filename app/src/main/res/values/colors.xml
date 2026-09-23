@@ -1,0 +1,54 @@
+<resources>
+    <!--
+      Guardian Flow palette — Teal & Gold.
+      Teal carries trust and safety, Gold means premium/active,
+      amber is a warning, red is danger only.
+    -->
+
+    <!-- Primary — Teal -->
+    <color name="primary">#00897B</color>
+    <color name="primary_dark">#00695C</color>
+    <color name="primary_container">#B2DFDB</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#002019</color>
+
+    <!-- Secondary — Gold/Amber. Used for anything that means "protected / on / premium". -->
+    <color name="secondary">#F9A825</color>
+    <color name="secondary_dark">#F57F17</color>
+    <color name="secondary_container">#FFE082</color>
+    <color name="on_secondary">#3E2D00</color>
+    <color name="on_secondary_container">#3E2D00</color>
+
+    <!-- Tertiary — Light Amber. Warnings and time limits. -->
+    <color name="tertiary">#FB8C00</color>
+    <color name="tertiary_container">#FFE0B2</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="on_tertiary_container">#4E2600</color>
+
+    <!-- Error -->
+    <color name="error">#BA1A1A</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="on_error_container">#93000A</color>
+
+    <!-- Surfaces — Soft cream/white -->
+    <color name="background">#F5F9F8</color>
+    <color name="surface">#F5F9F8</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_container_low">#E8F5E9</color>
+    <color name="surface_container">#E0F2F1</color>
+    <color name="surface_container_high">#B2DFDB</color>
+    <color name="surface_variant">#B2DFDB</color>
+
+    <!-- Text — Dark slate -->
+    <color name="on_surface">#0D2B26</color>
+    <color name="on_surface_variant">#3E5852</color>
+    <color name="outline">#6F7975</color>
+    <color name="outline_variant">#B0C4BE</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Adaptive icon background — white so it matches the artwork's own tile. -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+</resources>

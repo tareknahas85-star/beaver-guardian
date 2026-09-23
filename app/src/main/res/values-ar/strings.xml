@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">حارس بيفر</string>
+    <string name="admin_description">السماح للآباء بحماية هذا الجهاز: منع الإزالة، القفل، وفرض الحدود.</string>
+    <string name="accessibility_label">حارس بيفر — حارس التطبيقات</string>
+    <string name="accessibility_description">يُستخدم لفرض حظر التطبيقات وحدود وقت الشاشة على جهاز الطفل.</string>
+
+    <string name="role_title">من يستخدم هذا الجهاز؟</string>
+    <string name="role_parent">أنا الأب/الأم</string>
+    <string name="role_child">هذا جهاز الطفل</string>
+    <string name="child_notice">هذا الجهاز تحت إشراف أحد الوالدين باستخدام حارس بيفر.</string>
+    <string name="pair_code">رمز الإقران</string>
+
+    <!-- Bottom navigation. -->
+    <string name="tab_dashboard">لوحة التحكم</string>
+    <string name="tab_activity">النشاط</string>
+    <string name="tab_live">مباشر</string>
+    <string name="tab_settings">الإعدادات</string>
+</resources>

@@ -1,0 +1,31 @@
+﻿# ── Build outputs (APKs/archives) — not source ──
+*.apk
+*.zip
+*.aab
+
+# ── Android / Gradle ──
+.gradle/
+build/
+app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ── Local machine config (paths & secrets) ──
+local.properties
+
+# ── Firebase secrets — keep LOCAL only, never commit ──
+google-services.json
+app/google-services.json
+
+# ── IDE ──
+*.iml
+.idea/
+.DS_Store
+
+# ── Tool workspace caches (not project code) ──
+.codebase-index/
+.claude-flow/
+
+# ── Node (not used in this Android project) ──
+node_modules/

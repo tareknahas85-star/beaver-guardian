@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Beaver Guardian</string>
+    <string name="admin_description">Allows the parent to protect this device: prevent uninstall, lock, and enforce limits.</string>
+    <string name="accessibility_label">Beaver Guardian — App Guard</string>
+    <string name="accessibility_description">Used to enforce app blocking and screen-time limits on the child device.</string>
+
+    <string name="role_title">Who uses this device?</string>
+    <string name="role_parent">I am the parent</string>
+    <string name="role_child">This is the child\'s device</string>
+    <string name="child_notice">This device is supervised by a parent using Beaver Guardian.</string>
+    <string name="pair_code">Pairing code</string>
+
+    <!-- Bottom navigation. -->
+    <string name="tab_dashboard">Dashboard</string>
+    <string name="tab_activity">Activity</string>
+    <string name="tab_live">Live</string>
+    <string name="tab_settings">Settings</string>
+</resources>
